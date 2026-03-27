@@ -1,0 +1,339 @@
+{
+  "nav": {
+    "home": "Accueil",
+    "realisations": "Nos immeubles",
+    "about": "À propos",
+    "contact": "Contact",
+    "tools": "Calculateur SCHL",
+    "brandTagline": "Holding immobilière"
+  },
+  "home": {
+    "meta": {
+      "title": "ORÉA | Holding immobilière multirésidentielle au Québec",
+      "description": "Gestion ORÉA — holding immobilière spécialisée dans l'acquisition, la gestion et la valorisation d'actifs immobiliers."
+    },
+    "hero": {
+      "title": "On achète",
+      "titleHighlight": "pour garder.",
+      "eyebrow": "Multirésidentiel | Québec",
+      "institutional": "350+ unités acquises depuis 2020. Zéro immeuble revendu. Chaque actif est repositionné, stabilisé et intégré dans un portefeuille conçu pour le long terme.",
+      "subtitle": "Une exécution disciplinée. Une vision long terme.",
+      "cta": "Découvrir nos immeubles"
+    },
+    "trust": {
+      "focus": {
+        "title": "Multirésidentiel seulement",
+        "desc": "Une seule classe d'actifs. Zéro distraction."
+      },
+      "markets": {
+        "title": "Grand Montréal, Estrie, Granby",
+        "desc": "Trois marchés. Connus en profondeur."
+      },
+      "operations": {
+        "title": "Gestion interne",
+        "desc": "On opère nous-mêmes. Chaque immeuble, chaque jour."
+      },
+      "strategy": {
+        "title": "Acheter pour garder",
+        "desc": "Repositionner pour créer de la valeur. Détenir pour la conserver."
+      }
+    },
+    "founder": {
+      "text": "Fondé par Olivier Lemieux. Plus de dix ans en construction. 350+ unités acquises et repositionnées depuis 2020.",
+      "link": "Lire l'histoire complète →"
+    },
+    "broker": {
+      "title": "Vous avez un immeuble à vendre?",
+      "text": "Nous achetons activement des immeubles multirésidentiels dans nos marchés ciblés. Analyse rapide. Réponse en 48h.",
+      "criteria": ["6 à 100+ portes", "Grand Montréal, Estrie, Granby", "Sous-performant ou mal géré", "Potentiel de repositionnement"],
+      "cta": "Soumettre un immeuble",
+      "speed": "Réponse en 48 heures."
+    },
+    "presentation": {
+      "title": "Notre vision",
+      "text": "Devenir une référence en multirésidentiel au Québec, fondée sur une exécution rigoureuse, une gestion interne forte et une création de valeur durable.",
+      "text2": "Depuis 2020, ORÉA bâtit un portefeuille concentré sur le Grand Montréal et les marchés stratégiques du Québec. Des immeubles plus grands. Une équipe plus forte. Une vision à long terme — celle de laisser derrière nous un parc immobilier de meilleure qualité."
+    },
+    "audience": {
+      "title": "Travailler avec ORÉA",
+      "intro": "Nous travaillons avec des prêteurs et partenaires qui partagent notre approche : discipline, long terme, exécution.",
+      "lenders": {
+        "title": "Pour les prêteurs",
+        "text": "Nous échangeons avec des prêteurs actifs en multirésidentiel pour le financement d'acquisitions, de repositionnements et de refinancements.",
+        "points": ["Acquisitions multirésidentielles", "Repositionnement d'actifs", "Refinancement du portefeuille"],
+        "cta": "Échanger sur un financement"
+      },
+      "partners": {
+        "title": "Pour les partenaires",
+        "text": "Nous travaillons avec des partenaires alignés sur notre discipline d'exécution et notre vision de détention long terme.",
+        "points": ["Co-investissement sur des actifs ciblés", "Partenariats opérationnels", "Opportunités alignées sur le long terme"],
+        "cta": "Échanger sur un partenariat"
+      }
+    },
+    "buildings": {
+      "title": "Nos immeubles",
+      "subtitle": "Des actifs multirésidentiels sélectionnés dans nos marchés ciblés pour leur qualité, leur potentiel de repositionnement et leur contribution à la croissance du portefeuille.",
+    "cta": {
+      "title": "Vous avez un immeuble à nous présenter?",
+      "text": "Nous achetons activement dans le Grand Montréal, l'Estrie et Granby. Réponse en 48h.",
+      "button": "Soumettre un immeuble"
+    },
+      "viewAll": "Voir tous nos immeubles"
+    },
+    "stats": {
+      "units": "Unités au portefeuille",
+      "buildings": "Immeubles acquis",
+      "founded": "Année de fondation",
+      "markets": "Marchés ciblés"
+    },
+    "cta": {
+      "title": "Nous contacter",
+      "subtitle": "Une question, un projet ou une opportunité? Écrivez-nous.",
+      "button": "Contactez-nous"
+    }
+  },
+  "realisations": {
+    "meta": {
+      "title": "Nos immeubles | ORÉA",
+      "description": "Découvrez les immeubles de Gestion ORÉA : notre portfolio immobilier à travers le Québec."
+    },
+    "title": "Nos immeubles",
+    "subtitle": "Chaque immeuble de notre portfolio est sélectionné avec soin pour sa valeur stratégique et son potentiel de croissance.",
+    "filters": {
+      "all": "Tous",
+      "residential": "Résidentiel",
+      "commercial": "Commercial",
+      "mixed": "Mixte"
+    },
+    "buildings": {
+      "b1": {
+        "title": "11 unités — Granby",
+        "description": "Immeuble résidentiel. Acquisition et repositionnement complet.",
+        "location": "Granby"
+      },
+      "b2": {
+        "title": "16 unités — Laval",
+        "description": "Immeuble résidentiel. Rénovations ciblées et gestion rigoureuse.",
+        "location": "Laval"
+      },
+      "b3": {
+        "title": "16 unités — Longueuil",
+        "description": "Immeuble résidentiel repositionné par ORÉA.",
+        "location": "Longueuil"
+      },
+      "b4": {
+        "title": "23 unités — Sherbrooke",
+        "description": "Immeuble résidentiel repositionné par ORÉA.",
+        "location": "Sherbrooke"
+      },
+      "b5": {
+        "title": "25 unités — Sherbrooke",
+        "description": "Immeuble résidentiel avec rénovations stratégiques.",
+        "location": "Sherbrooke"
+      },
+      "b6": {
+        "title": "12 unités — Granby",
+        "description": "Immeuble résidentiel acquis et repositionné.",
+        "location": "Granby"
+      },
+      "b7": {
+        "title": "12 unités — Sherbrooke",
+        "description": "Immeuble résidentiel avec repositionnement complet.",
+        "location": "Sherbrooke"
+      }
+    }
+  },
+  "about": {
+    "meta": {
+      "title": "À propos | ORÉA",
+      "description": "Découvrez l'histoire, la mission et les valeurs de Gestion ORÉA, votre partenaire en gestion immobilière."
+    },
+    "header": {
+      "title": "À propos d'ORÉA",
+      "subtitle": "ORÉA est une holding immobilière spécialisée dans l'acquisition, la gestion et la valorisation d'actifs multirésidentiels au Québec."
+    },
+    "title": "À propos",
+    "subtitle": "Une holding immobilière bâtie sur l'excellence et la vision à long terme.",
+    "ecosystem": {
+      "title": "Écosystème de soutien",
+      "subtitle": "ORÉA s'appuie sur un écosystème d'entreprises complémentaires qui soutiennent certaines fonctions d'exploitation, de gestion et de développement."
+    },
+    "mission": {
+      "title": "Notre mission",
+      "text": "Acquérir des immeubles sous-performants, les repositionner avec discipline et les opérer selon des standards durables de gestion, d'entretien et de qualité locative.",
+      "text2": "Par une gestion rigoureuse, des rénovations ciblées et une exécution disciplinée, ORÉA repositionne des immeubles multirésidentiels pour en faire des milieux de vie de qualité — mieux opérés, mieux entretenus et mieux adaptés aux attentes des locataires. Chaque projet contribue à rehausser durablement le parc immobilier québécois."
+    },
+    "values": {
+      "title": "Ce qui nous définit",
+      "rigor": {
+        "title": "Rigueur opérationnelle",
+        "description": "Chaque actif est piloté avec une discipline opérationnelle fondée sur les processus, le suivi et la qualité d'exécution."
+      },
+      "longterm": {
+        "title": "Vision long terme",
+        "description": "Nous investissons avec un horizon long terme, dans une logique de détention durable et de création de valeur progressive."
+      },
+      "local": {
+        "title": "Ancrage local",
+        "description": "Nous concentrons nos efforts dans des marchés que nous connaissons en profondeur, avec une lecture terrain disciplinée et locale."
+      },
+      "quality": {
+        "title": "Qualité des actifs",
+        "description": "Nous croyons qu'un actif bien entretenu, bien opéré et bien repositionné protège sa valeur et améliore durablement sa performance."
+      }
+    },
+    "media": {
+      "title": "Podcasts",
+      "subtitle": "Olivier Lemieux partage sa vision de l'immobilier multirésidentiel."
+    },
+    "investments": {
+      "title": "Nos investissements",
+      "subtitle": "L'écosystème d'entreprises fondé et soutenu par Olivier Lemieux."
+    },
+    "timeline": {
+      "title": "Notre croissance",
+      "subtitle": "Croissance annuelle du portefeuille depuis 2020.",
+      "added": "unités ajoutées",
+      "cumulative": "unités cumulatives"
+    },
+    "team": {
+      "title": "Le fondateur",
+      "subtitle": "",
+      "bio1": "Olivier Lemieux évolue dans l'environnement de la construction depuis plus de dix ans. En 2020, il entreprend son premier projet immobilier multirésidentiel, qu'il acquiert, rénove et exploite directement. Cette première initiative marque le point de départ d'un parcours qui mènera à la création et au développement d'ORÉA. Depuis, l'entreprise a structuré une capacité d'exécution interne orientée vers le repositionnement et l'exploitation disciplinée d'actifs résidentiels dans ses marchés ciblés.",
+      "bio2": "Son parcours s'est construit dans un contexte de marché exigeant, marqué par la hausse des taux, la pression sur les coûts et le resserrement du crédit. Cette réalité a façonné une approche fondée sur l'adaptation, la rigueur et la durabilité.",
+      "bio3": "Immeuble après immeuble, ORÉA a renforcé sa structure de gestion interne et sa capacité d'intervention terrain, avec une vision de croissance disciplinée et de long terme.",
+      "bio4": "Père de trois filles, Olivier dirige ORÉA avec la conviction que seules les fondations solides traversent le temps."
+    }
+  },
+  "contact": {
+    "meta": {
+      "title": "Contact | ORÉA",
+      "description": "Contactez Gestion ORÉA pour discuter de vos projets immobiliers. Nous sommes là pour vous accompagner."
+    },
+    "title": "Entrer en contact avec ORÉA",
+    "subtitle": "Nous échangeons avec des prêteurs, partenaires et collaborateurs alignés sur notre stratégie d'acquisition, de repositionnement et de croissance long terme.",
+    "defaultButton": "Nous écrire",
+    "separator": "ou",
+    "intro": "",
+    "types": {
+      "financement": {
+        "title": "Discuter financement",
+        "text": "Échangeons au sujet d'une opportunité de financement, d'acquisition ou de refinancement en multirésidentiel."
+      },
+      "partenariat": {
+        "title": "Discuter partenariat",
+        "text": "Échangeons au sujet d'une relation d'affaires, d'une collaboration stratégique ou d'une opportunité privée alignée sur notre approche d'exécution et de croissance long terme."
+      }
+    },
+    "form": {
+      "tabs": {
+        "broker": "Courtier / Vendeur",
+        "lender": "Prêteur",
+        "partner": "Partenaire"
+      },
+      "broker": {
+        "title": "Soumettre un immeuble",
+        "subtitle": "Nous achetons activement des immeubles de 6 à 100+ portes dans le Grand Montréal, l'Estrie et Granby.",
+        "cta": "Soumettre",
+        "reassurance": "Réponse en 48 heures. Aucune obligation."
+      },
+      "lender": {
+        "title": "Échanger sur un financement",
+        "subtitle": "Nous échangeons avec des prêteurs actifs en multirésidentiel pour le financement d'acquisitions, de repositionnements et de refinancements.",
+        "cta": "Envoyer",
+        "reassurance": "Nous vous répondrons dans les meilleurs délais."
+      },
+      "partner": {
+        "title": "Échanger sur un partenariat",
+        "subtitle": "Nous travaillons avec des partenaires alignés sur notre discipline d'exécution et notre vision de détention long terme.",
+        "cta": "Envoyer",
+        "reassurance": "Nous vous répondrons dans les meilleurs délais."
+      },
+      "fields": {
+        "name": "Nom",
+        "email": "Courriel",
+        "phone": "Téléphone (optionnel)",
+        "doors": "Nombre de portes",
+        "city": "Ville / Secteur",
+        "institution": "Institution (optionnel)",
+        "message": "Message (optionnel)",
+        "context": "Décrivez brièvement votre intérêt",
+        "notes": "Détails additionnels : prix, revenus, état (optionnel)"
+      },
+      "sending": "Envoi...",
+      "confirmation": {
+        "broker": {
+          "title": "Immeuble reçu.",
+          "text": "Nous avons bien reçu votre soumission. Notre équipe analyse chaque opportunité individuellement. Vous recevrez une réponse dans les 48 prochaines heures."
+        },
+        "lender": {
+          "title": "Message reçu.",
+          "text": "Merci pour votre intérêt. Nous vous répondrons dans les meilleurs délais."
+        },
+        "partner": {
+          "title": "Message reçu.",
+          "text": "Merci pour votre intérêt. Nous prendrons connaissance de votre message et reviendrons vers vous prochainement."
+        }
+      }
+    },
+    "info": {
+      "title": "Coordonnées",
+      "address": "Montréal, Québec, Canada",
+      "email": "olemieux@levicapital.ca",
+      "phone": "(514) 876-5276"
+    }
+  },
+  "tools": {
+    "meta": {
+      "title": "Outils | ORÉA",
+      "description": "Calculez la valeur économique SCHL de votre immeuble multirésidentiel."
+    },
+    "title": "Outils",
+    "subtitle": "Calculez la valeur économique SCHL de votre immeuble.",
+    "calculator": {
+      "revenus": "Revenus",
+      "revenuBrut": "Revenu brut annuel ($)",
+      "portes": "Nombre de portes",
+      "depensesReelles": "Dépenses réelles",
+      "taxesMuni": "Taxes municipales",
+      "taxesScol": "Taxes scolaires",
+      "assurances": "Assurances",
+      "hydroGaz": "Hydro / Gaz",
+      "depensesNorm": "Dépenses normalisées",
+      "depensesNormDesc": "Calculées automatiquement selon les barèmes SCHL et le nombre de portes.",
+      "entretien": "Entretien (610$/porte)",
+      "conciergerie": "Conciergerie (365$/porte)",
+      "reserve": "Réserve (190$/porte)",
+      "gestion": "Gestion (5% rev.)",
+      "parametres": "Paramètres SCHL",
+      "rcd": "Ratio de couverture de dette",
+      "rpv": "Ratio prêt-valeur",
+      "taux": "Taux d'intérêt",
+      "amortissement": "Amortissement",
+      "years": "ans",
+      "units": "portes",
+      "selectPortes": "Sélectionner",
+      "calculate": "Calculer la valeur",
+      "result": "Résultat",
+      "valeurEconomique": "Valeur économique SCHL",
+      "pretMax": "Prêt maximum",
+      "rbe": "Revenu brut effectif (−3%)",
+      "rne": "Revenu net d'exploitation",
+      "depensesTotal": "Dépenses totales",
+      "paiementMensuel": "Paiement mensuel",
+      "cta": {
+        "title": "Cet immeuble correspond à nos critères?",
+        "text": "Soumettez-le. Analyse rapide. Réponse en 48h.",
+        "button": "Soumettre un immeuble"
+      },
+      "disclaimer": "Ce calculateur est fourni à titre indicatif seulement. Les résultats ne constituent pas une évaluation officielle ni un engagement de financement. Consultez un professionnel pour une analyse complète.",
+      "placeholder": "Entrez vos données et cliquez sur Calculer pour voir le résultat."
+    }
+  },
+  "footer": {
+    "description": "Holding immobilière spécialisée dans l'acquisition, le repositionnement et la valorisation d'actifs multirésidentiels au Québec.",
+    "quickLinks": "Navigation",
+    "contact": "Contact",
+    "rights": "Tous droits réservés."
+  }
+}

@@ -1,0 +1,339 @@
+{
+  "nav": {
+    "home": "Home",
+    "realisations": "Our Buildings",
+    "about": "About",
+    "contact": "Contact",
+    "tools": "CMHC Calculator",
+    "brandTagline": "Real estate holding"
+  },
+  "home": {
+    "meta": {
+      "title": "Gestion ORÉA | Real Estate Holding",
+      "description": "Gestion ORÉA — real estate holding company specializing in property acquisition, management and value creation."
+    },
+    "hero": {
+      "title": "We buy",
+      "titleHighlight": "to keep.",
+      "eyebrow": "Multi-residential | Quebec",
+      "institutional": "350+ units acquired since 2020. Zero buildings sold. Every asset is repositioned, stabilized and held for the long term.",
+      "subtitle": "Disciplined execution. Long-term vision.",
+      "cta": "Discover our buildings"
+    },
+    "trust": {
+      "focus": {
+        "title": "Multi-residential only",
+        "desc": "One asset class. Zero distraction."
+      },
+      "markets": {
+        "title": "Greater Montreal, Estrie, Granby",
+        "desc": "Three markets. Known in depth."
+      },
+      "operations": {
+        "title": "In-house management",
+        "desc": "We operate ourselves. Every building, every day."
+      },
+      "strategy": {
+        "title": "Buy to hold",
+        "desc": "Reposition to create value. Hold to preserve it."
+      }
+    },
+    "founder": {
+      "text": "Founded by Olivier Lemieux. Over ten years in construction. 350+ units acquired and repositioned since 2020.",
+      "link": "Read the full story →"
+    },
+    "broker": {
+      "title": "Have a building to sell?",
+      "text": "We actively buy multi-residential buildings in our target markets. Fast analysis. Response within 48 hours.",
+      "criteria": ["6 to 100+ units", "Greater Montreal, Estrie, Granby", "Underperforming or mismanaged", "Repositioning potential"],
+      "cta": "Submit a building",
+      "speed": "Response within 48 hours."
+    },
+    "presentation": {
+      "title": "Our vision",
+      "text": "Become the benchmark in multi-residential real estate in Quebec.",
+      "text2": "Since 2020, ORÉA has been building a portfolio focused on Greater Montreal and Quebec's strategic markets. Bigger buildings. A stronger team. A long-term vision — to leave behind a higher-quality housing stock."
+    },
+    "audience": {
+      "title": "Working with ORÉA",
+      "intro": "We work with lenders and partners who share our approach: discipline, long term, execution.",
+      "lenders": {
+        "title": "For lenders",
+        "text": "We engage with lenders active in multi-residential for acquisition financing, repositioning and refinancing.",
+        "points": ["Multi-residential acquisitions", "Asset repositioning", "Portfolio refinancing and growth"],
+        "cta": "Discuss a financing"
+      },
+      "partners": {
+        "title": "For partners",
+        "text": "We work with partners aligned on our execution discipline and long-term hold vision.",
+        "points": ["Co-investment on targeted assets", "Operational partnerships", "Long-term aligned opportunities"],
+        "cta": "Discuss a partnership"
+      }
+    },
+    "buildings": {
+      "title": "Our buildings",
+      "subtitle": "A carefully selected real estate portfolio across Quebec.",
+      "viewAll": "View all our buildings"
+    },
+    "stats": {
+      "units": "Units in portfolio",
+      "buildings": "Buildings acquired",
+      "founded": "Year founded",
+      "markets": "Target markets"
+    },
+    "cta": {
+      "title": "Contact us",
+      "subtitle": "A question, a project or an opportunity? Write to us.",
+      "button": "Get in touch"
+    }
+  },
+  "realisations": {
+    "meta": {
+      "title": "Our Buildings | Gestion ORÉA",
+      "description": "Discover Gestion ORÉA's buildings: our real estate portfolio across Quebec."
+    },
+    "title": "Our buildings",
+    "subtitle": "Each building in our portfolio is carefully selected for its strategic value and growth potential.",
+    "cta": {
+      "title": "Have a building to present?",
+      "text": "We actively buy in Greater Montreal, Estrie and Granby. Response within 48 hours.",
+      "button": "Submit a building"
+    },
+    "filters": {
+      "all": "All",
+      "residential": "Residential",
+      "commercial": "Commercial",
+      "mixed": "Mixed-use"
+    },
+    "buildings": {
+      "b1": {
+        "title": "11 units — Granby",
+        "description": "Residential building. Full acquisition and repositioning.",
+        "location": "Granby"
+      },
+      "b2": {
+        "title": "16 units — Laval",
+        "description": "Residential building. Targeted renovations and rigorous management.",
+        "location": "Laval"
+      },
+      "b3": {
+        "title": "16 units — Longueuil",
+        "description": "Residential building repositioned by ORÉA.",
+        "location": "Longueuil"
+      },
+      "b4": {
+        "title": "23 units — Sherbrooke",
+        "description": "Residential building repositioned by ORÉA.",
+        "location": "Sherbrooke"
+      },
+      "b5": {
+        "title": "25 units — Sherbrooke",
+        "description": "Residential building with strategic renovations.",
+        "location": "Sherbrooke"
+      },
+      "b6": {
+        "title": "12 units — Granby",
+        "description": "Residential building acquired and repositioned.",
+        "location": "Granby"
+      },
+      "b7": {
+        "title": "12 units — Sherbrooke",
+        "description": "Residential building with full repositioning.",
+        "location": "Sherbrooke"
+      }
+    }
+  },
+  "about": {
+    "meta": {
+      "title": "About | Gestion ORÉA",
+      "description": "Discover the history, mission and values of Gestion ORÉA, your real estate management partner."
+    },
+    "header": {
+      "title": "About ORÉA",
+      "subtitle": "ORÉA is a real estate holding company specializing in the acquisition, management and enhancement of multi-residential assets in Quebec."
+    },
+    "title": "About us",
+    "subtitle": "A real estate holding company built on excellence and long-term vision.",
+    "ecosystem": {
+      "title": "Supporting ecosystem",
+      "subtitle": "ORÉA relies on an ecosystem of complementary businesses that support certain operations, management and development functions."
+    },
+    "mission": {
+      "title": "Our mission",
+      "text": "Transform underperforming buildings into exceptional assets.",
+      "text2": "Through rigorous management, targeted renovations and disciplined execution, ORÉA repositions multi-residential buildings into quality living environments — better operated, better maintained and better suited to tenant expectations. Every project contributes to the lasting improvement of Quebec's housing stock."
+    },
+    "values": {
+      "title": "What defines us",
+      "rigor": {
+        "title": "Operational rigor",
+        "description": "Every building is managed with the same discipline as an institutional portfolio. Processes, data, follow-up — nothing is left to chance."
+      },
+      "longterm": {
+        "title": "Long-term vision",
+        "description": "We don't buy to flip. We build a portfolio designed to last and create value over decades."
+      },
+      "local": {
+        "title": "Local roots",
+        "description": "We know our markets. Greater Montreal, Granby, Sherbrooke — we invest where we understand the ground."
+      },
+      "quality": {
+        "title": "Asset quality",
+        "description": "A well-renovated building attracts better tenants, generates better revenue and holds its value. That's our core belief."
+      }
+    },
+    "media": {
+      "title": "Podcasts",
+      "subtitle": "Olivier Lemieux shares his vision of multi-residential real estate."
+    },
+    "investments": {
+      "title": "Our investments",
+      "subtitle": "The ecosystem of companies founded and supported by Olivier Lemieux."
+    },
+    "timeline": {
+      "title": "Our growth",
+      "subtitle": "Annual portfolio growth since 2020.",
+      "added": "units added",
+      "cumulative": "cumulative units"
+    },
+    "team": {
+      "title": "The founder",
+      "subtitle": "",
+      "bio1": "Ten years in construction. Thousands of hours building other people's projects. In 2020, Olivier Lemieux decided to build his own. With his own hands, he acquired, renovated and managed his first multi-residential building — no partner, no team, no safety net.",
+      "bio2": "The timing? The worst imaginable. Since day one, the real estate market has faced unprecedented upheaval: rising rates, soaring costs, tightening credit. Where many pulled back, Olivier chose to adapt. Reinvent. Innovate. Push through the hard times without ever compromising the vision.",
+      "bio3": "That resilience became ORÉA's DNA. Building after building, market after market, Olivier turned obstacles into competitive advantage — building an internal management structure capable of performing in any condition. In just a few years, ORÉA went from one man with one building to a five-person team and a rapidly expanding multi-regional portfolio.",
+      "bio4": "Father of three daughters, Olivier runs ORÉA the way he builds: with discipline, no shortcuts, and the conviction that only solid foundations stand the test of time."
+    }
+  },
+  "contact": {
+    "meta": {
+      "title": "Contact | Gestion ORÉA",
+      "description": "Contact Gestion ORÉA to discuss your real estate projects. We're here to help."
+    },
+    "title": "Contact us",
+    "subtitle": "Have a real estate project in mind? Let's talk about it.",
+    "defaultButton": "Write to us",
+    "separator": "or",
+    "intro": "",
+    "types": {
+      "financement": {
+        "title": "Discuss financing",
+        "text": "Let's talk about a financing, acquisition or refinancing opportunity."
+      },
+      "partenariat": {
+        "title": "Discuss partnership",
+        "text": "Let's talk about a strategic partnership, co-investment or targeted opportunity."
+      }
+    },
+    "form": {
+      "tabs": {
+        "broker": "Broker / Seller",
+        "lender": "Lender",
+        "partner": "Partner"
+      },
+      "broker": {
+        "title": "Submit a building",
+        "subtitle": "We actively buy buildings from 6 to 100+ units in Greater Montreal, Estrie and Granby.",
+        "cta": "Submit",
+        "reassurance": "Response within 48 hours. No obligation."
+      },
+      "lender": {
+        "title": "Discuss financing",
+        "subtitle": "We work with lenders active in multi-residential for acquisition financing, repositioning and refinancing.",
+        "cta": "Send",
+        "reassurance": "We'll get back to you shortly."
+      },
+      "partner": {
+        "title": "Discuss a partnership",
+        "subtitle": "We work with partners aligned on our execution discipline and long-term hold vision.",
+        "cta": "Send",
+        "reassurance": "We'll get back to you shortly."
+      },
+      "fields": {
+        "name": "Name",
+        "email": "Email",
+        "phone": "Phone (optional)",
+        "doors": "Number of units",
+        "city": "City / Area",
+        "institution": "Institution (optional)",
+        "message": "Message (optional)",
+        "context": "Briefly describe your interest",
+        "notes": "Additional details: price, revenue, condition (optional)"
+      },
+      "sending": "Sending...",
+      "confirmation": {
+        "broker": {
+          "title": "Building received.",
+          "text": "We have received your submission. Our team reviews every opportunity individually. You will receive a response within 48 hours."
+        },
+        "lender": {
+          "title": "Message received.",
+          "text": "Thank you for your interest. We'll get back to you shortly."
+        },
+        "partner": {
+          "title": "Message received.",
+          "text": "Thank you for your interest. We will review your message and get back to you soon."
+        }
+      }
+    },
+    "info": {
+      "title": "Contact info",
+      "address": "Montreal, Quebec, Canada",
+      "email": "olemieux@levicapital.ca",
+      "phone": "(514) 876-5276"
+    }
+  },
+  "tools": {
+    "meta": {
+      "title": "Tools | Gestion ORÉA",
+      "description": "Calculate the CMHC economic value of your multi-residential building."
+    },
+    "title": "Tools",
+    "subtitle": "Calculate the CMHC economic value of your building.",
+    "calculator": {
+      "revenus": "Revenue",
+      "revenuBrut": "Gross annual revenue ($)",
+      "portes": "Number of units",
+      "depensesReelles": "Actual expenses",
+      "taxesMuni": "Municipal taxes",
+      "taxesScol": "School taxes",
+      "assurances": "Insurance",
+      "hydroGaz": "Hydro / Gas",
+      "depensesNorm": "Normalized expenses",
+      "depensesNormDesc": "Automatically calculated based on CMHC standards and unit count.",
+      "entretien": "Maintenance ($610/unit)",
+      "conciergerie": "Janitorial ($365/unit)",
+      "reserve": "Reserve ($190/unit)",
+      "gestion": "Management (5% rev.)",
+      "parametres": "CMHC parameters",
+      "rcd": "Debt coverage ratio",
+      "rpv": "Loan-to-value ratio",
+      "taux": "Interest rate",
+      "amortissement": "Amortization",
+      "years": "years",
+      "units": "units",
+      "selectPortes": "Select",
+      "calculate": "Calculate value",
+      "result": "Result",
+      "valeurEconomique": "CMHC economic value",
+      "pretMax": "Maximum loan",
+      "rbe": "Effective gross income (−3%)",
+      "rne": "Net operating income",
+      "depensesTotal": "Total expenses",
+      "paiementMensuel": "Monthly payment",
+      "cta": {
+        "title": "Does this building match our criteria?",
+        "text": "Submit it. Fast analysis. Response within 48 hours.",
+        "button": "Submit a building"
+      },
+      "disclaimer": "This calculator is provided for informational purposes only. Results do not constitute an official appraisal or financing commitment. Consult a professional for a complete analysis.",
+      "placeholder": "Enter your data and click Calculate to see the result."
+    }
+  },
+  "footer": {
+    "description": "Real estate holding company specializing in property acquisition, management and value creation.",
+    "quickLinks": "Navigation",
+    "contact": "Contact",
+    "rights": "All rights reserved."
+  }
+}
