@@ -13,7 +13,7 @@ export function HeroSection() {
     <section className="relative flex min-h-screen items-center justify-center bg-black overflow-hidden">
       {/* Background photo */}
       <Image
-        src="/images/hero.png"
+        src="/images/hero.webp"
         alt=""
         fill
         className="object-cover"
