@@ -5,7 +5,7 @@ import { headers } from 'next/headers';
 import { contactSchema, type ContactFormData } from '@/lib/validators';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
-const CONTACT_EMAIL = process.env.CONTACT_EMAIL || 'olemieux@oreaholding.ca';
+const CONTACT_EMAIL = process.env.CONTACT_EMAIL || 'olemieux@levicapital.ca';
 const RATE_LIMIT_WINDOW_MS = 10 * 60 * 1000;
 const RATE_LIMIT_MAX_REQUESTS = 5;
 const requestLog = new Map<string, number[]>();
@@ -107,7 +107,7 @@ export async function submitContactForm(payload: unknown): Promise<{ success: bo
 
   try {
     await resend.emails.send({
-      from: 'ORÉA <noreply@oreaholding.com>',
+      from: 'ORÉA <onboarding@resend.dev>',
       to: CONTACT_EMAIL,
       subject: `${subjects[data.type]} — ${data.name}`,
       text: buildEmailBody(data),
@@ -116,7 +116,7 @@ export async function submitContactForm(payload: unknown): Promise<{ success: bo
 
     // Send confirmation to the submitter
     await resend.emails.send({
-      from: 'ORÉA <noreply@oreaholding.com>',
+      from: 'ORÉA <onboarding@resend.dev>',
       to: data.email,
       subject: 'ORÉA — Votre message a bien été reçu',
       html: buildConfirmationHtml(data),
