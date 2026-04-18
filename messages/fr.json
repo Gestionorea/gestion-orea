@@ -5,7 +5,9 @@
     "about": "À propos",
     "contact": "Contact",
     "tools": "Outils",
-    "brandTagline": "Holding immobilière"
+    "brandTagline": "Holding immobilière",
+    "openMenu": "Ouvrir le menu",
+    "closeMenu": "Fermer le menu"
   },
   "home": {
     "meta": {
@@ -99,47 +101,34 @@
       "text": "Nous achetons activement dans le Grand Montréal et en Estrie. Réponse en 48h.",
       "button": "Soumettre un immeuble"
     },
-    "filters": {
-      "all": "Tous",
-      "residential": "Résidentiel",
-      "commercial": "Commercial",
-      "mixed": "Mixte"
-    },
     "buildings": {
       "b1": {
         "title": "11 unités — Granby",
-        "description": "Immeuble résidentiel. Acquisition et repositionnement complet.",
-        "location": "Granby"
+        "description": "Immeuble résidentiel. Acquisition et repositionnement complet."
       },
       "b2": {
         "title": "16 unités — Laval",
-        "description": "Immeuble résidentiel. Rénovations ciblées et gestion rigoureuse.",
-        "location": "Laval"
+        "description": "Immeuble résidentiel. Rénovations ciblées et gestion rigoureuse."
       },
       "b3": {
         "title": "16 unités — Longueuil",
-        "description": "Immeuble résidentiel repositionné par ORÉA.",
-        "location": "Longueuil"
+        "description": "Immeuble résidentiel repositionné par ORÉA."
       },
       "b4": {
         "title": "23 unités — Sherbrooke",
-        "description": "Immeuble résidentiel repositionné par ORÉA.",
-        "location": "Sherbrooke"
+        "description": "Immeuble résidentiel repositionné par ORÉA."
       },
       "b5": {
         "title": "25 unités — Sherbrooke",
-        "description": "Immeuble résidentiel avec rénovations stratégiques.",
-        "location": "Sherbrooke"
+        "description": "Immeuble résidentiel avec rénovations stratégiques."
       },
       "b6": {
         "title": "12 unités — Granby",
-        "description": "Immeuble résidentiel acquis et repositionné.",
-        "location": "Granby"
+        "description": "Immeuble résidentiel acquis et repositionné."
       },
       "b7": {
         "title": "12 unités — Sherbrooke",
-        "description": "Immeuble résidentiel avec repositionnement complet.",
-        "location": "Sherbrooke"
+        "description": "Immeuble résidentiel avec repositionnement complet."
       }
     }
   },
@@ -153,8 +142,7 @@
       "subtitle": "ORÉA est une holding immobilière spécialisée dans l'acquisition, la gestion et la valorisation d'actifs multirésidentiels au Québec.",
       "positioning": "Bâti en Estrie à partir de 2020, ORÉA concentre aujourd'hui sa croissance sur le Grand Montréal."
     },
-    "title": "À propos",
-    "subtitle": "Une holding immobilière bâtie sur l'excellence et la vision à long terme.",
+    "buildingAlt": "Immeuble ORÉA",
     "ecosystem": {
       "title": "Écosystème de soutien",
       "subtitle": "ORÉA s'appuie sur un écosystème d'entreprises complémentaires qui soutiennent certaines fonctions d'exploitation, de gestion et de développement."
@@ -187,10 +175,6 @@
       "title": "Podcasts",
       "subtitle": "Olivier Lemieux partage sa vision de l'immobilier multirésidentiel."
     },
-    "investments": {
-      "title": "Nos investissements",
-      "subtitle": "L'écosystème d'entreprises fondé et soutenu par Olivier Lemieux."
-    },
     "timeline": {
       "title": "Notre croissance",
       "subtitle": "Croissance annuelle du portefeuille depuis 2020.",
@@ -199,7 +183,6 @@
     },
     "team": {
       "title": "Le fondateur",
-      "subtitle": "",
       "bio1": "Olivier Lemieux évolue dans l'environnement de la construction depuis plus de dix ans. En 2020, il entreprend son premier projet immobilier multirésidentiel, qu'il acquiert, rénove et exploite directement. Cette première initiative marque le point de départ d'un parcours qui mènera à la création et au développement d'ORÉA. Depuis, l'entreprise a structuré une capacité d'exécution interne orientée vers le repositionnement et l'exploitation disciplinée d'actifs résidentiels dans ses marchés ciblés.",
       "bio2": "Son parcours s'est construit dans un contexte de marché exigeant, marqué par la hausse des taux, la pression sur les coûts et le resserrement du crédit. Cette réalité a façonné une approche fondée sur l'adaptation, la rigueur et la durabilité.",
       "bio3": "Immeuble après immeuble, ORÉA a renforcé sa structure de gestion interne et sa capacité d'intervention terrain, avec une vision de croissance disciplinée et de long terme.",
@@ -213,9 +196,6 @@
     },
     "title": "Entrer en contact avec ORÉA",
     "subtitle": "Nous échangeons avec des prêteurs, partenaires et collaborateurs alignés sur notre stratégie d'acquisition, de repositionnement et de croissance long terme.",
-    "defaultButton": "Nous écrire",
-    "separator": "ou",
-    "intro": "",
     "errors": {
       "submitFailed": "Une erreur est survenue. Merci de réessayer dans quelques instants.",
       "rateLimited": "Trop de tentatives. Merci de réessayer dans 10 minutes.",
@@ -322,7 +302,6 @@
       "amortissement": "Amortissement",
       "years": "ans",
       "units": "portes",
-      "selectPortes": "Sélectionner",
       "calculate": "Calculer la valeur",
       "result": "Résultat",
       "valeurEconomique": "Valeur économique SCHL",

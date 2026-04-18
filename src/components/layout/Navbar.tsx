@@ -56,7 +56,7 @@ export function Navbar() {
             <button
               className="p-2 cursor-pointer"
               onClick={() => setIsMobileMenuOpen(true)}
-              aria-label="Open menu"
+              aria-label={t('openMenu')}
             >
               <Menu className={clsx('h-5 w-5 transition-colors duration-300', isScrolled ? 'text-black' : 'text-white')} />
             </button>

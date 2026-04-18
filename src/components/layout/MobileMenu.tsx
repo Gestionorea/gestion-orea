@@ -52,7 +52,7 @@ export function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
               <button
                 onClick={onClose}
                 className="p-2 cursor-pointer"
-                aria-label="Close menu"
+                aria-label={t('closeMenu')}
               >
                 <X className="h-5 w-5 text-black" />
               </button>

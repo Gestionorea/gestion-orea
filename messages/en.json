@@ -5,7 +5,9 @@
     "about": "About",
     "contact": "Contact",
     "tools": "Tools",
-    "brandTagline": "Real estate holding"
+    "brandTagline": "Real estate holding",
+    "openMenu": "Open menu",
+    "closeMenu": "Close menu"
   },
   "home": {
     "meta": {
@@ -99,47 +101,34 @@
       "text": "We actively buy in Greater Montreal and Estrie. Response within 48 hours.",
       "button": "Submit a building"
     },
-    "filters": {
-      "all": "All",
-      "residential": "Residential",
-      "commercial": "Commercial",
-      "mixed": "Mixed-use"
-    },
     "buildings": {
       "b1": {
         "title": "11 units — Granby",
-        "description": "Residential building. Full acquisition and repositioning.",
-        "location": "Granby"
+        "description": "Residential building. Full acquisition and repositioning."
       },
       "b2": {
         "title": "16 units — Laval",
-        "description": "Residential building. Targeted renovations and rigorous management.",
-        "location": "Laval"
+        "description": "Residential building. Targeted renovations and rigorous management."
       },
       "b3": {
         "title": "16 units — Longueuil",
-        "description": "Residential building repositioned by ORÉA.",
-        "location": "Longueuil"
+        "description": "Residential building repositioned by ORÉA."
       },
       "b4": {
         "title": "23 units — Sherbrooke",
-        "description": "Residential building repositioned by ORÉA.",
-        "location": "Sherbrooke"
+        "description": "Residential building repositioned by ORÉA."
       },
       "b5": {
         "title": "25 units — Sherbrooke",
-        "description": "Residential building with strategic renovations.",
-        "location": "Sherbrooke"
+        "description": "Residential building with strategic renovations."
       },
       "b6": {
         "title": "12 units — Granby",
-        "description": "Residential building acquired and repositioned.",
-        "location": "Granby"
+        "description": "Residential building acquired and repositioned."
       },
       "b7": {
         "title": "12 units — Sherbrooke",
-        "description": "Residential building with full repositioning.",
-        "location": "Sherbrooke"
+        "description": "Residential building with full repositioning."
       }
     }
   },
@@ -153,8 +142,7 @@
       "subtitle": "ORÉA is a real estate holding company specializing in the acquisition, management and enhancement of multi-residential assets in Quebec.",
       "positioning": "Built in Estrie since 2020, ORÉA now focuses its growth on Greater Montreal."
     },
-    "title": "About us",
-    "subtitle": "A real estate holding company built on excellence and long-term vision.",
+    "buildingAlt": "ORÉA building",
     "ecosystem": {
       "title": "Supporting ecosystem",
       "subtitle": "ORÉA relies on an ecosystem of complementary businesses that support certain operations, management and development functions."
@@ -187,10 +175,6 @@
       "title": "Podcasts",
       "subtitle": "Olivier Lemieux shares his vision of multi-residential real estate."
     },
-    "investments": {
-      "title": "Our investments",
-      "subtitle": "The ecosystem of companies founded and supported by Olivier Lemieux."
-    },
     "timeline": {
       "title": "Our growth",
       "subtitle": "Annual portfolio growth since 2020.",
@@ -199,7 +183,6 @@
     },
     "team": {
       "title": "The founder",
-      "subtitle": "",
       "bio1": "Olivier Lemieux has worked in the construction environment for more than ten years. In 2020, he undertook his first multi-residential real estate project, which he acquired, renovated and operated directly. That initial project marked the starting point of the path that would lead to the creation and development of ORÉA. Since then, the company has built an in-house execution capability focused on the repositioning and disciplined operation of residential assets in its target markets.",
       "bio2": "His path has been shaped in a demanding market environment marked by rising interest rates, cost pressure and tighter credit conditions. That reality has informed an approach grounded in adaptation, rigor and durability.",
       "bio3": "Building after building, ORÉA has strengthened its internal management structure and on-the-ground execution capacity, with a disciplined, long-term growth vision.",
@@ -213,9 +196,6 @@
     },
     "title": "Contact us",
     "subtitle": "We engage with lenders, partners and collaborators aligned with our acquisition, repositioning and long-term growth strategy.",
-    "defaultButton": "Write to us",
-    "separator": "or",
-    "intro": "",
     "errors": {
       "submitFailed": "An error occurred. Please try again shortly.",
       "rateLimited": "Too many attempts. Please try again in 10 minutes.",
@@ -322,7 +302,6 @@
       "amortissement": "Amortization",
       "years": "years",
       "units": "units",
-      "selectPortes": "Select",
       "calculate": "Calculate value",
       "result": "Result",
       "valeurEconomique": "CMHC economic value",
