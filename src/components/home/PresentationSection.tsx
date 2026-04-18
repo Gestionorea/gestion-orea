@@ -78,7 +78,6 @@ export function PresentationSection() {
 
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 divide-x divide-white/10">
             {values.map((value, index) => {
-              const Icon = value.icon;
               return (
                 <AnimatedSection key={value.key} delay={index * 0.1}>
                   <div className="group cursor-default px-8 py-4 transition-all duration-500 hover:bg-white/[0.03]">

@@ -1,3 +1,4 @@
+import type { Metadata } from 'next';
 import { NextIntlClientProvider } from 'next-intl';
 import { getMessages, setRequestLocale } from 'next-intl/server';
 import { Inter, Playfair_Display } from 'next/font/google';
@@ -5,6 +6,7 @@ import { notFound } from 'next/navigation';
 import { routing } from '@/i18n/routing';
 import { Navbar } from '@/components/layout/Navbar';
 import { Footer } from '@/components/layout/Footer';
+import { buildAlternates } from '@/lib/alternates';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -19,6 +21,10 @@ const playfair = Playfair_Display({
 });
 
 const siteUrl = 'https://gestionorea.com';
+
+export const metadata: Metadata = {
+  alternates: buildAlternates('/'),
+};
 
 export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }));
@@ -68,14 +74,9 @@ export default async function LocaleLayout({
   setRequestLocale(locale);
   const messages = await getMessages();
 
-  const otherLocale = locale === 'fr' ? 'en' : 'fr';
-
   return (
     <html lang={locale} className={`${inter.variable} ${playfair.variable}`}>
       <head>
-        <link rel="alternate" hrefLang="fr" href={`${siteUrl}/fr`} />
-        <link rel="alternate" hrefLang="en" href={`${siteUrl}/en`} />
-        <link rel="alternate" hrefLang="x-default" href={`${siteUrl}/fr`} />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}

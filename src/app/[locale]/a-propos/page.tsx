@@ -2,9 +2,10 @@ import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { Container } from '@/components/ui/Container';
 import { SectionHeading } from '@/components/ui/SectionHeading';
 import { AnimatedSection } from '@/components/ui/AnimatedSection';
-import { values, team } from '@/lib/data';
+import { team } from '@/lib/data';
 import { Timeline } from '@/components/about/Timeline';
 import Image from 'next/image';
+import { buildAlternates } from '@/lib/alternates';
 
 export async function generateMetadata({
   params,
@@ -16,6 +17,7 @@ export async function generateMetadata({
   return {
     title: t('title'),
     description: t('description'),
+    alternates: buildAlternates('/a-propos'),
   };
 }
 

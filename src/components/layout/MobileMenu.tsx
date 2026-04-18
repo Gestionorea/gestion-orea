@@ -4,7 +4,6 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { X } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { Link } from '@/i18n/navigation';
-import Image from 'next/image';
 import { LanguageSwitcher } from './LanguageSwitcher';
 
 interface MobileMenuProps {

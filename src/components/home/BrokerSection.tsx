@@ -1,6 +1,6 @@
 'use client';
 
-import { useTranslations, useLocale } from 'next-intl';
+import { useTranslations } from 'next-intl';
 import { Container } from '@/components/ui/Container';
 import { AnimatedSection } from '@/components/ui/AnimatedSection';
 import { Button } from '@/components/ui/Button';
@@ -8,7 +8,6 @@ import { Mail } from 'lucide-react';
 
 export function BrokerSection() {
   const t = useTranslations('home.broker');
-  const locale = useLocale();
 
   const mailtoHref = `mailto:olemieux@levicapital.ca?subject=${encodeURIComponent('Soumission immeuble — ORÉA')}`;
 

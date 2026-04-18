@@ -5,7 +5,6 @@ import { Menu } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { Link } from '@/i18n/navigation';
 import { clsx } from 'clsx';
-import Image from 'next/image';
 import { LanguageSwitcher } from './LanguageSwitcher';
 import { MobileMenu } from './MobileMenu';
 

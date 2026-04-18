@@ -8,6 +8,7 @@ import { AudienceSection } from '@/components/home/AudienceSection';
 import { BuildingsPreview } from '@/components/home/BuildingsPreview';
 import { StatsCounter } from '@/components/home/StatsCounter';
 import { CTASection } from '@/components/home/CTASection';
+import { buildAlternates } from '@/lib/alternates';
 
 export async function generateMetadata({
   params,
@@ -19,6 +20,7 @@ export async function generateMetadata({
   return {
     title: t('title'),
     description: t('description'),
+    alternates: buildAlternates('/'),
   };
 }
 

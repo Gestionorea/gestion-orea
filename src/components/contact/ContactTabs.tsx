@@ -160,82 +160,136 @@ export function ContactTabs() {
 
         {/* Common fields */}
         <div className="grid grid-cols-2 gap-6">
-          <input
-            name="name"
-            required
-            className={inputClasses}
-            placeholder={t('fields.name')}
-          />
-          <input
-            name="email"
-            type="email"
-            required
-            className={inputClasses}
-            placeholder={t('fields.email')}
-          />
+          <div>
+            <label className="sr-only" htmlFor="contact-name">
+              {t('labels.name')}
+            </label>
+            <input
+              id="contact-name"
+              name="name"
+              required
+              className={inputClasses}
+              placeholder={t('fields.name')}
+            />
+          </div>
+          <div>
+            <label className="sr-only" htmlFor="contact-email">
+              {t('labels.email')}
+            </label>
+            <input
+              id="contact-email"
+              name="email"
+              type="email"
+              required
+              className={inputClasses}
+              placeholder={t('fields.email')}
+            />
+          </div>
         </div>
 
         {/* Broker fields */}
         {activeTab === 'broker' && (
           <>
             <div className="grid grid-cols-2 gap-6">
-              <input
-                name="doors"
-                required
-                className={inputClasses}
-                placeholder={t('fields.doors')}
-              />
-              <input
-                name="city"
-                required
-                className={inputClasses}
-                placeholder={t('fields.city')}
-              />
+              <div>
+                <label className="sr-only" htmlFor="broker-doors">
+                  {t('labels.doors')}
+                </label>
+                <input
+                  id="broker-doors"
+                  name="doors"
+                  required
+                  className={inputClasses}
+                  placeholder={t('fields.doors')}
+                />
+              </div>
+              <div>
+                <label className="sr-only" htmlFor="broker-city">
+                  {t('labels.city')}
+                </label>
+                <input
+                  id="broker-city"
+                  name="city"
+                  required
+                  className={inputClasses}
+                  placeholder={t('fields.city')}
+                />
+              </div>
             </div>
             <div className="grid grid-cols-2 gap-6">
-              <input
-                name="phone"
-                className={inputClasses}
-                placeholder={t('fields.phone')}
-              />
+              <div>
+                <label className="sr-only" htmlFor="broker-phone">
+                  {t('labels.phone')}
+                </label>
+                <input
+                  id="broker-phone"
+                  name="phone"
+                  className={inputClasses}
+                  placeholder={t('fields.phone')}
+                />
+              </div>
               <div />
             </div>
-            <textarea
-              name="notes"
-              rows={3}
-              className={inputClasses}
-              placeholder={t('fields.notes')}
-            />
+            <div>
+              <label className="sr-only" htmlFor="broker-notes">
+                {t('labels.notes')}
+              </label>
+              <textarea
+                id="broker-notes"
+                name="notes"
+                rows={3}
+                className={inputClasses}
+                placeholder={t('fields.notes')}
+              />
+            </div>
           </>
         )}
 
         {/* Lender fields */}
         {activeTab === 'lender' && (
           <>
-            <input
-              name="institution"
-              className={inputClasses}
-              placeholder={t('fields.institution')}
-            />
-            <textarea
-              name="context"
-              required
-              rows={3}
-              className={inputClasses}
-              placeholder={t('fields.message')}
-            />
+            <div>
+              <label className="sr-only" htmlFor="lender-institution">
+                {t('labels.institution')}
+              </label>
+              <input
+                id="lender-institution"
+                name="institution"
+                className={inputClasses}
+                placeholder={t('fields.institution')}
+              />
+            </div>
+            <div>
+              <label className="sr-only" htmlFor="lender-context">
+                {t('labels.message')}
+              </label>
+              <textarea
+                id="lender-context"
+                name="context"
+                required
+                rows={3}
+                className={inputClasses}
+                placeholder={t('fields.message')}
+              />
+            </div>
           </>
         )}
 
         {/* Partner fields */}
         {activeTab === 'partner' && (
-          <textarea
-            name="context"
-            required
-            rows={4}
-            className={inputClasses}
-            placeholder={t('fields.context')}
-          />
+          <div>
+            <label className="sr-only" htmlFor="partner-context">
+              {t('labels.context')}
+            </label>
+            <textarea
+              id="partner-context"
+              name="context"
+              required
+              rows={4}
+              className={inputClasses}
+              placeholder={t('fields.context')}
+            />
+          </div>
         )}
 
         {error && (

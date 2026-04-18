@@ -250,6 +250,17 @@
         "context": "Décrivez brièvement votre intérêt",
         "notes": "Détails additionnels : prix, revenus, état (optionnel)"
       },
+      "labels": {
+        "name": "Nom complet",
+        "email": "Adresse courriel",
+        "phone": "Téléphone",
+        "doors": "Nombre de portes",
+        "city": "Ville ou secteur",
+        "institution": "Institution",
+        "message": "Message",
+        "context": "Description de votre intérêt",
+        "notes": "Détails additionnels"
+      },
       "sending": "Envoi...",
       "confirmation": {
         "broker": {

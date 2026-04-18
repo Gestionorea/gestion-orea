@@ -5,6 +5,7 @@ import { AnimatedSection } from '@/components/ui/AnimatedSection';
 import { Button } from '@/components/ui/Button';
 import { SCHLCalculator } from '@/components/tools/SCHLCalculator';
 import { Mail } from 'lucide-react';
+import { buildAlternates } from '@/lib/alternates';
 
 export async function generateMetadata({
   params,
@@ -16,6 +17,7 @@ export async function generateMetadata({
   return {
     title: t('title'),
     description: t('description'),
+    alternates: buildAlternates('/outils'),
   };
 }
 

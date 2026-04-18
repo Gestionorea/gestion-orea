@@ -1,7 +1,6 @@
 import { useTranslations } from 'next-intl';
 import { Link } from '@/i18n/navigation';
 import { Container } from '@/components/ui/Container';
-import Image from 'next/image';
 
 export function Footer() {
   const t = useTranslations();

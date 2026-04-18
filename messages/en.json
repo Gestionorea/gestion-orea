@@ -250,6 +250,17 @@
         "context": "Briefly describe your interest",
         "notes": "Additional details: price, revenue, condition (optional)"
       },
+      "labels": {
+        "name": "Full name",
+        "email": "Email address",
+        "phone": "Phone",
+        "doors": "Number of units",
+        "city": "City or area",
+        "institution": "Institution",
+        "message": "Message",
+        "context": "Description of your interest",
+        "notes": "Additional details"
+      },
       "sending": "Sending...",
       "confirmation": {
         "broker": {
