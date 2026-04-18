@@ -22,9 +22,17 @@ const playfair = Playfair_Display({
 
 const siteUrl = 'https://gestionorea.com';
 
-export const metadata: Metadata = {
-  alternates: buildAlternates('/'),
-};
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+
+  return {
+    alternates: buildAlternates('/', locale),
+  };
+}
 
 export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }));

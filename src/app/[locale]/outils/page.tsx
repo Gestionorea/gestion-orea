@@ -17,7 +17,7 @@ export async function generateMetadata({
   return {
     title: t('title'),
     description: t('description'),
-    alternates: buildAlternates('/outils'),
+    alternates: buildAlternates('/outils', locale),
   };
 }
 
