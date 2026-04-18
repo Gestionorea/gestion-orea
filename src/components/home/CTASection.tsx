@@ -23,9 +23,9 @@ export function CTASection() {
               {t('subtitle')}
             </p>
             <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-6 text-sm text-gray">
-              <a href="mailto:olemieux@levicapital.ca" className="flex items-center gap-2 transition-colors duration-300 hover:text-black">
+              <a href="mailto:olemieux@oreaholding.ca" className="flex items-center gap-2 transition-colors duration-300 hover:text-black">
                 <Mail className="h-4 w-4" />
-                olemieux@levicapital.ca
+                olemieux@oreaholding.ca
               </a>
               <span className="hidden sm:block h-px w-6 bg-gray-light" />
               <a href="tel:5148765276" className="flex items-center gap-2 transition-colors duration-300 hover:text-black">

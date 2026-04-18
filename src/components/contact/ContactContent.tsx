@@ -53,7 +53,7 @@ export function ContactContent() {
           <AnimatedSection>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-10">
               <a
-                href="mailto:olemieux@levicapital.ca"
+                href="mailto:olemieux@oreaholding.ca"
                 className="flex items-center gap-3 text-sm text-gray transition-colors duration-300 hover:text-black"
               >
                 <Mail className="h-4 w-4" />

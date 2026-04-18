@@ -9,7 +9,7 @@ import { Mail } from 'lucide-react';
 export function BrokerSection() {
   const t = useTranslations('home.broker');
 
-  const mailtoHref = `mailto:olemieux@levicapital.ca?subject=${encodeURIComponent('Soumission immeuble — ORÉA')}`;
+  const mailtoHref = `mailto:olemieux@oreaholding.ca?subject=${encodeURIComponent('Soumission immeuble — ORÉA')}`;
 
   return (
     <section className="bg-black py-16 lg:py-20">

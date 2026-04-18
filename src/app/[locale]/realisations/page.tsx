@@ -164,7 +164,7 @@ export default async function RealisationsPage({
                 {t('cta.text')}
               </p>
               <div className="mt-8">
-                <a href={`mailto:olemieux@levicapital.ca?subject=${encodeURIComponent('Soumission immeuble — ORÉA')}`}>
+                <a href={`mailto:olemieux@oreaholding.ca?subject=${encodeURIComponent('Soumission immeuble — ORÉA')}`}>
                   <Button variant="white" size="md">
                     <Mail className="mr-2 h-4 w-4" />
                     {t('cta.button')}

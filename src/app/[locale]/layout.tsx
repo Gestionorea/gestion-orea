@@ -52,7 +52,7 @@ const jsonLd = {
   contactPoint: {
     '@type': 'ContactPoint',
     telephone: '+1-514-876-5276',
-    email: 'olemieux@levicapital.ca',
+    email: 'olemieux@oreaholding.ca',
     contactType: 'general',
   },
   sameAs: [],

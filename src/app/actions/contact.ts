@@ -5,7 +5,7 @@ import { headers } from 'next/headers';
 import { contactSchema, type ContactFormData } from '@/lib/validators';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
-const CONTACT_EMAIL = process.env.CONTACT_EMAIL || 'olemieux@levicapital.ca';
+const CONTACT_EMAIL = process.env.CONTACT_EMAIL || 'olemieux@oreaholding.ca';
 const RATE_LIMIT_WINDOW_MS = 10 * 60 * 1000;
 const RATE_LIMIT_MAX_REQUESTS = 5;
 const requestLog = new Map<string, number[]>();
