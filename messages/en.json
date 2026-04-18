@@ -51,7 +51,7 @@
     },
     "presentation": {
       "title": "Our vision",
-      "text": "Become the benchmark in multi-residential real estate in Quebec.",
+      "text": "Become a benchmark in multi-residential real estate in Quebec, built on rigorous execution, strong in-house management and durable value creation.",
       "text2": "Since 2020, ORÉA has been building a portfolio focused on Greater Montreal and Estrie. Bigger buildings. A stronger team. A long-term vision — to leave behind a higher-quality housing stock."
     },
     "audience": {
@@ -89,7 +89,7 @@
   },
   "realisations": {
     "meta": {
-      "title": "Our Buildings | Gestion ORÉA",
+      "title": "Gestion ORÉA | Our Buildings",
       "description": "Discover Gestion ORÉA's buildings: our real estate portfolio across Quebec."
     },
     "title": "Our buildings",
@@ -145,7 +145,7 @@
   },
   "about": {
     "meta": {
-      "title": "About | Gestion ORÉA",
+      "title": "Gestion ORÉA | About",
       "description": "Discover the history, mission and values of Gestion ORÉA, your real estate management partner."
     },
     "header": {
@@ -161,26 +161,26 @@
     },
     "mission": {
       "title": "Our mission",
-      "text": "Transform underperforming buildings into exceptional assets.",
+      "text": "Acquire underperforming buildings, reposition them with discipline and operate them according to lasting standards of management, maintenance and rental quality.",
       "text2": "Through rigorous management, targeted renovations and disciplined execution, ORÉA repositions multi-residential buildings into quality living environments — better operated, better maintained and better suited to tenant expectations. Every project contributes to the lasting improvement of Quebec's housing stock."
     },
     "values": {
       "title": "What defines us",
       "rigor": {
         "title": "Operational rigor",
-        "description": "Every building is managed with the same discipline as an institutional portfolio. Processes, data, follow-up — nothing is left to chance."
+        "description": "Each asset is managed with operational discipline grounded in process, follow-through and quality of execution."
       },
       "longterm": {
         "title": "Long-term vision",
-        "description": "We don't buy to flip. We build a portfolio designed to last and create value over decades."
+        "description": "We invest with a long-term horizon, with a view to durable ownership and progressive value creation."
       },
       "local": {
         "title": "Local roots",
-        "description": "We know our markets. Greater Montreal and Estrie — we invest where we understand the ground."
+        "description": "We focus our efforts on markets we know in depth, with a disciplined, ground-level local understanding."
       },
       "quality": {
         "title": "Asset quality",
-        "description": "A well-renovated building attracts better tenants, generates better revenue and holds its value. That's our core belief."
+        "description": "We believe that a well-maintained, well-operated and well-repositioned asset protects its value and improves its performance over time."
       }
     },
     "media": {
@@ -200,19 +200,19 @@
     "team": {
       "title": "The founder",
       "subtitle": "",
-      "bio1": "Ten years in construction. Thousands of hours building other people's projects. In 2020, Olivier Lemieux decided to build his own. With his own hands, he acquired, renovated and managed his first multi-residential building — no partner, no team, no safety net.",
-      "bio2": "The timing? The worst imaginable. Since day one, the real estate market has faced unprecedented upheaval: rising rates, soaring costs, tightening credit. Where many pulled back, Olivier chose to adapt. Reinvent. Innovate. Push through the hard times without ever compromising the vision.",
-      "bio3": "That resilience became ORÉA's DNA. Building after building, market after market, Olivier turned obstacles into competitive advantage — building an internal management structure capable of performing in any condition. In just a few years, ORÉA went from one man with one building to a five-person team and a rapidly expanding multi-regional portfolio.",
-      "bio4": "Father of three daughters, Olivier runs ORÉA the way he builds: with discipline, no shortcuts, and the conviction that only solid foundations stand the test of time."
+      "bio1": "Olivier Lemieux has worked in the construction environment for more than ten years. In 2020, he undertook his first multi-residential real estate project, which he acquired, renovated and operated directly. That initial project marked the starting point of the path that would lead to the creation and development of ORÉA. Since then, the company has built an in-house execution capability focused on the repositioning and disciplined operation of residential assets in its target markets.",
+      "bio2": "His path has been shaped in a demanding market environment marked by rising interest rates, cost pressure and tighter credit conditions. That reality has informed an approach grounded in adaptation, rigor and durability.",
+      "bio3": "Building after building, ORÉA has strengthened its internal management structure and on-the-ground execution capacity, with a disciplined, long-term growth vision.",
+      "bio4": "Father of three daughters, Olivier leads ORÉA with the conviction that only solid foundations stand the test of time."
     }
   },
   "contact": {
     "meta": {
-      "title": "Contact | Gestion ORÉA",
+      "title": "Gestion ORÉA | Contact",
       "description": "Contact Gestion ORÉA to discuss your real estate projects. We're here to help."
     },
     "title": "Contact us",
-    "subtitle": "Have a real estate project in mind? Let's talk about it.",
+    "subtitle": "We engage with lenders, partners and collaborators aligned with our acquisition, repositioning and long-term growth strategy.",
     "defaultButton": "Write to us",
     "separator": "or",
     "intro": "",
@@ -295,7 +295,7 @@
   },
   "tools": {
     "meta": {
-      "title": "Tools | Gestion ORÉA",
+      "title": "Gestion ORÉA | Tools",
       "description": "Calculate the CMHC economic value of your multi-residential building."
     },
     "title": "Tools",

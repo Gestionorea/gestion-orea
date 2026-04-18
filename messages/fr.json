@@ -9,7 +9,7 @@
   },
   "home": {
     "meta": {
-      "title": "ORÉA | Holding immobilière multirésidentielle au Québec",
+      "title": "Gestion ORÉA | Holding immobilière multirésidentielle au Québec",
       "description": "Gestion ORÉA — holding immobilière spécialisée dans l'acquisition, la gestion et la valorisation d'actifs immobiliers."
     },
     "hero": {
@@ -89,7 +89,7 @@
   },
   "realisations": {
     "meta": {
-      "title": "Nos immeubles | ORÉA",
+      "title": "Gestion ORÉA | Nos immeubles",
       "description": "Découvrez les immeubles de Gestion ORÉA : notre portfolio immobilier à travers le Québec."
     },
     "title": "Nos immeubles",
@@ -145,7 +145,7 @@
   },
   "about": {
     "meta": {
-      "title": "À propos | ORÉA",
+      "title": "Gestion ORÉA | À propos",
       "description": "Découvrez l'histoire, la mission et les valeurs de Gestion ORÉA, votre partenaire en gestion immobilière."
     },
     "header": {
@@ -208,7 +208,7 @@
   },
   "contact": {
     "meta": {
-      "title": "Contact | ORÉA",
+      "title": "Gestion ORÉA | Contact",
       "description": "Contactez Gestion ORÉA pour discuter de vos projets immobiliers. Nous sommes là pour vous accompagner."
     },
     "title": "Entrer en contact avec ORÉA",
@@ -295,7 +295,7 @@
   },
   "tools": {
     "meta": {
-      "title": "Outils | ORÉA",
+      "title": "Gestion ORÉA | Outils",
       "description": "Calculez la valeur économique SCHL de votre immeuble multirésidentiel."
     },
     "title": "Outils",

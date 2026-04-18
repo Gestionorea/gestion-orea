@@ -1,9 +1,8 @@
 'use client';
 
 import { useState, useMemo } from 'react';
-import { useTranslations } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Button } from '@/components/ui/Button';
 import { Calculator, ChevronDown, ChevronUp } from 'lucide-react';
 
 const RCD_OPTIONS = [1.1, 1.2, 1.3];
@@ -21,8 +20,8 @@ function calculatePV(payment: number, monthlyRate: number, totalMonths: number):
   return payment * (1 - Math.pow(1 + monthlyRate, -totalMonths)) / monthlyRate;
 }
 
-function formatCurrency(value: number): string {
-  return new Intl.NumberFormat('fr-CA', {
+function formatCurrency(value: number, locale: string): string {
+  return new Intl.NumberFormat(locale === 'en' ? 'en-CA' : 'fr-CA', {
     style: 'currency',
     currency: 'CAD',
     minimumFractionDigits: 0,
@@ -31,7 +30,12 @@ function formatCurrency(value: number): string {
 }
 
 function parseNumber(val: string): number {
-  return parseFloat(val.replace(/\s/g, '').replace(/,/g, '.')) || 0;
+  const normalized = val.replace(/\s/g, '').replace(/,/g, '');
+  return parseFloat(normalized) || 0;
+}
+
+function formatPlaceholder(value: number, locale: string): string {
+  return new Intl.NumberFormat(locale === 'en' ? 'en-CA' : 'fr-CA').format(value);
 }
 
 // Stepper component for numbers
@@ -74,6 +78,7 @@ function Stepper({ label, value, options, onChange, format }: {
 
 export function SCHLCalculator() {
   const t = useTranslations('tools.calculator');
+  const locale = useLocale();
 
   const [revenuBrut, setRevenuBrut] = useState('');
   const [portes, setPortes] = useState('');
@@ -143,7 +148,7 @@ export function SCHLCalculator() {
                   value={revenuBrut}
                   onChange={(e) => setRevenuBrut(e.target.value)}
                   className={`${inputClasses} pl-4`}
-                  placeholder="150 000"
+                  placeholder={formatPlaceholder(150000, locale)}
                 />
               </div>
             </div>
@@ -171,28 +176,28 @@ export function SCHLCalculator() {
               <label className="text-xs uppercase tracking-widest text-gray mb-2 block">{t('taxesMuni')}</label>
               <div className="relative">
                 <span className="absolute left-0 top-3 text-gray">$</span>
-                <input type="text" value={taxesMuni} onChange={(e) => setTaxesMuni(e.target.value)} className={`${inputClasses} pl-4`} placeholder="12 000" />
+                <input type="text" value={taxesMuni} onChange={(e) => setTaxesMuni(e.target.value)} className={`${inputClasses} pl-4`} placeholder={formatPlaceholder(12000, locale)} />
               </div>
             </div>
             <div>
               <label className="text-xs uppercase tracking-widest text-gray mb-2 block">{t('taxesScol')}</label>
               <div className="relative">
                 <span className="absolute left-0 top-3 text-gray">$</span>
-                <input type="text" value={taxesScol} onChange={(e) => setTaxesScol(e.target.value)} className={`${inputClasses} pl-4`} placeholder="2 000" />
+                <input type="text" value={taxesScol} onChange={(e) => setTaxesScol(e.target.value)} className={`${inputClasses} pl-4`} placeholder={formatPlaceholder(2000, locale)} />
               </div>
             </div>
             <div>
               <label className="text-xs uppercase tracking-widest text-gray mb-2 block">{t('assurances')}</label>
               <div className="relative">
                 <span className="absolute left-0 top-3 text-gray">$</span>
-                <input type="text" value={assurances} onChange={(e) => setAssurances(e.target.value)} className={`${inputClasses} pl-4`} placeholder="4 000" />
+                <input type="text" value={assurances} onChange={(e) => setAssurances(e.target.value)} className={`${inputClasses} pl-4`} placeholder={formatPlaceholder(4000, locale)} />
               </div>
             </div>
             <div>
               <label className="text-xs uppercase tracking-widest text-gray mb-2 block">{t('hydroGaz')}</label>
               <div className="relative">
                 <span className="absolute left-0 top-3 text-gray">$</span>
-                <input type="text" value={hydroGaz} onChange={(e) => setHydroGaz(e.target.value)} className={`${inputClasses} pl-4`} placeholder="3 000" />
+                <input type="text" value={hydroGaz} onChange={(e) => setHydroGaz(e.target.value)} className={`${inputClasses} pl-4`} placeholder={formatPlaceholder(3000, locale)} />
               </div>
             </div>
           </div>
@@ -203,7 +208,7 @@ export function SCHLCalculator() {
               onClick={() => setShowNorm(!showNorm)}
               className="flex items-center gap-2 text-xs uppercase tracking-widest text-gray hover:text-black transition-colors cursor-pointer"
             >
-              {t('depensesNorm')} — {formatCurrency(depensesNorm.total)}
+              {t('depensesNorm')} — {formatCurrency(depensesNorm.total, locale)}
               {showNorm ? <ChevronUp className="h-3 w-3" /> : <ChevronDown className="h-3 w-3" />}
             </button>
             <AnimatePresence>
@@ -219,19 +224,19 @@ export function SCHLCalculator() {
                   <div className="grid grid-cols-2 gap-x-8 gap-y-2 text-sm">
                     <div className="flex justify-between py-1.5">
                       <span className="text-gray">{t('entretien')}</span>
-                      <span className="text-black">{formatCurrency(depensesNorm.entretien)}</span>
+                      <span className="text-black">{formatCurrency(depensesNorm.entretien, locale)}</span>
                     </div>
                     <div className="flex justify-between py-1.5">
                       <span className="text-gray">{t('conciergerie')}</span>
-                      <span className="text-black">{formatCurrency(depensesNorm.conciergerie)}</span>
+                      <span className="text-black">{formatCurrency(depensesNorm.conciergerie, locale)}</span>
                     </div>
                     <div className="flex justify-between py-1.5">
                       <span className="text-gray">{t('reserve')}</span>
-                      <span className="text-black">{formatCurrency(depensesNorm.reserve)}</span>
+                      <span className="text-black">{formatCurrency(depensesNorm.reserve, locale)}</span>
                     </div>
                     <div className="flex justify-between py-1.5">
                       <span className="text-gray">{t('gestion')}</span>
-                      <span className="text-black">{formatCurrency(depensesNorm.gestion)}</span>
+                      <span className="text-black">{formatCurrency(depensesNorm.gestion, locale)}</span>
                     </div>
                   </div>
                 </motion.div>
@@ -298,7 +303,7 @@ export function SCHLCalculator() {
                   {t('valeurEconomique')}
                 </p>
                 <p className="mt-2 font-serif text-4xl text-gold lg:text-5xl">
-                  {formatCurrency(results.valeurEco)}
+                  {formatCurrency(results.valeurEco, locale)}
                 </p>
               </div>
 
@@ -317,7 +322,7 @@ export function SCHLCalculator() {
                       {item.label}
                     </span>
                     <span className="font-serif text-lg text-white">
-                      {formatCurrency(item.value)}
+                      {formatCurrency(item.value, locale)}
                     </span>
                   </div>
                 ))}
