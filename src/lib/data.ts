@@ -74,10 +74,10 @@ export const buildings: Building[] = [
 ];
 
 export const stats = [
-  { key: 'units', value: 350, suffix: '+' },
-  { key: 'buildings', value: 30, suffix: '+' },
+  { key: 'units', value: 450, suffix: '+' },
+  { key: 'buildings', value: 40, suffix: '+' },
   { key: 'founded', value: 2020, suffix: '' },
-  { key: 'markets', value: 3, suffix: '' },
+  { key: 'markets', value: 2, suffix: '' },
 ] as const;
 
 export const team = [

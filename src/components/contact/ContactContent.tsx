@@ -9,6 +9,9 @@ import { ContactTabs } from './ContactTabs';
 import { Mail, Phone, MapPin } from 'lucide-react';
 
 const variants: Record<string, { titleKey: string; textKey: string }> = {
+  broker: { titleKey: 'types.broker.title', textKey: 'types.broker.text' },
+  lender: { titleKey: 'types.financement.title', textKey: 'types.financement.text' },
+  partner: { titleKey: 'types.partenariat.title', textKey: 'types.partenariat.text' },
   financement: { titleKey: 'types.financement.title', textKey: 'types.financement.text' },
   partenariat: { titleKey: 'types.partenariat.title', textKey: 'types.partenariat.text' },
 };

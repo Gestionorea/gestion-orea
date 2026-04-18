@@ -23,7 +23,7 @@ export const metadata: Metadata = {
     template: '%s',
   },
   description:
-    'Holding immobilière spécialisée dans l\'acquisition et le repositionnement d\'actifs multirésidentiels au Québec. 350+ unités sous gestion.',
+    'Holding immobilière spécialisée dans l\'acquisition et le repositionnement d\'actifs multirésidentiels au Québec. 450+ logements acquis depuis 2020.',
   icons: {
     icon: '/icon.svg',
     apple: '/apple-icon.png',
@@ -35,7 +35,7 @@ export const metadata: Metadata = {
     siteName: 'Gestion ORÉA',
     title: 'Gestion ORÉA | Holding Immobilière',
     description:
-      'Acquérir. Repositionner. Croître. Holding immobilière multirésidentielle au Québec — 350+ unités sous gestion.',
+      'Acquérir. Repositionner. Croître. Holding immobilière multirésidentielle au Québec — 450+ logements acquis depuis 2020.',
     url: siteUrl,
   },
   twitter: {

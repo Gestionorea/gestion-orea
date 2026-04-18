@@ -4,7 +4,7 @@
     "realisations": "Nos immeubles",
     "about": "À propos",
     "contact": "Contact",
-    "tools": "Calculateur SCHL",
+    "tools": "Outils",
     "brandTagline": "Holding immobilière"
   },
   "home": {
@@ -16,7 +16,7 @@
       "title": "On achète",
       "titleHighlight": "pour garder.",
       "eyebrow": "Multirésidentiel | Québec",
-      "institutional": "350+ unités acquises depuis 2020. Zéro immeuble revendu. Chaque actif est repositionné, stabilisé et intégré dans un portefeuille conçu pour le long terme.",
+      "institutional": "Chaque actif est acquis pour être conservé, repositionné et opéré dans la durée. Zéro immeuble revendu depuis 2020.",
       "subtitle": "Une exécution disciplinée. Une vision long terme.",
       "cta": "Découvrir nos immeubles"
     },
@@ -26,8 +26,8 @@
         "desc": "Une seule classe d'actifs. Zéro distraction."
       },
       "markets": {
-        "title": "Grand Montréal, Estrie, Granby",
-        "desc": "Trois marchés. Connus en profondeur."
+        "title": "Grand Montréal et Estrie",
+        "desc": "Deux marchés. Connus en profondeur."
       },
       "operations": {
         "title": "Gestion interne",
@@ -39,20 +39,20 @@
       }
     },
     "founder": {
-      "text": "Fondé par Olivier Lemieux. Plus de dix ans en construction. 350+ unités acquises et repositionnées depuis 2020.",
+      "text": "Fondé par Olivier Lemieux. Plus de dix ans en construction. 450+ logements acquis et repositionnés depuis 2020.",
       "link": "Lire l'histoire complète →"
     },
     "broker": {
       "title": "Vous avez un immeuble à vendre?",
       "text": "Nous achetons activement des immeubles multirésidentiels dans nos marchés ciblés. Analyse rapide. Réponse en 48h.",
-      "criteria": ["6 à 100+ portes", "Grand Montréal, Estrie, Granby", "Sous-performant ou mal géré", "Potentiel de repositionnement"],
+      "criteria": ["6 à 100+ portes", "Grand Montréal et Estrie", "Sous-performant ou mal géré", "Potentiel de repositionnement"],
       "cta": "Soumettre un immeuble",
       "speed": "Réponse en 48 heures."
     },
     "presentation": {
       "title": "Notre vision",
       "text": "Devenir une référence en multirésidentiel au Québec, fondée sur une exécution rigoureuse, une gestion interne forte et une création de valeur durable.",
-      "text2": "Depuis 2020, ORÉA bâtit un portefeuille concentré sur le Grand Montréal et les marchés stratégiques du Québec. Des immeubles plus grands. Une équipe plus forte. Une vision à long terme — celle de laisser derrière nous un parc immobilier de meilleure qualité."
+      "text2": "Depuis 2020, ORÉA bâtit un portefeuille concentré sur le Grand Montréal et l'Estrie. Des immeubles plus grands. Une équipe plus forte. Une vision à long terme — celle de laisser derrière nous un parc immobilier de meilleure qualité."
     },
     "audience": {
       "title": "Travailler avec ORÉA",
@@ -72,19 +72,14 @@
     },
     "buildings": {
       "title": "Nos immeubles",
-      "subtitle": "Des actifs multirésidentiels sélectionnés dans nos marchés ciblés pour leur qualité, leur potentiel de repositionnement et leur contribution à la croissance du portefeuille.",
-    "cta": {
-      "title": "Vous avez un immeuble à nous présenter?",
-      "text": "Nous achetons activement dans le Grand Montréal, l'Estrie et Granby. Réponse en 48h.",
-      "button": "Soumettre un immeuble"
-    },
+      "subtitle": "Un aperçu de notre portefeuille multirésidentiel acquis, repositionné et opéré dans nos marchés ciblés.",
       "viewAll": "Voir tous nos immeubles"
     },
     "stats": {
-      "units": "Unités au portefeuille",
-      "buildings": "Immeubles acquis",
+      "units": "Logements acquis depuis 2020",
+      "buildings": "Immeubles acquis depuis 2020",
       "founded": "Année de fondation",
-      "markets": "Marchés ciblés"
+      "markets": "Marchés"
     },
     "cta": {
       "title": "Nous contacter",
@@ -98,7 +93,12 @@
       "description": "Découvrez les immeubles de Gestion ORÉA : notre portfolio immobilier à travers le Québec."
     },
     "title": "Nos immeubles",
-    "subtitle": "Chaque immeuble de notre portfolio est sélectionné avec soin pour sa valeur stratégique et son potentiel de croissance.",
+    "subtitle": "Un portefeuille d'actifs acquis, repositionnés et opérés dans nos marchés ciblés du Québec.",
+    "cta": {
+      "title": "Vous avez un immeuble à nous présenter?",
+      "text": "Nous achetons activement dans le Grand Montréal et en Estrie. Réponse en 48h.",
+      "button": "Soumettre un immeuble"
+    },
     "filters": {
       "all": "Tous",
       "residential": "Résidentiel",
@@ -150,7 +150,8 @@
     },
     "header": {
       "title": "À propos d'ORÉA",
-      "subtitle": "ORÉA est une holding immobilière spécialisée dans l'acquisition, la gestion et la valorisation d'actifs multirésidentiels au Québec."
+      "subtitle": "ORÉA est une holding immobilière spécialisée dans l'acquisition, la gestion et la valorisation d'actifs multirésidentiels au Québec.",
+      "positioning": "Bâti en Estrie à partir de 2020, ORÉA concentre aujourd'hui sa croissance sur le Grand Montréal."
     },
     "title": "À propos",
     "subtitle": "Une holding immobilière bâtie sur l'excellence et la vision à long terme.",
@@ -193,8 +194,8 @@
     "timeline": {
       "title": "Notre croissance",
       "subtitle": "Croissance annuelle du portefeuille depuis 2020.",
-      "added": "unités ajoutées",
-      "cumulative": "unités cumulatives"
+      "added": "logements acquis",
+      "cumulative": "logements acquis depuis 2020"
     },
     "team": {
       "title": "Le fondateur",
@@ -215,7 +216,16 @@
     "defaultButton": "Nous écrire",
     "separator": "ou",
     "intro": "",
+    "errors": {
+      "submitFailed": "Une erreur est survenue. Merci de réessayer dans quelques instants.",
+      "rateLimited": "Trop de tentatives. Merci de réessayer dans 10 minutes.",
+      "validation": "Certains champs sont invalides. Merci de vérifier."
+    },
     "types": {
+      "broker": {
+        "title": "Soumettre un immeuble",
+        "text": "Décrivez l'actif, le secteur et les éléments clés. Nous analysons rapidement les opportunités alignées sur notre stratégie d'acquisition."
+      },
       "financement": {
         "title": "Discuter financement",
         "text": "Échangeons au sujet d'une opportunité de financement, d'acquisition ou de refinancement en multirésidentiel."
@@ -233,7 +243,7 @@
       },
       "broker": {
         "title": "Soumettre un immeuble",
-        "subtitle": "Nous achetons activement des immeubles de 6 à 100+ portes dans le Grand Montréal, l'Estrie et Granby.",
+        "subtitle": "Nous achetons activement des immeubles de 6 à 100+ portes dans le Grand Montréal et en Estrie.",
         "cta": "Soumettre",
         "reassurance": "Réponse en 48 heures. Aucune obligation."
       },
@@ -256,7 +266,7 @@
         "doors": "Nombre de portes",
         "city": "Ville / Secteur",
         "institution": "Institution (optionnel)",
-        "message": "Message (optionnel)",
+        "message": "Message",
         "context": "Décrivez brièvement votre intérêt",
         "notes": "Détails additionnels : prix, revenus, état (optionnel)"
       },

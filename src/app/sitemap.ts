@@ -1,26 +1,24 @@
 import type { MetadataRoute } from 'next';
+import { routing } from '@/i18n/routing';
 
 const siteUrl = 'https://gestionorea.com';
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const locales = ['fr', 'en'];
-  const routes = [
-    '',
-    '/realisations',
-    '/a-propos',
-    '/contact',
-    '/outils',
-  ];
-
   const entries: MetadataRoute.Sitemap = [];
 
-  for (const locale of locales) {
-    for (const route of routes) {
+  for (const locale of routing.locales) {
+    for (const [pathname, localizedPathname] of Object.entries(routing.pathnames)) {
+      const localizedPath =
+        typeof localizedPathname === 'string'
+          ? localizedPathname
+          : localizedPathname[locale];
+      const localePath = localizedPath === '/' ? `/${locale}` : `/${locale}${localizedPath}`;
+
       entries.push({
-        url: `${siteUrl}/${locale}${route}`,
+        url: `${siteUrl}${localePath}`,
         lastModified: new Date(),
         changeFrequency: 'monthly',
-        priority: route === '' ? 1.0 : 0.8,
+        priority: pathname === '/' ? 1.0 : 0.8,
       });
     }
   }

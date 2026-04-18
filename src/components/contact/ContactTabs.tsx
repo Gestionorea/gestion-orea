@@ -16,6 +16,9 @@ const tabs: { key: ContactType; labelKey: string }[] = [
 ];
 
 const typeMap: Record<string, ContactType> = {
+  broker: 'broker',
+  lender: 'lender',
+  partner: 'partner',
   financement: 'lender',
   partenariat: 'partner',
   financing: 'lender',
@@ -31,36 +34,66 @@ export function ContactTabs() {
   const initialTab = typeParam && typeMap[typeParam] ? typeMap[typeParam] : 'broker';
 
   const t = useTranslations('contact.form');
+  const tErrors = useTranslations('contact.errors');
   const [activeTab, setActiveTab] = useState<ContactType>(initialTab);
   const [sending, setSending] = useState(false);
   const [sent, setSent] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setError(null);
     setSending(true);
 
     const form = e.currentTarget;
     const formData = new FormData(form);
+    const payload = Object.fromEntries(formData.entries());
+    const phone = typeof payload.phone === 'string' && payload.phone.trim() ? payload.phone.trim() : undefined;
+    const doors = typeof payload.doors === 'string' && payload.doors.trim() ? payload.doors.trim() : undefined;
+    const city = typeof payload.city === 'string' && payload.city.trim() ? payload.city.trim() : undefined;
+    const institution = typeof payload.institution === 'string' && payload.institution.trim() ? payload.institution.trim() : undefined;
+    const context = typeof payload.context === 'string' && payload.context.trim() ? payload.context.trim() : undefined;
+    const notes = typeof payload.notes === 'string' && payload.notes.trim() ? payload.notes.trim() : undefined;
+    const website = typeof payload.website === 'string' && payload.website.trim() ? payload.website.trim() : undefined;
 
-    const data: Record<string, string> = { type: activeTab };
-    formData.forEach((value, key) => {
-      if (typeof value === 'string' && value.trim()) {
-        data[key] = value.trim();
-      }
-    });
+    const message =
+      activeTab === 'broker'
+        ? notes || `Soumission immeuble${doors ? ` | Portes: ${doors}` : ''}${city ? ` | Ville / Secteur: ${city}` : ''}`
+        : context || '';
 
-    // Honeypot check
-    if (data.website) {
-      setSending(false);
-      return;
-    }
+    const data = {
+      type: activeTab,
+      name: typeof payload.name === 'string' ? payload.name.trim() : '',
+      email: typeof payload.email === 'string' ? payload.email.trim() : '',
+      phone,
+      doors,
+      city,
+      institution,
+      context,
+      notes,
+      website,
+      message,
+    };
 
-    const result = await submitContactForm(data as any);
+    const result = await submitContactForm(data);
     setSending(false);
 
     if (result.success) {
       setSent(true);
+      return;
     }
+
+    if (result.error === 'rate_limited') {
+      setError('rateLimited');
+      return;
+    }
+
+    if (result.error === 'validation') {
+      setError('validation');
+      return;
+    }
+
+    setError('submitFailed');
   };
 
   if (sent) {
@@ -86,7 +119,10 @@ export function ContactTabs() {
         {tabs.map((tab) => (
           <button
             key={tab.key}
-            onClick={() => setActiveTab(tab.key)}
+            onClick={() => {
+              setActiveTab(tab.key);
+              setError(null);
+            }}
             className={clsx(
               'px-6 py-2.5 text-xs uppercase tracking-widest transition-all duration-300 cursor-pointer',
               activeTab === tab.key
@@ -110,7 +146,15 @@ export function ContactTabs() {
       </div>
 
       {/* Form */}
-      <form onSubmit={handleSubmit} className="mx-auto max-w-xl space-y-6">
+      <form
+        onSubmit={handleSubmit}
+        onChange={() => {
+          if (error) {
+            setError(null);
+          }
+        }}
+        className="mx-auto max-w-xl space-y-6"
+      >
         {/* Honeypot */}
         <input type="text" name="website" className="hidden" tabIndex={-1} autoComplete="off" />
 
@@ -175,6 +219,7 @@ export function ContactTabs() {
             />
             <textarea
               name="context"
+              required
               rows={3}
               className={inputClasses}
               placeholder={t('fields.message')}
@@ -191,6 +236,15 @@ export function ContactTabs() {
             className={inputClasses}
             placeholder={t('fields.context')}
           />
+        )}
+
+        {error && (
+          <div
+            role="alert"
+            className="border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700"
+          >
+            {tErrors(error)}
+          </div>
         )}
 
         <div className="flex flex-col items-center gap-3 pt-4">

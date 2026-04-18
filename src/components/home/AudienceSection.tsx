@@ -1,13 +1,13 @@
 'use client';
 
-import { useTranslations, useLocale } from 'next-intl';
+import { useTranslations } from 'next-intl';
 import { Container } from '@/components/ui/Container';
 import { AnimatedSection } from '@/components/ui/AnimatedSection';
 import { Button } from '@/components/ui/Button';
+import { Link } from '@/i18n/navigation';
 
 export function AudienceSection() {
   const t = useTranslations('home.audience');
-  const locale = useLocale();
 
   return (
     <section className="py-24 lg:py-32">
@@ -43,11 +43,11 @@ export function AudienceSection() {
                 ))}
               </ul>
               <div className="mt-10">
-                <a href={`/${locale}/contact?type=financement`}>
+                <Link href={{ pathname: '/contact', query: { type: 'lender' } }}>
                   <Button variant="outline" size="sm">
                     {t('lenders.cta')}
                   </Button>
-                </a>
+                </Link>
               </div>
             </div>
           </AnimatedSection>
@@ -70,11 +70,11 @@ export function AudienceSection() {
                 ))}
               </ul>
               <div className="mt-10">
-                <a href={`/${locale}/contact?type=partenariat`}>
+                <Link href={{ pathname: '/contact', query: { type: 'partner' } }}>
                   <Button variant="outline" size="sm">
                     {t('partners.cta')}
                   </Button>
-                </a>
+                </Link>
               </div>
             </div>
           </AnimatedSection>

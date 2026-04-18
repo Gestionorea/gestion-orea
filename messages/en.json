@@ -4,7 +4,7 @@
     "realisations": "Our Buildings",
     "about": "About",
     "contact": "Contact",
-    "tools": "CMHC Calculator",
+    "tools": "Tools",
     "brandTagline": "Real estate holding"
   },
   "home": {
@@ -16,7 +16,7 @@
       "title": "We buy",
       "titleHighlight": "to keep.",
       "eyebrow": "Multi-residential | Quebec",
-      "institutional": "350+ units acquired since 2020. Zero buildings sold. Every asset is repositioned, stabilized and held for the long term.",
+      "institutional": "Every asset is acquired to be held, repositioned and operated over the long term. Zero buildings resold since 2020.",
       "subtitle": "Disciplined execution. Long-term vision.",
       "cta": "Discover our buildings"
     },
@@ -26,8 +26,8 @@
         "desc": "One asset class. Zero distraction."
       },
       "markets": {
-        "title": "Greater Montreal, Estrie, Granby",
-        "desc": "Three markets. Known in depth."
+        "title": "Greater Montreal and Estrie",
+        "desc": "Two markets. Known in depth."
       },
       "operations": {
         "title": "In-house management",
@@ -39,20 +39,20 @@
       }
     },
     "founder": {
-      "text": "Founded by Olivier Lemieux. Over ten years in construction. 350+ units acquired and repositioned since 2020.",
+      "text": "Founded by Olivier Lemieux. Over ten years in construction. 450+ units acquired and repositioned since 2020.",
       "link": "Read the full story →"
     },
     "broker": {
       "title": "Have a building to sell?",
       "text": "We actively buy multi-residential buildings in our target markets. Fast analysis. Response within 48 hours.",
-      "criteria": ["6 to 100+ units", "Greater Montreal, Estrie, Granby", "Underperforming or mismanaged", "Repositioning potential"],
+      "criteria": ["6 to 100+ units", "Greater Montreal and Estrie", "Underperforming or mismanaged", "Repositioning potential"],
       "cta": "Submit a building",
       "speed": "Response within 48 hours."
     },
     "presentation": {
       "title": "Our vision",
       "text": "Become the benchmark in multi-residential real estate in Quebec.",
-      "text2": "Since 2020, ORÉA has been building a portfolio focused on Greater Montreal and Quebec's strategic markets. Bigger buildings. A stronger team. A long-term vision — to leave behind a higher-quality housing stock."
+      "text2": "Since 2020, ORÉA has been building a portfolio focused on Greater Montreal and Estrie. Bigger buildings. A stronger team. A long-term vision — to leave behind a higher-quality housing stock."
     },
     "audience": {
       "title": "Working with ORÉA",
@@ -72,14 +72,14 @@
     },
     "buildings": {
       "title": "Our buildings",
-      "subtitle": "A carefully selected real estate portfolio across Quebec.",
+      "subtitle": "A preview of our multi-residential portfolio acquired, repositioned and operated in our target markets.",
       "viewAll": "View all our buildings"
     },
     "stats": {
-      "units": "Units in portfolio",
-      "buildings": "Buildings acquired",
+      "units": "Units acquired since 2020",
+      "buildings": "Buildings acquired since 2020",
       "founded": "Year founded",
-      "markets": "Target markets"
+      "markets": "Markets"
     },
     "cta": {
       "title": "Contact us",
@@ -93,10 +93,10 @@
       "description": "Discover Gestion ORÉA's buildings: our real estate portfolio across Quebec."
     },
     "title": "Our buildings",
-    "subtitle": "Each building in our portfolio is carefully selected for its strategic value and growth potential.",
+    "subtitle": "A portfolio of assets acquired, repositioned and operated in ORÉA's target Quebec markets.",
     "cta": {
       "title": "Have a building to present?",
-      "text": "We actively buy in Greater Montreal, Estrie and Granby. Response within 48 hours.",
+      "text": "We actively buy in Greater Montreal and Estrie. Response within 48 hours.",
       "button": "Submit a building"
     },
     "filters": {
@@ -150,7 +150,8 @@
     },
     "header": {
       "title": "About ORÉA",
-      "subtitle": "ORÉA is a real estate holding company specializing in the acquisition, management and enhancement of multi-residential assets in Quebec."
+      "subtitle": "ORÉA is a real estate holding company specializing in the acquisition, management and enhancement of multi-residential assets in Quebec.",
+      "positioning": "Built in Estrie since 2020, ORÉA now focuses its growth on Greater Montreal."
     },
     "title": "About us",
     "subtitle": "A real estate holding company built on excellence and long-term vision.",
@@ -175,7 +176,7 @@
       },
       "local": {
         "title": "Local roots",
-        "description": "We know our markets. Greater Montreal, Granby, Sherbrooke — we invest where we understand the ground."
+        "description": "We know our markets. Greater Montreal and Estrie — we invest where we understand the ground."
       },
       "quality": {
         "title": "Asset quality",
@@ -193,8 +194,8 @@
     "timeline": {
       "title": "Our growth",
       "subtitle": "Annual portfolio growth since 2020.",
-      "added": "units added",
-      "cumulative": "cumulative units"
+      "added": "units acquired",
+      "cumulative": "units acquired since 2020"
     },
     "team": {
       "title": "The founder",
@@ -215,7 +216,16 @@
     "defaultButton": "Write to us",
     "separator": "or",
     "intro": "",
+    "errors": {
+      "submitFailed": "An error occurred. Please try again shortly.",
+      "rateLimited": "Too many attempts. Please try again in 10 minutes.",
+      "validation": "Some fields are invalid. Please review them."
+    },
     "types": {
+      "broker": {
+        "title": "Submit a building",
+        "text": "Share the asset, location and key facts. We review opportunities that fit our acquisition strategy quickly and directly."
+      },
       "financement": {
         "title": "Discuss financing",
         "text": "Let's talk about a financing, acquisition or refinancing opportunity."
@@ -233,7 +243,7 @@
       },
       "broker": {
         "title": "Submit a building",
-        "subtitle": "We actively buy buildings from 6 to 100+ units in Greater Montreal, Estrie and Granby.",
+        "subtitle": "We actively buy buildings from 6 to 100+ units in Greater Montreal and Estrie.",
         "cta": "Submit",
         "reassurance": "Response within 48 hours. No obligation."
       },
@@ -256,7 +266,7 @@
         "doors": "Number of units",
         "city": "City / Area",
         "institution": "Institution (optional)",
-        "message": "Message (optional)",
+        "message": "Message",
         "context": "Briefly describe your interest",
         "notes": "Additional details: price, revenue, condition (optional)"
       },
