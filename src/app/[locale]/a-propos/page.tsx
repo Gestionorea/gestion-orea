@@ -32,6 +32,8 @@ export default async function AboutPage({
 
   return (
     <>
+      <link rel="preconnect" href="https://www.youtube.com" />
+      <link rel="preconnect" href="https://i.ytimg.com" />
       {/* Header — ORÉA first */}
       <section className="bg-black pt-32 pb-12">
         <Container>
