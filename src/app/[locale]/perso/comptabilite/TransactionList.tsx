@@ -1,16 +1,18 @@
 import { getTranslations } from 'next-intl/server';
 import Link from 'next/link';
-import { deleteTransactionAction } from '@/app/actions/transactions';
+import { deleteTransactionAction, toggleReconciledAction } from '@/app/actions/transactions';
 import type { TransactionRow } from '@/lib/transactions';
 
 export default async function TransactionList({
   rows,
   locale,
   canMutate,
+  canReconcile,
 }: {
   rows: TransactionRow[];
   locale: string;
   canMutate: boolean;
+  canReconcile: boolean;
 }) {
   const t = await getTranslations('perso.compta');
 
@@ -24,6 +26,10 @@ export default async function TransactionList({
             <th className="px-4 py-3 font-medium">{t('columns.type')}</th>
             <th className="px-4 py-3 font-medium">{t('columns.total')}</th>
             <th className="px-4 py-3 font-medium">{t('columns.category')}</th>
+            <th className="px-4 py-3 font-medium">{t('columns.paymentMethod')}</th>
+            <th className="px-4 py-3 font-medium">{t('columns.property')}</th>
+            <th className="px-4 py-3 font-medium">{t('columns.company')}</th>
+            <th className="px-4 py-3 font-medium">{t('columns.reconciled')}</th>
             <th className="px-4 py-3 font-medium">{t('columns.actions')}</th>
           </tr>
         </thead>
@@ -41,6 +47,35 @@ export default async function TransactionList({
               <td className="px-4 py-4 text-gray-600">{t(`types.${row.type}`)}</td>
               <td className="px-4 py-4 text-gray-600">${row.amountTotal}</td>
               <td className="px-4 py-4 text-gray-600">{row.category?.name ?? '-'}</td>
+              <td className="px-4 py-4 text-gray-600">{t(`paymentMethods.${row.paymentMethod}`)}</td>
+              <td className="px-4 py-4 text-gray-600">{row.property?.name ?? '-'}</td>
+              <td className="px-4 py-4 text-gray-600">{row.company?.name ?? '-'}</td>
+              <td className="px-4 py-4 text-gray-600">
+                {canReconcile ? (
+                  <form action={toggleReconciledAction} className="flex items-center gap-2">
+                    <input type="hidden" name="id" value={row.id} />
+                    <input type="hidden" name="reconciled" value={row.reconciledAt ? 'false' : 'true'} />
+                    <button
+                      type="submit"
+                      className="inline-flex h-5 w-5 items-center justify-center border border-gray-300 hover:border-black"
+                      aria-label={row.reconciledAt ? t('reconciled.unmark') : t('reconciled.mark')}
+                      title={
+                        row.reconciledAt
+                          ? `${t('reconciled.yes')} ${row.reconciledBy ? t('reconciled.by', { username: row.reconciledBy.username }) : ''}`
+                          : t('reconciled.mark')
+                      }
+                    >
+                      {row.reconciledAt ? '✓' : ''}
+                    </button>
+                  </form>
+                ) : row.reconciledAt ? (
+                  <span title={row.reconciledBy ? t('reconciled.by', { username: row.reconciledBy.username }) : ''}>
+                    ✓
+                  </span>
+                ) : (
+                  <span className="text-gray-400">{t('reconciled.no')}</span>
+                )}
+              </td>
               <td className="px-4 py-4">
                 {canMutate ? (
                   <form action={deleteTransactionAction}>

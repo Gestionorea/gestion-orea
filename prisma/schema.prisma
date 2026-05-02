@@ -8,13 +8,14 @@ datasource db {
 }
 
 model User {
-  id           String   @id @default(cuid())
-  username     String   @unique
-  passwordHash String
-  role         Role     @default(assistant)
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
-  transactions Transaction[]
+  id                       String   @id @default(cuid())
+  username                 String   @unique
+  passwordHash             String
+  role                     Role     @default(assistant)
+  createdAt                DateTime @default(now())
+  updatedAt                DateTime @updatedAt
+  transactions             Transaction[]
+  reconciledTransactions   Transaction[] @relation("TransactionReconciledBy")
 
   @@map("users")
 }
@@ -107,6 +108,9 @@ model Transaction {
   category        Category?       @relation(fields: [categoryId], references: [id], onDelete: SetNull)
   createdById     String
   createdBy       User            @relation(fields: [createdById], references: [id])
+  reconciledAt    DateTime?
+  reconciledById  String?
+  reconciledBy    User?           @relation("TransactionReconciledBy", fields: [reconciledById], references: [id], onDelete: SetNull)
   createdAt       DateTime        @default(now())
   updatedAt       DateTime        @updatedAt
 
@@ -115,4 +119,5 @@ model Transaction {
   @@index([companyId])
   @@index([categoryId])
   @@index([createdAt])
+  @@index([reconciledAt])
 }

@@ -500,7 +500,18 @@
         "type": "Type",
         "total": "Total",
         "category": "Category",
+        "paymentMethod": "Payment method",
+        "property": "Property",
+        "company": "Company",
+        "reconciled": "Reconciled",
         "actions": "Actions"
+      },
+      "reconciled": {
+        "yes": "Reconciled",
+        "no": "No",
+        "by": "by {username}",
+        "mark": "Mark reconciled",
+        "unmark": "Unmark"
       },
       "filters": {
         "allMonths": "All months",
@@ -544,9 +555,11 @@
       "paymentMethods": {
         "interac": "Interac",
         "credit_card": "Credit card",
+        "debit_card": "Debit card",
         "cash": "Cash",
         "wire": "Wire",
         "check": "Check",
+        "preauthorized_debit": "Preauthorized debit",
         "other": "Other"
       },
       "beneficiaries": {

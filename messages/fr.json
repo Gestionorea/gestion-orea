@@ -500,7 +500,18 @@
         "type": "Type",
         "total": "Total",
         "category": "Catégorie",
+        "paymentMethod": "Moyen de paiement",
+        "property": "Immeuble",
+        "company": "Entité",
+        "reconciled": "Réconcilié",
         "actions": "Actions"
+      },
+      "reconciled": {
+        "yes": "Réconcilié",
+        "no": "Non",
+        "by": "par {username}",
+        "mark": "Marquer réconcilié",
+        "unmark": "Annuler"
       },
       "filters": {
         "allMonths": "Tous les mois",
@@ -544,9 +555,11 @@
       "paymentMethods": {
         "interac": "Interac",
         "credit_card": "Carte de crédit",
+        "debit_card": "Carte de débit",
         "cash": "Comptant",
         "wire": "Virement",
         "check": "Chèque",
+        "preauthorized_debit": "Prélèvement préautorisé",
         "other": "Autre"
       },
       "beneficiaries": {

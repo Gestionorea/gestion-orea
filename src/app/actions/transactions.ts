@@ -3,13 +3,15 @@
 import { Prisma } from '@prisma/client';
 import { redirect } from 'next/navigation';
 import { getDb } from '@/lib/db';
-import { requireMutator } from '@/lib/permissions';
+import { requireMutator, requireReconciler } from '@/lib/permissions';
+import { revalidatePath } from 'next/cache';
 import {
   createTransaction,
   deleteTransaction,
   isBeneficiary,
   isPaymentMethod,
   isTransactionType,
+  setTransactionReconciled,
   updateTransaction,
 } from '@/lib/transactions';
 
@@ -159,4 +161,12 @@ export async function deleteTransactionAction(formData: FormData): Promise<void>
   await requireMutator();
   await deleteTransaction(getString(formData, 'id'));
   redirect('/fr/perso/comptabilite');
+}
+
+export async function toggleReconciledAction(formData: FormData): Promise<void> {
+  const session = await requireReconciler();
+  const id = getString(formData, 'id');
+  const reconciled = getString(formData, 'reconciled') === 'true';
+  await setTransactionReconciled(id, reconciled, session.userId);
+  revalidatePath('/fr/perso/comptabilite');
 }

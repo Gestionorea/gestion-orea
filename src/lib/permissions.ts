@@ -32,3 +32,13 @@ export async function requireOwner() {
 
   return session;
 }
+
+export async function requireReconciler() {
+  const session = await requireAuth();
+
+  if (!['owner', 'accountant'].includes(session.role)) {
+    redirect('/fr/perso');
+  }
+
+  return session;
+}
