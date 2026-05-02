@@ -49,8 +49,21 @@ export type TransactionRow = {
   property: { id: string; name: string } | null;
   company: { id: string; name: string } | null;
   category: { id: string; name: string } | null;
+  createdBy: { id: string; username: string } | null;
+  createdAt: Date;
+  updatedAt: Date;
   reconciledAt: Date | null;
   reconciledBy: { id: string; username: string } | null;
+  reimbursementTransactionId: string | null;
+  reimbursementTransaction: RelatedTransaction | null;
+  reimbursementOf: RelatedTransaction | null;
+};
+
+export type RelatedTransaction = {
+  id: string;
+  date: Date;
+  amountTotal: string;
+  merchantName: string;
 };
 
 export type TransactionInput = {
@@ -103,8 +116,41 @@ const transactionInclude = {
       ownerCompany: { select: { id: true, name: true } },
     },
   },
+  createdBy: { select: { id: true, username: true } },
   reconciledBy: { select: { id: true, username: true } },
+  reimbursementTransaction: {
+    select: {
+      id: true,
+      date: true,
+      amountTotal: true,
+      merchantName: true,
+    },
+  },
+  reimbursementOf: {
+    select: {
+      id: true,
+      date: true,
+      amountTotal: true,
+      merchantName: true,
+    },
+  },
 } as const;
+
+function serializeRelated(
+  transaction: {
+    id: string;
+    date: Date;
+    amountTotal: Prisma.Decimal;
+    merchantName: string;
+  } | null,
+): RelatedTransaction | null {
+  if (!transaction) return null;
+
+  return {
+    ...transaction,
+    amountTotal: transaction.amountTotal.toFixed(2),
+  };
+}
 
 function serialize(transaction: {
   id: string;
@@ -137,8 +183,24 @@ function serialize(transaction: {
   property: { id: string; name: string } | null;
   company: { id: string; name: string } | null;
   category: { id: string; name: string } | null;
+  createdBy: { id: string; username: string } | null;
+  createdAt: Date;
+  updatedAt: Date;
   reconciledAt: Date | null;
   reconciledBy: { id: string; username: string } | null;
+  reimbursementTransactionId: string | null;
+  reimbursementTransaction: {
+    id: string;
+    date: Date;
+    amountTotal: Prisma.Decimal;
+    merchantName: string;
+  } | null;
+  reimbursementOf: {
+    id: string;
+    date: Date;
+    amountTotal: Prisma.Decimal;
+    merchantName: string;
+  } | null;
 }): TransactionRow {
   return {
     ...transaction,
@@ -146,6 +208,8 @@ function serialize(transaction: {
     gst: transaction.gst?.toFixed(2) ?? null,
     qst: transaction.qst?.toFixed(2) ?? null,
     amountTotal: transaction.amountTotal.toFixed(2),
+    reimbursementTransaction: serializeRelated(transaction.reimbursementTransaction),
+    reimbursementOf: serializeRelated(transaction.reimbursementOf),
   };
 }
 

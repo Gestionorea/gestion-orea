@@ -1,31 +1,45 @@
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { notFound } from 'next/navigation';
-import { requireMutator } from '@/lib/permissions';
+import { requireAuth } from '@/lib/permissions';
 import { listCategories } from '@/lib/categories';
 import { listCompanies } from '@/lib/companies';
 import { listPaymentSources } from '@/lib/paymentSources';
 import { listProperties } from '@/lib/properties';
 import { getTransactionById } from '@/lib/transactions';
 import EditTransactionForm from './EditTransactionForm';
+import TransactionDetail from './TransactionDetail';
 
 export default async function EditTransactionPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ locale: string; id: string }>;
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
   const { locale, id } = await params;
   setRequestLocale(locale);
-  await requireMutator();
-  const [t, transaction, properties, companies, categories, paymentSources] = await Promise.all([
-    getTranslations('perso.compta'),
+  const [session, rawSearchParams, transaction] = await Promise.all([
+    requireAuth(),
+    searchParams,
     getTransactionById(id),
+  ]);
+
+  if (!transaction) notFound();
+
+  const canEdit = ['owner', 'assistant'].includes(session.role);
+  const editRequested = rawSearchParams.edit === '1';
+
+  if (!editRequested || !canEdit) {
+    return <TransactionDetail transaction={transaction} locale={locale} canEdit={canEdit} />;
+  }
+
+  const [t, properties, companies, categories, paymentSources] = await Promise.all([
+    getTranslations('perso.compta'),
     listProperties(),
     listCompanies(),
     listCategories(),
     listPaymentSources(),
   ]);
-
-  if (!transaction) notFound();
 
   return (
     <div className="py-8">
