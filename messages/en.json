@@ -357,7 +357,14 @@
       "admin": "Admin",
       "password": "Password",
       "users": "Users",
-      "permissions": "Permissions"
+      "permissions": "Permissions",
+      "compta": {
+        "title": "Accounting",
+        "transactions": "Transactions",
+        "properties": "Properties",
+        "companies": "Companies",
+        "categories": "Categories"
+      }
     },
     "admin": {
       "users": {
@@ -411,6 +418,170 @@
           "invalidRole": "Invalid role.",
           "notFound": "User not found."
         }
+      },
+      "properties": {
+        "eyebrow": "Admin",
+        "title": "Properties",
+        "addButton": "+ Add property",
+        "newTitle": "Add property",
+        "editTitle": "Edit property",
+        "edit": "Edit",
+        "delete": "Delete",
+        "form": {
+          "name": "Name",
+          "address": "Address",
+          "company": "Company",
+          "none": "None",
+          "submitting": "Processing…",
+          "save": "Save"
+        },
+        "errors": {
+          "required": "This field is required.",
+          "invalid": "Invalid value."
+        }
+      },
+      "companies": {
+        "eyebrow": "Admin",
+        "title": "Companies",
+        "addButton": "+ Add company",
+        "newTitle": "Add company",
+        "editTitle": "Edit company",
+        "edit": "Edit",
+        "delete": "Delete",
+        "form": {
+          "name": "Name",
+          "submitting": "Processing…",
+          "save": "Save"
+        },
+        "errors": {
+          "required": "This field is required.",
+          "invalid": "Invalid value."
+        }
+      },
+      "categories": {
+        "eyebrow": "Admin",
+        "title": "Categories",
+        "addButton": "+ Add category",
+        "newTitle": "Add category",
+        "editTitle": "Edit category",
+        "edit": "Edit",
+        "delete": "Delete",
+        "types": {
+          "income": "Income",
+          "expense": "Expense",
+          "both": "Both"
+        },
+        "form": {
+          "name": "Name",
+          "type": "Type",
+          "description": "Description",
+          "submitting": "Processing…",
+          "save": "Save"
+        },
+        "errors": {
+          "required": "This field is required.",
+          "invalid": "Invalid value."
+        }
+      }
+    },
+    "compta": {
+      "eyebrow": "Accounting",
+      "title": "Transactions",
+      "summary": "{count} transactions, total income: ${income}, total expenses: ${expense}",
+      "newButton": "+ New transaction",
+      "newTitle": "New transaction",
+      "newSubtitle": "Enter income or an expense with taxes, category and references.",
+      "editTitle": "Edit transaction",
+      "delete": "Delete",
+      "readOnly": "Read-only",
+      "columns": {
+        "date": "Date",
+        "merchant": "Merchant",
+        "type": "Type",
+        "total": "Total",
+        "category": "Category",
+        "actions": "Actions"
+      },
+      "filters": {
+        "allMonths": "All months",
+        "allTypes": "All types",
+        "allProperties": "All properties",
+        "allCompanies": "All companies",
+        "allCategories": "All categories",
+        "allPayments": "All payments",
+        "search": "Search",
+        "apply": "Filter"
+      },
+      "pagination": {
+        "previous": "Previous",
+        "next": "Next",
+        "page": "Page {page}"
+      },
+      "sort": {
+        "dateDesc": "Newest date",
+        "dateAsc": "Oldest date",
+        "amountDesc": "Highest amount",
+        "amountAsc": "Lowest amount"
+      },
+      "months": {
+        "1": "January",
+        "2": "February",
+        "3": "March",
+        "4": "April",
+        "5": "May",
+        "6": "June",
+        "7": "July",
+        "8": "August",
+        "9": "September",
+        "10": "October",
+        "11": "November",
+        "12": "December"
+      },
+      "types": {
+        "income": "Income",
+        "expense": "Expense"
+      },
+      "paymentMethods": {
+        "interac": "Interac",
+        "credit_card": "Credit card",
+        "cash": "Cash",
+        "wire": "Wire",
+        "check": "Check",
+        "other": "Other"
+      },
+      "beneficiaries": {
+        "self": "Personal",
+        "company": "Company",
+        "property": "Property"
+      },
+      "form": {
+        "type": "Type",
+        "date": "Date",
+        "merchantName": "Merchant",
+        "amountBeforeTax": "Amount before tax",
+        "gst": "GST",
+        "qst": "QST",
+        "amountTotal": "Total",
+        "paymentMethod": "Payment method",
+        "beneficiary": "Beneficiary",
+        "property": "Property",
+        "company": "Company",
+        "category": "Category",
+        "none": "None",
+        "invoiceNumber": "Invoice number",
+        "attachmentUrl": "Attachment link",
+        "attachmentHelp": "Paste the OneDrive link to the supporting document.",
+        "justification": "Justification",
+        "submitting": "Processing…",
+        "save": "Save"
+      },
+      "errors": {
+        "invalid": "Invalid value.",
+        "required": "This field is required.",
+        "invalid_amount": "Invalid amount.",
+        "total_mismatch": "The total must match amount before tax plus GST and QST.",
+        "invalid_url": "Invalid link.",
+        "not_found": "Item not found."
       }
     }
   },

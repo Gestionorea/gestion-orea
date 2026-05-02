@@ -1,0 +1,117 @@
+import { getTranslations, setRequestLocale } from 'next-intl/server';
+import Link from 'next/link';
+import { requireAuth } from '@/lib/permissions';
+import { listCategories } from '@/lib/categories';
+import { listCompanies } from '@/lib/companies';
+import { listProperties } from '@/lib/properties';
+import {
+  getTransactionYears,
+  isPaymentMethod,
+  isTransactionType,
+  listTransactions,
+} from '@/lib/transactions';
+import TransactionFilters from './TransactionFilters';
+import TransactionList from './TransactionList';
+import YearTabs from './YearTabs';
+
+export default async function AccountingPage({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ locale: string }>;
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
+}) {
+  const { locale } = await params;
+  setRequestLocale(locale);
+  const raw = await searchParams;
+  const currentYear = new Date().getFullYear();
+  const year = Number(raw.year) || currentYear;
+  const month = raw.month ? Number(raw.month) : undefined;
+  const page = Math.max(Number(raw.page) || 1, 1);
+  const type = typeof raw.type === 'string' && isTransactionType(raw.type) ? raw.type : undefined;
+  const sort =
+    raw.sort === 'date_asc' || raw.sort === 'amount_desc' || raw.sort === 'amount_asc'
+      ? raw.sort
+      : 'date_desc';
+  const paymentMethod =
+    typeof raw.paymentMethod === 'string' && isPaymentMethod(raw.paymentMethod)
+      ? raw.paymentMethod
+      : undefined;
+  const session = await requireAuth();
+  const [t, years, properties, companies, categories, result] = await Promise.all([
+    getTranslations('perso.compta'),
+    getTransactionYears(),
+    listProperties(),
+    listCompanies(),
+    listCategories(),
+    listTransactions({
+      year,
+      month,
+      page,
+      type,
+      paymentMethod,
+      propertyId: typeof raw.propertyId === 'string' ? raw.propertyId : undefined,
+      companyId: typeof raw.companyId === 'string' ? raw.companyId : undefined,
+      categoryId: typeof raw.categoryId === 'string' ? raw.categoryId : undefined,
+      q: typeof raw.q === 'string' ? raw.q : undefined,
+      sort,
+    }),
+  ]);
+  const canMutate = ['owner', 'assistant'].includes(session.role);
+  const normalizedSearchParams = Object.fromEntries(
+    Object.entries(raw).map(([key, value]) => [key, Array.isArray(value) ? value[0] ?? '' : value ?? '']),
+  );
+
+  return (
+    <div className="py-8">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+        <div>
+          <p className="text-xs font-medium uppercase tracking-[0.25em] text-gray-500">{t('eyebrow')}</p>
+          <h1 className="mt-3 font-serif text-3xl tracking-[0.08em] text-black">{t('title')}</h1>
+          <p className="mt-4 text-sm text-gray-500">
+            {t('summary', {
+              count: result.count,
+              income: result.incomeTotal,
+              expense: result.expenseTotal,
+            })}
+          </p>
+        </div>
+        {canMutate ? (
+          <Link
+            href={`/${locale}/perso/comptabilite/nouvelle`}
+            className="inline-flex bg-black px-4 py-3 text-xs font-medium uppercase tracking-[0.18em] text-white"
+          >
+            {t('newButton')}
+          </Link>
+        ) : null}
+      </div>
+      <YearTabs years={years} activeYear={year} locale={locale} />
+      <TransactionFilters
+        properties={properties}
+        companies={companies}
+        categories={categories}
+        searchParams={{ ...normalizedSearchParams, year: String(year) }}
+      />
+      <TransactionList rows={result.rows} locale={locale} canMutate={canMutate} />
+      {result.count > result.pageSize ? (
+        <div className="mt-8 flex items-center justify-between text-sm text-gray-500">
+          {page > 1 ? (
+            <Link href={{ pathname: `/${locale}/perso/comptabilite`, query: { ...normalizedSearchParams, year, page: page - 1 } }}>
+              {t('pagination.previous')}
+            </Link>
+          ) : (
+            <span />
+          )}
+          <span>{t('pagination.page', { page })}</span>
+          {page * result.pageSize < result.count ? (
+            <Link href={{ pathname: `/${locale}/perso/comptabilite`, query: { ...normalizedSearchParams, year, page: page + 1 } }}>
+              {t('pagination.next')}
+            </Link>
+          ) : (
+            <span />
+          )}
+        </div>
+      ) : null}
+    </div>
+  );
+}

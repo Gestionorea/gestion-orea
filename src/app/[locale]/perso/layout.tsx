@@ -22,14 +22,21 @@ export default async function PersoLayout({
 
   setRequestLocale(locale);
 
-  if (!(await getSession())) {
+  const session = await getSession();
+
+  if (!session) {
     redirect(`/${locale}/login`);
   }
 
   const t = await getTranslations('perso');
   const homeHref = `/${locale}/perso`;
+  const accountingHref = `/${locale}/perso/comptabilite`;
   const passwordHref = `/${locale}/perso/admin/mot-de-passe`;
   const usersHref = `/${locale}/perso/admin/utilisateurs`;
+  const propertiesHref = `/${locale}/perso/admin/immeubles`;
+  const companiesHref = `/${locale}/perso/admin/compagnies`;
+  const categoriesHref = `/${locale}/perso/admin/categories`;
+  const isOwner = session.role === 'owner';
   const renderNavItems = () => (
     <nav className="mt-8 space-y-8">
       <div>
@@ -39,6 +46,19 @@ export default async function PersoLayout({
         >
           {t('nav.home')}
         </Link>
+      </div>
+      <div>
+        <div className="text-xs font-medium uppercase tracking-[0.2em] text-gray-500">
+          {t('nav.compta.title')}
+        </div>
+        <div className="mt-4 space-y-3">
+          <Link
+            href={accountingHref}
+            className="block text-sm text-black transition hover:text-gray-600"
+          >
+            {t('nav.compta.transactions')}
+          </Link>
+        </div>
       </div>
       <div>
         <div className="text-xs font-medium uppercase tracking-[0.2em] text-gray-500">
@@ -57,6 +77,28 @@ export default async function PersoLayout({
           >
             {t('nav.users')}
           </Link>
+          {isOwner ? (
+            <>
+              <Link
+                href={propertiesHref}
+                className="block text-sm text-black transition hover:text-gray-600"
+              >
+                {t('nav.compta.properties')}
+              </Link>
+              <Link
+                href={companiesHref}
+                className="block text-sm text-black transition hover:text-gray-600"
+              >
+                {t('nav.compta.companies')}
+              </Link>
+              <Link
+                href={categoriesHref}
+                className="block text-sm text-black transition hover:text-gray-600"
+              >
+                {t('nav.compta.categories')}
+              </Link>
+            </>
+          ) : null}
           <span
             className="pointer-events-none block text-sm text-gray-400"
             aria-disabled="true"

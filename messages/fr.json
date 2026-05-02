@@ -357,7 +357,14 @@
       "admin": "Admin",
       "password": "Mot de passe",
       "users": "Utilisateurs",
-      "permissions": "Permissions"
+      "permissions": "Permissions",
+      "compta": {
+        "title": "Comptabilité",
+        "transactions": "Transactions",
+        "properties": "Immeubles",
+        "companies": "Compagnies",
+        "categories": "Catégories"
+      }
     },
     "admin": {
       "users": {
@@ -411,6 +418,170 @@
           "invalidRole": "Rôle invalide.",
           "notFound": "Utilisateur introuvable."
         }
+      },
+      "properties": {
+        "eyebrow": "Admin",
+        "title": "Immeubles",
+        "addButton": "+ Ajouter un immeuble",
+        "newTitle": "Ajouter un immeuble",
+        "editTitle": "Modifier l'immeuble",
+        "edit": "Modifier",
+        "delete": "Supprimer",
+        "form": {
+          "name": "Nom",
+          "address": "Adresse",
+          "company": "Compagnie",
+          "none": "Aucune",
+          "submitting": "Traitement…",
+          "save": "Enregistrer"
+        },
+        "errors": {
+          "required": "Ce champ est obligatoire.",
+          "invalid": "Valeur invalide."
+        }
+      },
+      "companies": {
+        "eyebrow": "Admin",
+        "title": "Compagnies",
+        "addButton": "+ Ajouter une compagnie",
+        "newTitle": "Ajouter une compagnie",
+        "editTitle": "Modifier la compagnie",
+        "edit": "Modifier",
+        "delete": "Supprimer",
+        "form": {
+          "name": "Nom",
+          "submitting": "Traitement…",
+          "save": "Enregistrer"
+        },
+        "errors": {
+          "required": "Ce champ est obligatoire.",
+          "invalid": "Valeur invalide."
+        }
+      },
+      "categories": {
+        "eyebrow": "Admin",
+        "title": "Catégories",
+        "addButton": "+ Ajouter une catégorie",
+        "newTitle": "Ajouter une catégorie",
+        "editTitle": "Modifier la catégorie",
+        "edit": "Modifier",
+        "delete": "Supprimer",
+        "types": {
+          "income": "Recette",
+          "expense": "Dépense",
+          "both": "Les deux"
+        },
+        "form": {
+          "name": "Nom",
+          "type": "Type",
+          "description": "Description",
+          "submitting": "Traitement…",
+          "save": "Enregistrer"
+        },
+        "errors": {
+          "required": "Ce champ est obligatoire.",
+          "invalid": "Valeur invalide."
+        }
+      }
+    },
+    "compta": {
+      "eyebrow": "Comptabilité",
+      "title": "Transactions",
+      "summary": "{count} transactions, total entrées: {income} $, total dépenses: {expense} $",
+      "newButton": "+ Nouvelle transaction",
+      "newTitle": "Nouvelle transaction",
+      "newSubtitle": "Saisissez une entrée ou une dépense avec ses taxes, catégorie et rattachements.",
+      "editTitle": "Modifier la transaction",
+      "delete": "Supprimer",
+      "readOnly": "Lecture seule",
+      "columns": {
+        "date": "Date",
+        "merchant": "Marchand",
+        "type": "Type",
+        "total": "Total",
+        "category": "Catégorie",
+        "actions": "Actions"
+      },
+      "filters": {
+        "allMonths": "Tous les mois",
+        "allTypes": "Tous les types",
+        "allProperties": "Tous les immeubles",
+        "allCompanies": "Toutes les compagnies",
+        "allCategories": "Toutes les catégories",
+        "allPayments": "Tous les paiements",
+        "search": "Recherche",
+        "apply": "Filtrer"
+      },
+      "pagination": {
+        "previous": "Précédent",
+        "next": "Suivant",
+        "page": "Page {page}"
+      },
+      "sort": {
+        "dateDesc": "Date récente",
+        "dateAsc": "Date ancienne",
+        "amountDesc": "Montant décroissant",
+        "amountAsc": "Montant croissant"
+      },
+      "months": {
+        "1": "Janvier",
+        "2": "Février",
+        "3": "Mars",
+        "4": "Avril",
+        "5": "Mai",
+        "6": "Juin",
+        "7": "Juillet",
+        "8": "Août",
+        "9": "Septembre",
+        "10": "Octobre",
+        "11": "Novembre",
+        "12": "Décembre"
+      },
+      "types": {
+        "income": "Recette",
+        "expense": "Dépense"
+      },
+      "paymentMethods": {
+        "interac": "Interac",
+        "credit_card": "Carte de crédit",
+        "cash": "Comptant",
+        "wire": "Virement",
+        "check": "Chèque",
+        "other": "Autre"
+      },
+      "beneficiaries": {
+        "self": "Personnel",
+        "company": "Compagnie",
+        "property": "Immeuble"
+      },
+      "form": {
+        "type": "Type",
+        "date": "Date",
+        "merchantName": "Marchand",
+        "amountBeforeTax": "Montant avant taxes",
+        "gst": "TPS",
+        "qst": "TVQ",
+        "amountTotal": "Total",
+        "paymentMethod": "Mode de paiement",
+        "beneficiary": "Bénéficiaire",
+        "property": "Immeuble",
+        "company": "Compagnie",
+        "category": "Catégorie",
+        "none": "Aucun",
+        "invoiceNumber": "No de facture",
+        "attachmentUrl": "Lien de pièce justificative",
+        "attachmentHelp": "Coller le lien OneDrive vers la pièce justificative.",
+        "justification": "Justification",
+        "submitting": "Traitement…",
+        "save": "Enregistrer"
+      },
+      "errors": {
+        "invalid": "Valeur invalide.",
+        "required": "Ce champ est obligatoire.",
+        "invalid_amount": "Montant invalide.",
+        "total_mismatch": "Le total doit correspondre au montant avant taxes plus TPS et TVQ.",
+        "invalid_url": "Lien invalide.",
+        "not_found": "Élément introuvable."
       }
     }
   },
