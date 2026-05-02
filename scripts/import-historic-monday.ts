@@ -62,6 +62,7 @@ type Summary = {
 };
 
 const prisma = new PrismaClient();
+const IMPORT_TRANSACTION_TIMEOUT_MS = 10 * 60 * 1000;
 
 const COLUMN = {
   name: 1,
@@ -474,7 +475,7 @@ async function executeImport(transactions: ParsedTransaction[], force: boolean, 
         }
       }
     },
-    { timeout: 120_000 },
+    { timeout: IMPORT_TRANSACTION_TIMEOUT_MS },
   );
 
   return {
