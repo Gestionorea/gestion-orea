@@ -650,6 +650,10 @@
         "next": "Next",
         "page": "Page {page}"
       },
+      "monthNavigator": {
+        "previous": "Previous month",
+        "next": "Next month"
+      },
       "sort": {
         "dateDesc": "Newest date",
         "dateAsc": "Oldest date",

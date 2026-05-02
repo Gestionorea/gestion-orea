@@ -15,6 +15,7 @@ import {
 } from '@/lib/transactions';
 import TransactionFilters from './TransactionFilters';
 import TransactionList from './TransactionList';
+import MonthNavigator from './MonthNavigator';
 import YearTabs from './YearTabs';
 
 export default async function AccountingPage({
@@ -27,9 +28,12 @@ export default async function AccountingPage({
   const { locale } = await params;
   setRequestLocale(locale);
   const raw = await searchParams;
-  const currentYear = new Date().getFullYear();
+  const now = new Date();
+  const currentYear = now.getFullYear();
+  const currentMonth = now.getMonth() + 1;
   const year = Number(raw.year) || currentYear;
-  const month = raw.month ? Number(raw.month) : undefined;
+  const rawMonth = Number(raw.month);
+  const month = Number.isInteger(rawMonth) && rawMonth >= 1 && rawMonth <= 12 ? rawMonth : currentMonth;
   const page = Math.max(Number(raw.page) || 1, 1);
   const type = typeof raw.type === 'string' && isTransactionType(raw.type) ? raw.type : undefined;
   const legacySort = typeof raw.sort === 'string' ? raw.sort : '';
@@ -79,6 +83,7 @@ export default async function AccountingPage({
   const normalizedSearchParams = Object.fromEntries(
     Object.entries(raw).map(([key, value]) => [key, Array.isArray(value) ? value[0] ?? '' : value ?? '']),
   );
+  const activeSearchParams = { ...normalizedSearchParams, year: String(year), month: String(month) };
 
   return (
     <div className="py-8">
@@ -104,11 +109,12 @@ export default async function AccountingPage({
         ) : null}
       </div>
       <YearTabs years={years} activeYear={year} locale={locale} />
+      <MonthNavigator year={year} month={month} locale={locale} searchParams={normalizedSearchParams} />
       <TransactionFilters
         properties={properties}
         companies={companies}
         categories={categories}
-        searchParams={{ ...normalizedSearchParams, year: String(year) }}
+        searchParams={activeSearchParams}
       />
       <TransactionList
         rows={result.rows}
@@ -117,12 +123,12 @@ export default async function AccountingPage({
         canReconcile={canReconcile}
         sortBy={sortBy}
         sortOrder={sortOrder}
-        searchParams={{ ...normalizedSearchParams, year: String(year) }}
+        searchParams={activeSearchParams}
       />
       {result.count > result.pageSize ? (
         <div className="mt-8 flex items-center justify-between text-sm text-gray-500">
           {page > 1 ? (
-            <Link href={{ pathname: `/${locale}/perso/comptabilite`, query: { ...normalizedSearchParams, year, page: page - 1 } }}>
+            <Link href={{ pathname: `/${locale}/perso/comptabilite`, query: { ...activeSearchParams, page: page - 1 } }}>
               {t('pagination.previous')}
             </Link>
           ) : (
@@ -130,7 +136,7 @@ export default async function AccountingPage({
           )}
           <span>{t('pagination.page', { page })}</span>
           {page * result.pageSize < result.count ? (
-            <Link href={{ pathname: `/${locale}/perso/comptabilite`, query: { ...normalizedSearchParams, year, page: page + 1 } }}>
+            <Link href={{ pathname: `/${locale}/perso/comptabilite`, query: { ...activeSearchParams, page: page + 1 } }}>
               {t('pagination.next')}
             </Link>
           ) : (
