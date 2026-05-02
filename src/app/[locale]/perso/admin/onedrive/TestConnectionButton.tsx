@@ -3,10 +3,20 @@
 import { useActionState } from 'react';
 import { useFormStatus } from 'react-dom';
 import { useTranslations } from 'next-intl';
-import {
-  initialOneDriveTestState,
-  testConnectionAction,
-} from '@/app/actions/onedrive';
+import { testConnectionAction } from '@/app/actions/onedrive';
+import type { OneDriveItem, PingDriveResult } from '@/lib/onedrive';
+
+type OneDriveTestState = {
+  ping: PingDriveResult | null;
+  items: OneDriveItem[] | null;
+  error: string | null;
+};
+
+const initialOneDriveTestState: OneDriveTestState = {
+  ping: null,
+  items: null,
+  error: null,
+};
 
 function SubmitButton() {
   const t = useTranslations('perso.admin.onedrive');

@@ -3,16 +3,10 @@
 import { listFolderItems, pingDrive, type OneDriveItem, type PingDriveResult } from '@/lib/onedrive';
 import { requireOwner } from '@/lib/permissions';
 
-export type OneDriveTestState = {
+type OneDriveTestState = {
   ping: PingDriveResult | null;
   items: OneDriveItem[] | null;
   error: string | null;
-};
-
-export const initialOneDriveTestState: OneDriveTestState = {
-  ping: null,
-  items: null,
-  error: null,
 };
 
 function safeError(error: unknown): string {
@@ -28,6 +22,6 @@ export async function testConnectionAction(_prevState?: OneDriveTestState): Prom
 
     return { ping, items, error: null };
   } catch (error) {
-    return { ...initialOneDriveTestState, error: safeError(error) };
+    return { ping: null, items: null, error: safeError(error) };
   }
 }
