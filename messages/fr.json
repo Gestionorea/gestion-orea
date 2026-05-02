@@ -351,6 +351,9 @@
     "subtitle": "Contenu à venir.",
     "logout": "Déconnexion",
     "headerLabel": "Espace privé",
+    "sidebar": {
+      "toggle": "Replier la barre laterale"
+    },
     "nav": {
       "menu": "Menu",
       "home": "Accueil",

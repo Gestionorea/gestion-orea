@@ -351,6 +351,9 @@
     "subtitle": "Content coming soon.",
     "logout": "Sign out",
     "headerLabel": "Private space",
+    "sidebar": {
+      "toggle": "Toggle sidebar"
+    },
     "nav": {
       "menu": "Menu",
       "home": "Home",
