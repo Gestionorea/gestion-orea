@@ -58,6 +58,7 @@ export default async function AccountingPage({
     }),
   ]);
   const canMutate = ['owner', 'assistant'].includes(session.role);
+  const canReconcile = ['owner', 'accountant'].includes(session.role);
   const normalizedSearchParams = Object.fromEntries(
     Object.entries(raw).map(([key, value]) => [key, Array.isArray(value) ? value[0] ?? '' : value ?? '']),
   );
@@ -92,7 +93,7 @@ export default async function AccountingPage({
         categories={categories}
         searchParams={{ ...normalizedSearchParams, year: String(year) }}
       />
-      <TransactionList rows={result.rows} locale={locale} canMutate={canMutate} />
+      <TransactionList rows={result.rows} locale={locale} canMutate={canMutate} canReconcile={canReconcile} />
       {result.count > result.pageSize ? (
         <div className="mt-8 flex items-center justify-between text-sm text-gray-500">
           {page > 1 ? (

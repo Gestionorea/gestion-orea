@@ -33,6 +33,8 @@ export type TransactionRow = {
   property: { id: string; name: string } | null;
   company: { id: string; name: string } | null;
   category: { id: string; name: string } | null;
+  reconciledAt: Date | null;
+  reconciledBy: { id: string; username: string } | null;
 };
 
 export type TransactionInput = {
@@ -71,6 +73,7 @@ const transactionInclude = {
   property: { select: { id: true, name: true } },
   company: { select: { id: true, name: true } },
   category: { select: { id: true, name: true } },
+  reconciledBy: { select: { id: true, username: true } },
 } as const;
 
 function serialize(transaction: {
@@ -93,6 +96,8 @@ function serialize(transaction: {
   property: { id: string; name: string } | null;
   company: { id: string; name: string } | null;
   category: { id: string; name: string } | null;
+  reconciledAt: Date | null;
+  reconciledBy: { id: string; username: string } | null;
 }): TransactionRow {
   return {
     ...transaction,
@@ -250,4 +255,18 @@ export async function updateTransaction(id: string, input: TransactionInput) {
 
 export async function deleteTransaction(id: string): Promise<void> {
   await getDb().transaction.delete({ where: { id } });
+}
+
+export async function setTransactionReconciled(
+  id: string,
+  reconciled: boolean,
+  reconciledById: string | null,
+) {
+  return await getDb().transaction.update({
+    where: { id },
+    data: {
+      reconciledAt: reconciled ? new Date() : null,
+      reconciledById: reconciled ? reconciledById : null,
+    },
+  });
 }
