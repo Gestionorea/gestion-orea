@@ -109,7 +109,16 @@ async function getAccessToken(forceRefresh = false): Promise<string> {
 
   if (!response.ok) {
     tokenCache = null;
-    throw new OneDriveError('Microsoft Graph authentication failed.', response.status);
+    let detail = '';
+    try {
+      const errorPayload = (await response.json()) as { error?: string; error_description?: string };
+      const code = errorPayload.error ?? '';
+      const description = errorPayload.error_description ?? '';
+      detail = [code, description].filter(Boolean).join(': ');
+    } catch {
+      detail = `HTTP ${response.status}`;
+    }
+    throw new OneDriveError(`Microsoft Graph authentication failed. ${detail}`, response.status);
   }
 
   const payload = (await response.json()) as { access_token?: string; expires_in?: number };
