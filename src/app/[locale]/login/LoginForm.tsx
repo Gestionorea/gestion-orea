@@ -30,12 +30,22 @@ export default function LoginForm({ locale, from }: { locale: string; from: stri
       <input type="hidden" name="locale" value={locale} />
       <input type="hidden" name="from" value={from} />
       <label className="block text-xs font-medium uppercase tracking-[0.2em] text-gray-600">
+        {t('usernameLabel')}
+        <input
+          name="username"
+          type="text"
+          required
+          autoFocus
+          autoComplete="username"
+          className="mt-3 block w-full border border-gray-300 px-4 py-3 text-base normal-case tracking-normal text-black outline-none transition focus:border-black"
+        />
+      </label>
+      <label className="mt-5 block text-xs font-medium uppercase tracking-[0.2em] text-gray-600">
         {t('passwordLabel')}
         <input
           name="password"
           type="password"
           required
-          autoFocus
           autoComplete="current-password"
           className="mt-3 block w-full border border-gray-300 px-4 py-3 text-base normal-case tracking-normal text-black outline-none transition focus:border-black"
         />

@@ -339,6 +339,7 @@
   },
   "login": {
     "subtitle": "Private space",
+    "usernameLabel": "Username",
     "passwordLabel": "Password",
     "submit": "Sign in",
     "submitting": "Signing in…",
@@ -349,6 +350,34 @@
     "title": "Private space",
     "subtitle": "Content coming soon.",
     "logout": "Sign out",
-    "headerLabel": "Private space"
+    "headerLabel": "Private space",
+    "nav": {
+      "menu": "Menu",
+      "home": "Home",
+      "admin": "Admin",
+      "password": "Password",
+      "users": "Users",
+      "permissions": "Permissions"
+    }
+  },
+  "admin": {
+    "password": {
+      "eyebrow": "Admin",
+      "title": "Password",
+      "subtitle": "Change the password for your owner access.",
+      "currentPassword": "Current password",
+      "newPassword": "New password",
+      "confirmPassword": "Confirm new password",
+      "submit": "Update",
+      "submitting": "Updating…",
+      "success": "Password updated.",
+      "errors": {
+        "wrongCurrent": "The current password is incorrect.",
+        "mismatch": "The new passwords do not match.",
+        "tooShort": "The new password must be at least 8 characters.",
+        "sameAsOld": "The new password must be different from the old one.",
+        "unauthorized": "Session expired. Sign in again."
+      }
+    }
   }
 }

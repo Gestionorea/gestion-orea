@@ -18,7 +18,7 @@ function isProtectedPath(pathname: string): boolean {
   return false;
 }
 
-export default function middleware(request: NextRequest) {
+export default async function middleware(request: NextRequest) {
   if (request.nextUrl.pathname === '/opengraph-image') {
     return NextResponse.next();
   }
@@ -43,7 +43,7 @@ export default function middleware(request: NextRequest) {
 
   const token = request.cookies.get(SESSION_COOKIE_NAME)?.value;
 
-  if (verifySessionToken(token)) {
+  if (await verifySessionToken(token)) {
     return intlResponse;
   }
 

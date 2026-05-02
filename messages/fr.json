@@ -339,6 +339,7 @@
   },
   "login": {
     "subtitle": "Espace privé",
+    "usernameLabel": "Nom d'utilisateur",
     "passwordLabel": "Mot de passe",
     "submit": "Se connecter",
     "submitting": "Connexion…",
@@ -349,6 +350,34 @@
     "title": "Espace privé",
     "subtitle": "Contenu à venir.",
     "logout": "Déconnexion",
-    "headerLabel": "Espace privé"
+    "headerLabel": "Espace privé",
+    "nav": {
+      "menu": "Menu",
+      "home": "Accueil",
+      "admin": "Admin",
+      "password": "Mot de passe",
+      "users": "Utilisateurs",
+      "permissions": "Permissions"
+    }
+  },
+  "admin": {
+    "password": {
+      "eyebrow": "Admin",
+      "title": "Mot de passe",
+      "subtitle": "Changez le mot de passe de votre accès propriétaire.",
+      "currentPassword": "Mot de passe actuel",
+      "newPassword": "Nouveau mot de passe",
+      "confirmPassword": "Confirmer le nouveau mot de passe",
+      "submit": "Mettre à jour",
+      "submitting": "Mise à jour…",
+      "success": "Mot de passe mis à jour.",
+      "errors": {
+        "wrongCurrent": "Le mot de passe actuel est incorrect.",
+        "mismatch": "Les nouveaux mots de passe ne correspondent pas.",
+        "tooShort": "Le nouveau mot de passe doit contenir au moins 8 caractères.",
+        "sameAsOld": "Le nouveau mot de passe doit être différent de l'ancien.",
+        "unauthorized": "Session expirée. Reconnectez-vous."
+      }
+    }
   }
 }

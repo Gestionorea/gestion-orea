@@ -6,7 +6,7 @@ import {
   clearSessionCookie,
   createSessionToken,
   setSessionCookie,
-  verifyPassword,
+  verifyCredentials,
 } from '@/lib/auth';
 
 export type LoginState = { error?: string };
@@ -61,6 +61,7 @@ export async function loginAction(
 ): Promise<LoginState> {
   void prev;
 
+  const username = formData.get('username');
   const password = formData.get('password');
   const locale = resolveLocale(formData.get('locale'));
 
@@ -68,10 +69,14 @@ export async function loginAction(
     return { error: 'too_many_attempts' };
   }
 
-  if (typeof password === 'string' && verifyPassword(password)) {
-    resetRateLimit();
-    await setSessionCookie(createSessionToken());
-    redirect(getValidRedirectPath(formData.get('from'), locale));
+  if (typeof username === 'string' && typeof password === 'string') {
+    const user = await verifyCredentials(username.trim(), password);
+
+    if (user) {
+      resetRateLimit();
+      await setSessionCookie(createSessionToken(user));
+      redirect(getValidRedirectPath(formData.get('from'), locale));
+    }
   }
 
   return { error: 'invalid' };
