@@ -578,7 +578,6 @@
           "category": "Category",
           "beneficiary": "Beneficiary",
           "invoiceNumber": "Invoice number",
-          "description": "Description",
           "justification": "Justification"
         }
       },

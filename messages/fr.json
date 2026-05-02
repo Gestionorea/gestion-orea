@@ -578,7 +578,6 @@
           "category": "Catégorie",
           "beneficiary": "Bénéficiaire",
           "invoiceNumber": "No de facture",
-          "description": "Description",
           "justification": "Justification"
         }
       },
