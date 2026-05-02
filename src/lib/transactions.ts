@@ -15,6 +15,9 @@ export const PAYMENT_METHODS: PaymentMethod[] = [
 ];
 export const BENEFICIARIES: Beneficiary[] = ['self', 'company', 'property'];
 
+export type TransactionSortBy = 'date' | 'amount' | 'merchant' | 'company' | 'source';
+export type TransactionSortOrder = 'asc' | 'desc';
+
 export type TransactionRow = {
   id: string;
   type: TransactionType;
@@ -80,7 +83,9 @@ export type TransactionFilters = {
   categoryId?: string;
   paymentMethod?: PaymentMethod;
   q?: string;
-  sort?: 'date_desc' | 'date_asc' | 'amount_desc' | 'amount_asc';
+  merchantName?: string;
+  sortBy?: TransactionSortBy;
+  sortOrder?: TransactionSortOrder;
   page: number;
 };
 
@@ -156,6 +161,23 @@ export function isBeneficiary(value: string): value is Beneficiary {
   return BENEFICIARIES.includes(value as Beneficiary);
 }
 
+export function isTransactionSortBy(value: string): value is TransactionSortBy {
+  return ['date', 'amount', 'merchant', 'company', 'source'].includes(value);
+}
+
+export function isTransactionSortOrder(value: string): value is TransactionSortOrder {
+  return value === 'asc' || value === 'desc';
+}
+
+export function slugifyMerchantName(value: string): string {
+  return value
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+}
+
 function yearRange(year: number, month?: number) {
   const start = month ? new Date(year, month - 1, 1) : new Date(year, 0, 1);
   const end = month ? new Date(year, month, 1) : new Date(year + 1, 0, 1);
@@ -172,6 +194,7 @@ function buildWhere(filters: TransactionFilters): Prisma.TransactionWhereInput {
   if (filters.companyId) where.companyId = filters.companyId;
   if (filters.categoryId) where.categoryId = filters.categoryId;
   if (filters.paymentMethod) where.paymentMethod = filters.paymentMethod;
+  if (filters.merchantName) where.merchantName = filters.merchantName;
   if (filters.q) {
     where.OR = [
       { merchantName: { contains: filters.q, mode: 'insensitive' } },
@@ -181,6 +204,24 @@ function buildWhere(filters: TransactionFilters): Prisma.TransactionWhereInput {
   }
 
   return where;
+}
+
+function buildOrderBy(filters: TransactionFilters): Prisma.TransactionOrderByWithRelationInput {
+  const sortOrder = filters.sortOrder ?? 'desc';
+
+  switch (filters.sortBy ?? 'date') {
+    case 'amount':
+      return { amountTotal: sortOrder };
+    case 'merchant':
+      return { merchantName: sortOrder };
+    case 'company':
+      return { company: { name: sortOrder } };
+    case 'source':
+      return { paymentSource: { name: sortOrder } };
+    case 'date':
+    default:
+      return { date: sortOrder };
+  }
 }
 
 export async function getTransactionYears(): Promise<number[]> {
@@ -203,14 +244,7 @@ export async function getTransactionYears(): Promise<number[]> {
 export async function listTransactions(filters: TransactionFilters) {
   const where = buildWhere(filters);
   const pageSize = 50;
-  const orderBy =
-    filters.sort === 'date_asc'
-      ? { date: 'asc' as const }
-      : filters.sort === 'amount_desc'
-        ? { amountTotal: 'desc' as const }
-        : filters.sort === 'amount_asc'
-          ? { amountTotal: 'asc' as const }
-          : { date: 'desc' as const };
+  const orderBy = buildOrderBy(filters);
   const [rows, count, income, expense] = await Promise.all([
     getDb().transaction.findMany({
       where,
@@ -236,6 +270,80 @@ export async function listTransactions(filters: TransactionFilters) {
     pageSize,
     incomeTotal: income._sum.amountTotal?.toFixed(2) ?? '0.00',
     expenseTotal: expense._sum.amountTotal?.toFixed(2) ?? '0.00',
+  };
+}
+
+export async function getMerchantNameBySlug(slug: string): Promise<string | null> {
+  const merchants = await getDb().transaction.findMany({
+    select: { merchantName: true },
+    distinct: ['merchantName'],
+  });
+
+  return merchants.find((merchant) => slugifyMerchantName(merchant.merchantName) === slug)?.merchantName ?? null;
+}
+
+export async function getTransactionsByMerchant(
+  merchantName: string,
+  year?: number,
+  sortBy: TransactionSortBy = 'date',
+  sortOrder: TransactionSortOrder = 'desc',
+) {
+  const currentYear = year ?? new Date().getFullYear();
+  return await listTransactions({
+    year: currentYear,
+    merchantName,
+    page: 1,
+    sortBy,
+    sortOrder,
+  });
+}
+
+export async function getMerchantSummary(merchantNameOrSlug: string): Promise<{
+  merchantName: string;
+  totalAmount: string;
+  transactionCount: number;
+  firstDate: Date;
+  lastDate: Date;
+  topCategoryName: string | null;
+} | null> {
+  const merchantName =
+    (await getMerchantNameBySlug(merchantNameOrSlug)) || merchantNameOrSlug;
+
+  const rows = await getDb().transaction.findMany({
+    where: { merchantName },
+    select: {
+      date: true,
+      amountTotal: true,
+      category: { select: { name: true } },
+    },
+  });
+
+  if (rows.length === 0) return null;
+
+  const categoryTotals = new Map<string, number>();
+  let totalAmount = 0;
+  let firstDate = rows[0].date;
+  let lastDate = rows[0].date;
+
+  for (const row of rows) {
+    totalAmount += Number(row.amountTotal);
+    if (row.date < firstDate) firstDate = row.date;
+    if (row.date > lastDate) lastDate = row.date;
+    if (row.category?.name) {
+      categoryTotals.set(row.category.name, (categoryTotals.get(row.category.name) ?? 0) + 1);
+    }
+  }
+
+  const topCategoryName =
+    [...categoryTotals.entries()].sort((a, b) => b[1] - a[1])[0]?.[0] ?? null;
+
+  return {
+    merchantName,
+    totalAmount: totalAmount.toFixed(2),
+    transactionCount: rows.length,
+    firstDate,
+    lastDate,
+    topCategoryName,
   };
 }
 

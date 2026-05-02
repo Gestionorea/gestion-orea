@@ -365,6 +365,7 @@
       "compta": {
         "title": "Accounting",
         "transactions": "Transactions",
+        "dashboards": "Dashboards",
         "properties": "Properties",
         "companies": "Companies",
         "categories": "Categories"
@@ -582,6 +583,54 @@
         "dateAsc": "Oldest date",
         "amountDesc": "Highest amount",
         "amountAsc": "Lowest amount"
+      },
+      "merchant": {
+        "eyebrow": "Merchant",
+        "total": "Total",
+        "count": "Transactions",
+        "topCategory": "Top category"
+      },
+      "dashboards": {
+        "eyebrow": "Accounting",
+        "title": "Dashboards",
+        "subtitle": "Aggregated transaction view for {year}.",
+        "income": "Income",
+        "expense": "Expenses",
+        "empty": "No data for this period.",
+        "topMerchants": "Top merchants",
+        "topCompanies": "Top companies",
+        "paymentSources": "Payment sources",
+        "advances": "Personal advances",
+        "unreimbursed": "Unreimbursed",
+        "reimbursed": "Reimbursed",
+        "personalAdvance": "Personal advance",
+        "noneCategory": "Uncategorized",
+        "noneCompany": "No company",
+        "noneSource": "No source",
+        "cards": {
+          "income": "Income",
+          "expense": "Expenses",
+          "cashFlow": "Net cash flow",
+          "year": "Year"
+        },
+        "charts": {
+          "monthly": "Income vs expenses by month",
+          "categories": "Expenses by category"
+        },
+        "months": {
+          "1": "Jan",
+          "2": "Feb",
+          "3": "Mar",
+          "4": "Apr",
+          "5": "May",
+          "6": "Jun",
+          "7": "Jul",
+          "8": "Aug",
+          "9": "Sep",
+          "10": "Oct",
+          "11": "Nov",
+          "12": "Dec"
+        }
       },
       "months": {
         "1": "January",

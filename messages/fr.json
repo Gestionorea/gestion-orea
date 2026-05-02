@@ -365,6 +365,7 @@
       "compta": {
         "title": "Comptabilité",
         "transactions": "Transactions",
+        "dashboards": "Dashboards",
         "properties": "Immeubles",
         "companies": "Compagnies",
         "categories": "Catégories"
@@ -582,6 +583,54 @@
         "dateAsc": "Date ancienne",
         "amountDesc": "Montant décroissant",
         "amountAsc": "Montant croissant"
+      },
+      "merchant": {
+        "eyebrow": "Fournisseur",
+        "total": "Total",
+        "count": "Transactions",
+        "topCategory": "Catégorie principale"
+      },
+      "dashboards": {
+        "eyebrow": "Comptabilité",
+        "title": "Dashboards",
+        "subtitle": "Vue agrégée des transactions pour {year}.",
+        "income": "Entrées",
+        "expense": "Dépenses",
+        "empty": "Aucune donnée pour cette période.",
+        "topMerchants": "Top fournisseurs",
+        "topCompanies": "Top compagnies",
+        "paymentSources": "Sources de paiement",
+        "advances": "Avances perso",
+        "unreimbursed": "Non remboursées",
+        "reimbursed": "Remboursées",
+        "personalAdvance": "Avance perso",
+        "noneCategory": "Sans catégorie",
+        "noneCompany": "Sans compagnie",
+        "noneSource": "Sans source",
+        "cards": {
+          "income": "Entrées",
+          "expense": "Dépenses",
+          "cashFlow": "Flux net",
+          "year": "Année"
+        },
+        "charts": {
+          "monthly": "Entrées vs dépenses par mois",
+          "categories": "Dépenses par catégorie"
+        },
+        "months": {
+          "1": "Jan",
+          "2": "Fév",
+          "3": "Mar",
+          "4": "Avr",
+          "5": "Mai",
+          "6": "Juin",
+          "7": "Juil",
+          "8": "Août",
+          "9": "Sep",
+          "10": "Oct",
+          "11": "Nov",
+          "12": "Déc"
+        }
       },
       "months": {
         "1": "Janvier",

@@ -5,6 +5,7 @@ import { usePathname } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import Link from 'next/link';
 import {
+  BarChart3,
   Briefcase,
   Building,
   CreditCard,
@@ -159,6 +160,11 @@ export default function Sidebar({ locale, userRole }: SidebarProps) {
             href: `/${locale}/perso/comptabilite`,
             label: t('nav.compta.transactions'),
             icon: Receipt,
+          },
+          {
+            href: `/${locale}/perso/comptabilite/dashboards`,
+            label: t('nav.compta.dashboards'),
+            icon: BarChart3,
           },
         ],
       },

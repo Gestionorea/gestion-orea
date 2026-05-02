@@ -1,34 +1,79 @@
 import { getTranslations } from 'next-intl/server';
 import Link from 'next/link';
 import { deleteTransactionAction, toggleReconciledAction } from '@/app/actions/transactions';
-import type { TransactionRow } from '@/lib/transactions';
+import { slugifyMerchantName, type TransactionRow, type TransactionSortBy, type TransactionSortOrder } from '@/lib/transactions';
 
 export default async function TransactionList({
   rows,
   locale,
   canMutate,
   canReconcile,
+  sortBy = 'date',
+  sortOrder = 'desc',
+  searchParams = {},
+  basePath,
 }: {
   rows: TransactionRow[];
   locale: string;
   canMutate: boolean;
   canReconcile: boolean;
+  sortBy?: TransactionSortBy;
+  sortOrder?: TransactionSortOrder;
+  searchParams?: Record<string, string>;
+  basePath?: string;
 }) {
   const t = await getTranslations('perso.compta');
+  const sortableColumns: Record<string, TransactionSortBy> = {
+    date: 'date',
+    merchant: 'merchant',
+    total: 'amount',
+    company: 'company',
+    paymentSource: 'source',
+  };
+
+  function sortHref(column: TransactionSortBy) {
+    const nextOrder = sortBy === column && sortOrder === 'desc' ? 'asc' : 'desc';
+    return {
+      pathname: basePath ?? `/${locale}/perso/comptabilite`,
+      query: {
+        ...searchParams,
+        sortBy: column,
+        sortOrder: nextOrder,
+        page: '1',
+      },
+    };
+  }
+
+  function renderSortableHeader(columnKey: keyof typeof sortableColumns, label: string) {
+    const column = sortableColumns[columnKey];
+    const active = sortBy === column;
+
+    return (
+      <th key={columnKey} className="px-4 py-3 font-medium">
+        <Link
+          href={sortHref(column)}
+          className="inline-flex items-center gap-1 text-gray-500 transition hover:text-black"
+        >
+          <span>{label}</span>
+          {active ? <span aria-hidden="true">{sortOrder === 'asc' ? '▲' : '▼'}</span> : null}
+        </Link>
+      </th>
+    );
+  }
 
   return (
     <div className="mt-8 overflow-x-auto border border-gray-200">
       <table className="min-w-full divide-y divide-gray-200 text-sm">
         <thead className="bg-gray-50 text-left text-xs uppercase tracking-[0.16em] text-gray-500">
           <tr>
-            <th className="px-4 py-3 font-medium">{t('columns.date')}</th>
-            <th className="px-4 py-3 font-medium">{t('columns.merchant')}</th>
+            {renderSortableHeader('date', t('columns.date'))}
+            {renderSortableHeader('merchant', t('columns.merchant'))}
             <th className="px-4 py-3 font-medium">{t('columns.type')}</th>
-            <th className="px-4 py-3 font-medium">{t('columns.total')}</th>
+            {renderSortableHeader('total', t('columns.total'))}
             <th className="px-4 py-3 font-medium">{t('columns.category')}</th>
-            <th className="px-4 py-3 font-medium">{t('columns.paymentSource')}</th>
+            {renderSortableHeader('paymentSource', t('columns.paymentSource'))}
             <th className="px-4 py-3 font-medium">{t('columns.property')}</th>
-            <th className="px-4 py-3 font-medium">{t('columns.company')}</th>
+            {renderSortableHeader('company', t('columns.company'))}
             <th className="px-4 py-3 font-medium">{t('columns.reconciled')}</th>
             <th className="px-4 py-3 font-medium">{t('columns.actions')}</th>
           </tr>
@@ -40,7 +85,10 @@ export default async function TransactionList({
                 {new Intl.DateTimeFormat(locale, { dateStyle: 'medium' }).format(row.date)}
               </td>
               <td className="px-4 py-4 font-medium text-black">
-                <Link href={`/${locale}/perso/comptabilite/${row.id}`} className="hover:underline">
+                <Link
+                  href={`/${locale}/perso/comptabilite/fournisseur/${slugifyMerchantName(row.merchantName)}`}
+                  className="hover:underline"
+                >
                   {row.merchantName}
                 </Link>
               </td>

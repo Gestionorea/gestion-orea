@@ -7,6 +7,8 @@ import { listProperties } from '@/lib/properties';
 import {
   getTransactionYears,
   isPaymentMethod,
+  isTransactionSortBy,
+  isTransactionSortOrder,
   isTransactionType,
   listTransactions,
 } from '@/lib/transactions';
@@ -29,10 +31,18 @@ export default async function AccountingPage({
   const month = raw.month ? Number(raw.month) : undefined;
   const page = Math.max(Number(raw.page) || 1, 1);
   const type = typeof raw.type === 'string' && isTransactionType(raw.type) ? raw.type : undefined;
-  const sort =
-    raw.sort === 'date_asc' || raw.sort === 'amount_desc' || raw.sort === 'amount_asc'
-      ? raw.sort
-      : 'date_desc';
+  const legacySort = typeof raw.sort === 'string' ? raw.sort : '';
+  const sortBy = typeof raw.sortBy === 'string' && isTransactionSortBy(raw.sortBy)
+    ? raw.sortBy
+    : legacySort.startsWith('amount')
+      ? 'amount'
+      : 'date';
+  const sortOrder =
+    typeof raw.sortOrder === 'string' && isTransactionSortOrder(raw.sortOrder)
+      ? raw.sortOrder
+      : legacySort.endsWith('asc')
+        ? 'asc'
+        : 'desc';
   const paymentMethod =
     typeof raw.paymentMethod === 'string' && isPaymentMethod(raw.paymentMethod)
       ? raw.paymentMethod
@@ -54,7 +64,8 @@ export default async function AccountingPage({
       companyId: typeof raw.companyId === 'string' ? raw.companyId : undefined,
       categoryId: typeof raw.categoryId === 'string' ? raw.categoryId : undefined,
       q: typeof raw.q === 'string' ? raw.q : undefined,
-      sort,
+      sortBy,
+      sortOrder,
     }),
   ]);
   const canMutate = ['owner', 'assistant'].includes(session.role);
@@ -93,7 +104,15 @@ export default async function AccountingPage({
         categories={categories}
         searchParams={{ ...normalizedSearchParams, year: String(year) }}
       />
-      <TransactionList rows={result.rows} locale={locale} canMutate={canMutate} canReconcile={canReconcile} />
+      <TransactionList
+        rows={result.rows}
+        locale={locale}
+        canMutate={canMutate}
+        canReconcile={canReconcile}
+        sortBy={sortBy}
+        sortOrder={sortOrder}
+        searchParams={{ ...normalizedSearchParams, year: String(year) }}
+      />
       {result.count > result.pageSize ? (
         <div className="mt-8 flex items-center justify-between text-sm text-gray-500">
           {page > 1 ? (
