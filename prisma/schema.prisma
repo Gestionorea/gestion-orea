@@ -33,9 +33,11 @@ enum TransactionType {
 enum PaymentMethod {
   interac
   credit_card
+  debit_card
   cash
   wire
   check
+  preauthorized_debit
   other
 }
 
