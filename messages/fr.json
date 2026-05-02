@@ -335,5 +335,19 @@
     "quickLinks": "Navigation",
     "contact": "Contact",
     "rights": "Tous droits réservés."
+  },
+  "login": {
+    "subtitle": "Espace privé",
+    "passwordLabel": "Mot de passe",
+    "submit": "Se connecter",
+    "submitting": "Connexion…",
+    "errorInvalid": "Mot de passe invalide.",
+    "errorTooMany": "Trop de tentatives. Réessayez dans quelques minutes."
+  },
+  "perso": {
+    "title": "Espace privé",
+    "subtitle": "Contenu à venir.",
+    "logout": "Déconnexion",
+    "headerLabel": "Espace privé"
   }
 }

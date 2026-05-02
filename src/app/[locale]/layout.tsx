@@ -4,8 +4,6 @@ import { getMessages, setRequestLocale } from 'next-intl/server';
 import { Inter, Playfair_Display } from 'next/font/google';
 import { notFound } from 'next/navigation';
 import { routing } from '@/i18n/routing';
-import { Navbar } from '@/components/layout/Navbar';
-import { Footer } from '@/components/layout/Footer';
 import { buildAlternates } from '@/lib/alternates';
 
 const inter = Inter({
@@ -91,11 +89,7 @@ export default async function LocaleLayout({
         />
       </head>
       <body className="font-sans antialiased">
-        <NextIntlClientProvider messages={messages}>
-          <Navbar />
-          <main className="min-h-screen">{children}</main>
-          <Footer />
-        </NextIntlClientProvider>
+        <NextIntlClientProvider messages={messages}>{children}</NextIntlClientProvider>
       </body>
     </html>
   );

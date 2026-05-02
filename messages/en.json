@@ -335,5 +335,19 @@
     "quickLinks": "Navigation",
     "contact": "Contact",
     "rights": "All rights reserved."
+  },
+  "login": {
+    "subtitle": "Private space",
+    "passwordLabel": "Password",
+    "submit": "Sign in",
+    "submitting": "Signing in…",
+    "errorInvalid": "Invalid password.",
+    "errorTooMany": "Too many attempts. Try again in a few minutes."
+  },
+  "perso": {
+    "title": "Private space",
+    "subtitle": "Content coming soon.",
+    "logout": "Sign out",
+    "headerLabel": "Private space"
   }
 }

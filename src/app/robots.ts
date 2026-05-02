@@ -5,6 +5,7 @@ export default function robots(): MetadataRoute.Robots {
     rules: {
       userAgent: '*',
       allow: '/',
+      disallow: ['/fr/login', '/en/login', '/fr/perso', '/en/private'],
     },
     sitemap: 'https://gestionorea.com/sitemap.xml',
   };

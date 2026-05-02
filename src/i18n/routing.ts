@@ -18,6 +18,8 @@ export const routing = defineRouting({
       fr: '/outils',
       en: '/tools',
     },
+    '/login': '/login',
+    '/perso': { fr: '/perso', en: '/private' },
   },
 });
 

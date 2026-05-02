@@ -2,12 +2,15 @@ import type { MetadataRoute } from 'next';
 import { routing } from '@/i18n/routing';
 
 const siteUrl = 'https://gestionorea.com';
+const PRIVATE_PATHS = new Set<string>(['/login', '/perso']);
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const entries: MetadataRoute.Sitemap = [];
 
   for (const locale of routing.locales) {
     for (const [pathname, localizedPathname] of Object.entries(routing.pathnames)) {
+      if (PRIVATE_PATHS.has(pathname)) continue;
+
       const localizedPath =
         typeof localizedPathname === 'string'
           ? localizedPathname
