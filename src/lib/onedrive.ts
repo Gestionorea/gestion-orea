@@ -59,10 +59,22 @@ function requireEnv(): OneDriveEnv {
     }
   }
 
+  const clientSecret = (process.env.AZURE_CLIENT_SECRET as string).trim();
+
+  if (
+    /[\r\n]/.test(clientSecret) ||
+    /^\s*[A-Z0-9_]+\s*=/m.test(clientSecret) ||
+    /<[^>]+>/.test(clientSecret)
+  ) {
+    throw new OneDriveError(
+      'OneDrive env var AZURE_CLIENT_SECRET invalid: expected the Azure client secret value only.',
+    );
+  }
+
   return {
     tenantId: process.env.AZURE_TENANT_ID as string,
     clientId: process.env.AZURE_CLIENT_ID as string,
-    clientSecret: process.env.AZURE_CLIENT_SECRET as string,
+    clientSecret,
     userPrincipal: process.env.ONEDRIVE_USER_PRINCIPAL as string,
   };
 }
@@ -109,16 +121,7 @@ async function getAccessToken(forceRefresh = false): Promise<string> {
 
   if (!response.ok) {
     tokenCache = null;
-    let detail = '';
-    try {
-      const errorPayload = (await response.json()) as { error?: string; error_description?: string };
-      const code = errorPayload.error ?? '';
-      const description = errorPayload.error_description ?? '';
-      detail = [code, description].filter(Boolean).join(': ');
-    } catch {
-      detail = `HTTP ${response.status}`;
-    }
-    throw new OneDriveError(`Microsoft Graph authentication failed. ${detail}`, response.status);
+    throw new OneDriveError('Microsoft Graph authentication failed. Verify AZURE_CLIENT_SECRET value.', response.status);
   }
 
   const payload = (await response.json()) as { access_token?: string; expires_in?: number };
