@@ -360,6 +360,7 @@
       "admin": "Admin",
       "password": "Mot de passe",
       "users": "Utilisateurs",
+      "paymentSources": "Sources de paiement",
       "permissions": "Permissions",
       "compta": {
         "title": "Comptabilité",
@@ -485,6 +486,46 @@
           "required": "Ce champ est obligatoire.",
           "invalid": "Valeur invalide."
         }
+      },
+      "paymentSources": {
+        "eyebrow": "Admin",
+        "title": "Sources de paiement",
+        "newTitle": "Ajouter une source",
+        "editTitle": "Modifier la source",
+        "add": "Ajouter une source",
+        "active": "Actives",
+        "archived": "Archivées",
+        "archive": "Archiver",
+        "edit": "Modifier",
+        "actions": "Actions",
+        "personalBadge": "Avance perso",
+        "fields": {
+          "name": "Nom",
+          "kind": "Type",
+          "lastDigits": "4 derniers chiffres",
+          "isPersonal": "Source personnelle (avance)",
+          "owner": "Compagnie proprietaire"
+        },
+        "kinds": {
+          "card": "Carte",
+          "bank_account": "Compte bancaire",
+          "cash": "Cash",
+          "other": "Autre"
+        },
+        "form": {
+          "none": "Aucune",
+          "submitting": "Traitement…",
+          "save": "Enregistrer"
+        },
+        "errors": {
+          "usernameTaken": "Nom deja utilise.",
+          "required": "Ce champ est obligatoire.",
+          "invalid": "Valeur invalide.",
+          "invalidLastDigits": "Entrer exactement 4 chiffres.",
+          "requireOwner": "Une compagnie proprietaire est requise (sauf si Personnelle).",
+          "personalOwnerForbidden": "Une source personnelle ne doit pas avoir de compagnie proprietaire.",
+          "notFound": "Élément introuvable."
+        }
       }
     },
     "compta": {
@@ -504,6 +545,7 @@
         "total": "Total",
         "category": "Catégorie",
         "paymentMethod": "Moyen de paiement",
+        "paymentSource": "Source",
         "property": "Immeuble",
         "company": "Entité",
         "reconciled": "Réconcilié",
@@ -515,6 +557,10 @@
         "by": "par {username}",
         "mark": "Marquer réconcilié",
         "unmark": "Annuler"
+      },
+      "advance": {
+        "badge": "AVANCE PERSO",
+        "reimbursed": "REMBOURSE"
       },
       "filters": {
         "allMonths": "Tous les mois",
@@ -578,6 +624,11 @@
         "gst": "TPS",
         "qst": "TVQ",
         "amountTotal": "Total",
+        "paymentSource": "Source de paiement",
+        "paymentSourceNone": "(aucune)",
+        "paymentSourceAutofill": "Compagnie auto-remplie depuis la source",
+        "paymentSourcePersonal": "⚠ Avance perso : cette transaction sera marquee comme avance, la compagnie devra te rembourser",
+        "paymentSourceNoCompany": "Aucune compagnie associee",
         "paymentMethod": "Mode de paiement",
         "beneficiary": "Bénéficiaire",
         "property": "Immeuble",
@@ -597,6 +648,7 @@
         "invalid_amount": "Montant invalide.",
         "total_mismatch": "Le total doit correspondre au montant avant taxes plus TPS et TVQ.",
         "invalid_url": "Lien invalide.",
+        "invalid_source": "Source de paiement invalide.",
         "not_found": "Élément introuvable."
       }
     }

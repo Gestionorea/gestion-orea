@@ -1,15 +1,16 @@
 'use client';
 
-import { useActionState } from 'react';
+import { useActionState, useState } from 'react';
 import { useFormStatus } from 'react-dom';
 import { useTranslations } from 'next-intl';
 import { updateTransactionAction, type TransactionActionState } from '@/app/actions/transactions';
 import type { CategoryItem } from '@/lib/categories';
 import type { CompanyItem } from '@/lib/companies';
+import type { PaymentSourceItem } from '@/lib/paymentSources';
 import type { PropertyItem } from '@/lib/properties';
 import type { TransactionRow } from '@/lib/transactions';
 
-const PAYMENT_METHODS = ['interac', 'credit_card', 'cash', 'wire', 'check', 'other'] as const;
+const PAYMENT_METHODS = ['interac', 'credit_card', 'debit_card', 'cash', 'wire', 'check', 'preauthorized_debit', 'other'] as const;
 const BENEFICIARIES = ['self', 'company', 'property'] as const;
 
 function SubmitButton() {
@@ -23,17 +24,29 @@ export default function EditTransactionForm({
   properties,
   companies,
   categories,
+  paymentSources,
 }: {
   transaction: TransactionRow;
   properties: PropertyItem[];
   companies: CompanyItem[];
   categories: CategoryItem[];
+  paymentSources: PaymentSourceItem[];
 }) {
   const t = useTranslations('perso.compta');
   const [state, formAction] = useActionState(updateTransactionAction, { success: false });
+  const [selectedPaymentSourceId, setSelectedPaymentSourceId] = useState(transaction.paymentSourceId ?? '');
+  const [selectedCompanyId, setSelectedCompanyId] = useState(transaction.companyId ?? '');
+  const selectedPaymentSource = paymentSources.find((source) => source.id === selectedPaymentSourceId);
   const errorFor = (field: string) => {
     const error = state.fieldErrors?.[field];
     return error ? <p className="mt-2 text-sm text-red-700">{t(`errors.${error}` as Parameters<typeof t>[0])}</p> : null;
+  };
+  const handlePaymentSourceChange = (sourceId: string) => {
+    setSelectedPaymentSourceId(sourceId);
+    const source = paymentSources.find((item) => item.id === sourceId);
+    if (source?.ownerCompanyId) {
+      setSelectedCompanyId(source.ownerCompanyId);
+    }
   };
 
   return (
@@ -68,6 +81,24 @@ export default function EditTransactionForm({
           {errorFor(name)}
         </label>
       ))}
+      <label className="block text-sm font-medium text-gray-700 md:col-span-2">
+        {t('form.paymentSource')}
+        <select
+          name="paymentSourceId"
+          value={selectedPaymentSourceId}
+          onChange={(event) => handlePaymentSourceChange(event.target.value)}
+          className="mt-2 w-full border border-gray-300 px-4 py-3"
+        >
+          <option value="">{t('form.paymentSourceNone')}</option>
+          {paymentSources.map((source) => (
+            <option key={source.id} value={source.id}>
+              {source.name}{source.lastDigits ? ` ····${source.lastDigits}` : ''}
+            </option>
+          ))}
+        </select>
+        {errorFor('paymentSourceId')}
+      </label>
+      <PaymentSourceInfo source={selectedPaymentSource} />
       <label className="block text-sm font-medium text-gray-700">
         {t('form.paymentMethod')}
         <select name="paymentMethod" defaultValue={transaction.paymentMethod} className="mt-2 w-full border border-gray-300 px-4 py-3">
@@ -80,7 +111,7 @@ export default function EditTransactionForm({
           {BENEFICIARIES.map((beneficiary) => <option key={beneficiary} value={beneficiary}>{t(`beneficiaries.${beneficiary}`)}</option>)}
         </select>
       </label>
-      <Selects properties={properties} companies={companies} categories={categories} transaction={transaction} />
+      <Selects properties={properties} companies={companies} categories={categories} transaction={transaction} selectedCompanyId={selectedCompanyId} setSelectedCompanyId={setSelectedCompanyId} />
       <label className="block text-sm font-medium text-gray-700">
         {t('form.invoiceNumber')}
         <input name="invoiceNumber" defaultValue={transaction.invoiceNumber ?? ''} className="mt-2 w-full border border-gray-300 px-4 py-3" />
@@ -99,12 +130,38 @@ export default function EditTransactionForm({
   );
 }
 
-function Selects({ properties, companies, categories, transaction }: { properties: PropertyItem[]; companies: CompanyItem[]; categories: CategoryItem[]; transaction: TransactionRow }) {
+function PaymentSourceInfo({ source }: { source?: PaymentSourceItem }) {
+  const t = useTranslations('perso.compta');
+  if (!source) return null;
+  if (source.isPersonal) {
+    return <div className="md:col-span-2 rounded bg-yellow-100 px-4 py-3 text-sm text-yellow-800">{t('form.paymentSourcePersonal')}</div>;
+  }
+  if (source.ownerCompany) {
+    return <div className="md:col-span-2 rounded bg-blue-50 px-4 py-3 text-sm text-blue-800">{t('form.paymentSourceAutofill')}: {source.ownerCompany.name}</div>;
+  }
+  return <div className="md:col-span-2 rounded bg-gray-50 px-4 py-3 text-sm text-gray-500">{t('form.paymentSourceNoCompany')}</div>;
+}
+
+function Selects({
+  properties,
+  companies,
+  categories,
+  transaction,
+  selectedCompanyId,
+  setSelectedCompanyId,
+}: {
+  properties: PropertyItem[];
+  companies: CompanyItem[];
+  categories: CategoryItem[];
+  transaction: TransactionRow;
+  selectedCompanyId: string;
+  setSelectedCompanyId: (value: string) => void;
+}) {
   const t = useTranslations('perso.compta');
   return (
     <>
       <label className="block text-sm font-medium text-gray-700">{t('form.property')}<select name="propertyId" defaultValue={transaction.propertyId ?? ''} className="mt-2 w-full border border-gray-300 px-4 py-3"><option value="">{t('form.none')}</option>{properties.map((item) => <option key={item.id} value={item.id}>{item.name}</option>)}</select></label>
-      <label className="block text-sm font-medium text-gray-700">{t('form.company')}<select name="companyId" defaultValue={transaction.companyId ?? ''} className="mt-2 w-full border border-gray-300 px-4 py-3"><option value="">{t('form.none')}</option>{companies.map((item) => <option key={item.id} value={item.id}>{item.name}</option>)}</select></label>
+      <label className="block text-sm font-medium text-gray-700">{t('form.company')}<select name="companyId" value={selectedCompanyId} onChange={(event) => setSelectedCompanyId(event.target.value)} className="mt-2 w-full border border-gray-300 px-4 py-3"><option value="">{t('form.none')}</option>{companies.map((item) => <option key={item.id} value={item.id}>{item.name}</option>)}</select></label>
       <label className="block text-sm font-medium text-gray-700">{t('form.category')}<select name="categoryId" defaultValue={transaction.categoryId ?? ''} className="mt-2 w-full border border-gray-300 px-4 py-3"><option value="">{t('form.none')}</option>{categories.map((item) => <option key={item.id} value={item.id}>{item.name}</option>)}</select></label>
     </>
   );

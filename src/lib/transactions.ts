@@ -6,9 +6,11 @@ export const TRANSACTION_TYPES: TransactionType[] = ['income', 'expense'];
 export const PAYMENT_METHODS: PaymentMethod[] = [
   'interac',
   'credit_card',
+  'debit_card',
   'cash',
   'wire',
   'check',
+  'preauthorized_debit',
   'other',
 ];
 export const BENEFICIARIES: Beneficiary[] = ['self', 'company', 'property'];
@@ -23,6 +25,17 @@ export type TransactionRow = {
   qst: string | null;
   amountTotal: string;
   paymentMethod: PaymentMethod;
+  paymentSourceId: string | null;
+  paymentSource: {
+    id: string;
+    name: string;
+    lastDigits: string | null;
+    isPersonal: boolean;
+    ownerCompanyId: string | null;
+    ownerCompany: { id: string; name: string } | null;
+  } | null;
+  isAdvance: boolean;
+  reimbursedAt: Date | null;
   beneficiary: Beneficiary;
   invoiceNumber: string | null;
   justification: string | null;
@@ -46,6 +59,8 @@ export type TransactionInput = {
   qst?: string | null;
   amountTotal: string;
   paymentMethod: PaymentMethod;
+  paymentSourceId?: string | null;
+  isAdvance?: boolean;
   propertyId?: string | null;
   companyId?: string | null;
   beneficiary: Beneficiary;
@@ -73,6 +88,16 @@ const transactionInclude = {
   property: { select: { id: true, name: true } },
   company: { select: { id: true, name: true } },
   category: { select: { id: true, name: true } },
+  paymentSource: {
+    select: {
+      id: true,
+      name: true,
+      lastDigits: true,
+      isPersonal: true,
+      ownerCompanyId: true,
+      ownerCompany: { select: { id: true, name: true } },
+    },
+  },
   reconciledBy: { select: { id: true, username: true } },
 } as const;
 
@@ -86,6 +111,17 @@ function serialize(transaction: {
   qst: Prisma.Decimal | null;
   amountTotal: Prisma.Decimal;
   paymentMethod: PaymentMethod;
+  paymentSourceId: string | null;
+  paymentSource: {
+    id: string;
+    name: string;
+    lastDigits: string | null;
+    isPersonal: boolean;
+    ownerCompanyId: string | null;
+    ownerCompany: { id: string; name: string } | null;
+  } | null;
+  isAdvance: boolean;
+  reimbursedAt: Date | null;
   beneficiary: Beneficiary;
   invoiceNumber: string | null;
   justification: string | null;
@@ -227,6 +263,8 @@ function dataFromInput(input: TransactionInput) {
     qst: decimal(input.qst),
     amountTotal: new Prisma.Decimal(input.amountTotal),
     paymentMethod: input.paymentMethod,
+    paymentSourceId: input.paymentSourceId || null,
+    isAdvance: input.isAdvance ?? false,
     propertyId: input.propertyId || null,
     companyId: input.companyId || null,
     beneficiary: input.beneficiary,

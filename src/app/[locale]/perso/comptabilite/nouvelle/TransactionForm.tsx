@@ -6,9 +6,10 @@ import { useTranslations } from 'next-intl';
 import { createTransactionAction, type TransactionActionState } from '@/app/actions/transactions';
 import type { CategoryItem } from '@/lib/categories';
 import type { CompanyItem } from '@/lib/companies';
+import type { PaymentSourceItem } from '@/lib/paymentSources';
 import type { PropertyItem } from '@/lib/properties';
 
-const PAYMENT_METHODS = ['interac', 'credit_card', 'cash', 'wire', 'check', 'other'] as const;
+const PAYMENT_METHODS = ['interac', 'credit_card', 'debit_card', 'cash', 'wire', 'check', 'preauthorized_debit', 'other'] as const;
 const BENEFICIARIES = ['self', 'company', 'property'] as const;
 
 function SubmitButton() {
@@ -27,13 +28,17 @@ export default function TransactionForm({
   properties,
   companies,
   categories,
+  paymentSources,
 }: {
   properties: PropertyItem[];
   companies: CompanyItem[];
   categories: CategoryItem[];
+  paymentSources: PaymentSourceItem[];
 }) {
   const t = useTranslations('perso.compta');
   const [state, formAction] = useActionState(createTransactionAction, { success: false });
+  const [selectedPaymentSourceId, setSelectedPaymentSourceId] = useState('');
+  const [selectedCompanyId, setSelectedCompanyId] = useState('');
   const [beforeTax, setBeforeTax] = useState('');
   const [gst, setGst] = useState('');
   const [qst, setQst] = useState('');
@@ -44,6 +49,15 @@ export default function TransactionForm({
     return Number.isFinite(value) ? value.toFixed(2) : '';
   }, [beforeTax, gst, qst]);
   const amountTotalValue = manualTotal ? amountTotal : total;
+  const selectedPaymentSource = paymentSources.find((source) => source.id === selectedPaymentSourceId);
+
+  function handlePaymentSourceChange(sourceId: string) {
+    setSelectedPaymentSourceId(sourceId);
+    const source = paymentSources.find((item) => item.id === sourceId);
+    if (source?.ownerCompanyId) {
+      setSelectedCompanyId(source.ownerCompanyId);
+    }
+  }
 
   return (
     <form action={formAction} className="mt-8 grid max-w-3xl gap-5 md:grid-cols-2">
@@ -84,6 +98,24 @@ export default function TransactionForm({
         <input name="amountTotal" value={amountTotalValue} onChange={(event) => { setManualTotal(true); setAmountTotal(event.target.value); }} required inputMode="decimal" className="mt-2 w-full border border-gray-300 px-4 py-3" />
         <FieldError state={state} field="amountTotal" />
       </label>
+      <label className="block text-sm font-medium text-gray-700 md:col-span-2">
+        {t('form.paymentSource')}
+        <select
+          name="paymentSourceId"
+          value={selectedPaymentSourceId}
+          onChange={(event) => handlePaymentSourceChange(event.target.value)}
+          className="mt-2 w-full border border-gray-300 px-4 py-3"
+        >
+          <option value="">{t('form.paymentSourceNone')}</option>
+          {paymentSources.map((source) => (
+            <option key={source.id} value={source.id}>
+              {source.name}{source.lastDigits ? ` ····${source.lastDigits}` : ''}
+            </option>
+          ))}
+        </select>
+        <FieldError state={state} field="paymentSourceId" />
+      </label>
+      <PaymentSourceInfo source={selectedPaymentSource} />
       <label className="block text-sm font-medium text-gray-700">
         {t('form.paymentMethod')}
         <select name="paymentMethod" className="mt-2 w-full border border-gray-300 px-4 py-3">
@@ -96,7 +128,7 @@ export default function TransactionForm({
           {BENEFICIARIES.map((beneficiary) => <option key={beneficiary} value={beneficiary}>{t(`beneficiaries.${beneficiary}`)}</option>)}
         </select>
       </label>
-      <Selects properties={properties} companies={companies} categories={categories} />
+      <Selects properties={properties} companies={companies} categories={categories} selectedCompanyId={selectedCompanyId} setSelectedCompanyId={setSelectedCompanyId} />
       <label className="block text-sm font-medium text-gray-700">
         {t('form.invoiceNumber')}
         <input name="invoiceNumber" className="mt-2 w-full border border-gray-300 px-4 py-3" />
@@ -116,7 +148,43 @@ export default function TransactionForm({
   );
 }
 
-function Selects({ properties, companies, categories }: { properties: PropertyItem[]; companies: CompanyItem[]; categories: CategoryItem[] }) {
+function PaymentSourceInfo({ source }: { source?: PaymentSourceItem }) {
+  const t = useTranslations('perso.compta');
+  if (!source) return null;
+  if (source.isPersonal) {
+    return (
+      <div className="md:col-span-2 rounded bg-yellow-100 px-4 py-3 text-sm text-yellow-800">
+        {t('form.paymentSourcePersonal')}
+      </div>
+    );
+  }
+  if (source.ownerCompany) {
+    return (
+      <div className="md:col-span-2 rounded bg-blue-50 px-4 py-3 text-sm text-blue-800">
+        {t('form.paymentSourceAutofill')}: {source.ownerCompany.name}
+      </div>
+    );
+  }
+  return (
+    <div className="md:col-span-2 rounded bg-gray-50 px-4 py-3 text-sm text-gray-500">
+      {t('form.paymentSourceNoCompany')}
+    </div>
+  );
+}
+
+function Selects({
+  properties,
+  companies,
+  categories,
+  selectedCompanyId,
+  setSelectedCompanyId,
+}: {
+  properties: PropertyItem[];
+  companies: CompanyItem[];
+  categories: CategoryItem[];
+  selectedCompanyId: string;
+  setSelectedCompanyId: (value: string) => void;
+}) {
   const t = useTranslations('perso.compta');
   return (
     <>
@@ -129,7 +197,7 @@ function Selects({ properties, companies, categories }: { properties: PropertyIt
       </label>
       <label className="block text-sm font-medium text-gray-700">
         {t('form.company')}
-        <select name="companyId" className="mt-2 w-full border border-gray-300 px-4 py-3">
+        <select name="companyId" value={selectedCompanyId} onChange={(event) => setSelectedCompanyId(event.target.value)} className="mt-2 w-full border border-gray-300 px-4 py-3">
           <option value="">{t('form.none')}</option>
           {companies.map((item) => <option key={item.id} value={item.id}>{item.name}</option>)}
         </select>

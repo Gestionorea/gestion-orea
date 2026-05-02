@@ -360,6 +360,7 @@
       "admin": "Admin",
       "password": "Password",
       "users": "Users",
+      "paymentSources": "Payment sources",
       "permissions": "Permissions",
       "compta": {
         "title": "Accounting",
@@ -485,6 +486,46 @@
           "required": "This field is required.",
           "invalid": "Invalid value."
         }
+      },
+      "paymentSources": {
+        "eyebrow": "Admin",
+        "title": "Payment sources",
+        "newTitle": "Add payment source",
+        "editTitle": "Edit payment source",
+        "add": "Add payment source",
+        "active": "Active",
+        "archived": "Archived",
+        "archive": "Archive",
+        "edit": "Edit",
+        "actions": "Actions",
+        "personalBadge": "Personal advance",
+        "fields": {
+          "name": "Name",
+          "kind": "Type",
+          "lastDigits": "Last 4 digits",
+          "isPersonal": "Personal source (advance)",
+          "owner": "Owner company"
+        },
+        "kinds": {
+          "card": "Card",
+          "bank_account": "Bank account",
+          "cash": "Cash",
+          "other": "Other"
+        },
+        "form": {
+          "none": "None",
+          "submitting": "Processing…",
+          "save": "Save"
+        },
+        "errors": {
+          "usernameTaken": "Name already used.",
+          "required": "This field is required.",
+          "invalid": "Invalid value.",
+          "invalidLastDigits": "Enter exactly 4 digits.",
+          "requireOwner": "An owner company is required unless the source is personal.",
+          "personalOwnerForbidden": "A personal source cannot have an owner company.",
+          "notFound": "Item not found."
+        }
       }
     },
     "compta": {
@@ -504,6 +545,7 @@
         "total": "Total",
         "category": "Category",
         "paymentMethod": "Payment method",
+        "paymentSource": "Source",
         "property": "Property",
         "company": "Company",
         "reconciled": "Reconciled",
@@ -515,6 +557,10 @@
         "by": "by {username}",
         "mark": "Mark reconciled",
         "unmark": "Unmark"
+      },
+      "advance": {
+        "badge": "PERSONAL ADVANCE",
+        "reimbursed": "REIMBURSED"
       },
       "filters": {
         "allMonths": "All months",
@@ -578,6 +624,11 @@
         "gst": "GST",
         "qst": "QST",
         "amountTotal": "Total",
+        "paymentSource": "Payment source",
+        "paymentSourceNone": "(none)",
+        "paymentSourceAutofill": "Company auto-filled from source",
+        "paymentSourcePersonal": "⚠ Personal advance: this transaction will be marked as an advance, the company will need to reimburse you",
+        "paymentSourceNoCompany": "No company associated",
         "paymentMethod": "Payment method",
         "beneficiary": "Beneficiary",
         "property": "Property",
@@ -597,6 +648,7 @@
         "invalid_amount": "Invalid amount.",
         "total_mismatch": "The total must match amount before tax plus GST and QST.",
         "invalid_url": "Invalid link.",
+        "invalid_source": "Invalid payment source.",
         "not_found": "Item not found."
       }
     }

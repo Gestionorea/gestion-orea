@@ -26,7 +26,7 @@ export default async function TransactionList({
             <th className="px-4 py-3 font-medium">{t('columns.type')}</th>
             <th className="px-4 py-3 font-medium">{t('columns.total')}</th>
             <th className="px-4 py-3 font-medium">{t('columns.category')}</th>
-            <th className="px-4 py-3 font-medium">{t('columns.paymentMethod')}</th>
+            <th className="px-4 py-3 font-medium">{t('columns.paymentSource')}</th>
             <th className="px-4 py-3 font-medium">{t('columns.property')}</th>
             <th className="px-4 py-3 font-medium">{t('columns.company')}</th>
             <th className="px-4 py-3 font-medium">{t('columns.reconciled')}</th>
@@ -47,7 +47,25 @@ export default async function TransactionList({
               <td className="px-4 py-4 text-gray-600">{t(`types.${row.type}`)}</td>
               <td className="px-4 py-4 text-gray-600">${row.amountTotal}</td>
               <td className="px-4 py-4 text-gray-600">{row.category?.name ?? '-'}</td>
-              <td className="px-4 py-4 text-gray-600">{t(`paymentMethods.${row.paymentMethod}`)}</td>
+              <td className="px-4 py-4 text-gray-600">
+                <div className="flex flex-col gap-2">
+                  <span>
+                    {row.paymentSource
+                      ? `${row.paymentSource.name}${row.paymentSource.lastDigits ? ` ····${row.paymentSource.lastDigits}` : ''}`
+                      : '-'}
+                  </span>
+                  {row.isAdvance && !row.reimbursedAt ? (
+                    <span className="w-fit rounded bg-yellow-100 px-2 py-1 text-[10px] font-medium uppercase tracking-[0.12em] text-yellow-800">
+                      {t('advance.badge')}
+                    </span>
+                  ) : null}
+                  {row.isAdvance && row.reimbursedAt ? (
+                    <span className="w-fit rounded bg-gray-100 px-2 py-1 text-[10px] font-medium uppercase tracking-[0.12em] text-gray-600">
+                      {t('advance.reimbursed')}
+                    </span>
+                  ) : null}
+                </div>
+              </td>
               <td className="px-4 py-4 text-gray-600">{row.property?.name ?? '-'}</td>
               <td className="px-4 py-4 text-gray-600">{row.company?.name ?? '-'}</td>
               <td className="px-4 py-4 text-gray-600">

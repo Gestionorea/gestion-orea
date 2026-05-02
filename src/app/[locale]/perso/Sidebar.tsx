@@ -7,6 +7,7 @@ import Link from 'next/link';
 import {
   Briefcase,
   Building,
+  CreditCard,
   Home,
   Lock,
   Menu,
@@ -135,6 +136,11 @@ export default function Sidebar({ locale, userRole }: SidebarProps) {
             href: `/${locale}/perso/admin/categories`,
             label: t('nav.compta.categories'),
             icon: Tag,
+          },
+          {
+            href: `/${locale}/perso/admin/sources-paiement`,
+            label: t('nav.paymentSources'),
+            icon: CreditCard,
           },
         ]
       : [];

@@ -14,6 +14,7 @@ import {
   setTransactionReconciled,
   updateTransaction,
 } from '@/lib/transactions';
+import { getActivePaymentSourceById } from '@/lib/paymentSources';
 
 export type TransactionActionState = {
   success: boolean;
@@ -51,7 +52,9 @@ async function parseAndValidate(formData: FormData): Promise<{
     gst: string | null;
     qst: string | null;
     amountTotal: string;
-    paymentMethod: 'interac' | 'credit_card' | 'cash' | 'wire' | 'check' | 'other';
+    paymentMethod: 'interac' | 'credit_card' | 'debit_card' | 'cash' | 'wire' | 'check' | 'preauthorized_debit' | 'other';
+    paymentSourceId: string | null;
+    isAdvance: boolean;
     propertyId: string | null;
     companyId: string | null;
     beneficiary: 'self' | 'company' | 'property';
@@ -74,9 +77,11 @@ async function parseAndValidate(formData: FormData): Promise<{
   const propertyId = getOptional(formData, 'propertyId');
   const companyId = getOptional(formData, 'companyId');
   const categoryId = getOptional(formData, 'categoryId');
+  const paymentSourceId = getOptional(formData, 'paymentSourceId');
   const attachmentUrl = getOptional(formData, 'attachmentUrl');
   const fieldErrors: Record<string, string> = {};
   const date = new Date(`${dateRaw}T00:00:00`);
+  const paymentSource = paymentSourceId ? await getActivePaymentSourceById(paymentSourceId) : null;
 
   if (!isTransactionType(typeRaw)) fieldErrors.type = 'invalid';
   if (!isPaymentMethod(paymentMethodRaw)) fieldErrors.paymentMethod = 'invalid';
@@ -107,10 +112,13 @@ async function parseAndValidate(formData: FormData): Promise<{
   if (!(await exists('property', propertyId))) fieldErrors.propertyId = 'not_found';
   if (!(await exists('company', companyId))) fieldErrors.companyId = 'not_found';
   if (!(await exists('category', categoryId))) fieldErrors.categoryId = 'not_found';
+  if (paymentSourceId && !paymentSource) fieldErrors.paymentSourceId = 'invalid_source';
 
   if (Object.keys(fieldErrors).length > 0) {
     return { fieldErrors };
   }
+
+  const finalCompanyId = companyId || paymentSource?.ownerCompanyId || null;
 
   return {
     input: {
@@ -121,9 +129,11 @@ async function parseAndValidate(formData: FormData): Promise<{
       gst,
       qst,
       amountTotal,
-      paymentMethod: paymentMethodRaw as 'interac' | 'credit_card' | 'cash' | 'wire' | 'check' | 'other',
+      paymentMethod: paymentMethodRaw as 'interac' | 'credit_card' | 'debit_card' | 'cash' | 'wire' | 'check' | 'preauthorized_debit' | 'other',
+      paymentSourceId,
+      isAdvance: paymentSource?.isPersonal ?? false,
       propertyId,
-      companyId,
+      companyId: finalCompanyId,
       beneficiary: beneficiaryRaw as 'self' | 'company' | 'property',
       invoiceNumber: getOptional(formData, 'invoiceNumber'),
       justification: getOptional(formData, 'justification'),
