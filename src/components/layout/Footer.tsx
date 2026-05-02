@@ -74,6 +74,13 @@ export function Footer() {
 
         <div className="mt-16 border-t border-white/10 pt-8 text-center text-xs text-white/30">
           © {new Date().getFullYear()} Gestion ORÉA. {t('footer.rights')}
+          <span className="mx-2" aria-hidden="true">·</span>
+          <Link
+            href="/login"
+            className="transition-colors duration-300 hover:text-white/60"
+          >
+            {t('footer.privateArea')}
+          </Link>
         </div>
       </Container>
     </footer>

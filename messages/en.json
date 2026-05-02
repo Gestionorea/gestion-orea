@@ -334,7 +334,8 @@
     "description": "Real estate holding company specializing in property acquisition, management and value creation.",
     "quickLinks": "Navigation",
     "contact": "Contact",
-    "rights": "All rights reserved."
+    "rights": "All rights reserved.",
+    "privateArea": "Private area"
   },
   "login": {
     "subtitle": "Private space",

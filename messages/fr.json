@@ -334,7 +334,8 @@
     "description": "Holding immobilière spécialisée dans l'acquisition, le repositionnement et la valorisation d'actifs multirésidentiels au Québec.",
     "quickLinks": "Navigation",
     "contact": "Contact",
-    "rights": "Tous droits réservés."
+    "rights": "Tous droits réservés.",
+    "privateArea": "Espace privé"
   },
   "login": {
     "subtitle": "Espace privé",
