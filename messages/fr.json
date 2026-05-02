@@ -358,6 +358,60 @@
       "password": "Mot de passe",
       "users": "Utilisateurs",
       "permissions": "Permissions"
+    },
+    "admin": {
+      "users": {
+        "eyebrow": "Admin",
+        "title": "Utilisateurs",
+        "subtitle": "Gérez les accès à l'espace privé.",
+        "addButton": "+ Ajouter un utilisateur",
+        "newTitle": "Ajouter un utilisateur",
+        "newSubtitle": "Créez un accès avec un rôle et un mot de passe initial.",
+        "editTitle": "Modifier l'utilisateur",
+        "editSubtitle": "Ajustez le nom d'utilisateur, le rôle ou réinitialisez le mot de passe.",
+        "resetTitle": "Réinitialiser le mot de passe",
+        "resetSubtitle": "Le nouveau mot de passe sera affiché une seule fois après la mise à jour.",
+        "resetSuccess": "Nouveau mot de passe à transmettre:",
+        "edit": "Modifier",
+        "delete": "Supprimer",
+        "deleteConfirm": "Supprimer cet utilisateur?",
+        "owner": "Propriétaire",
+        "you": "toi",
+        "columns": {
+          "username": "Nom d'utilisateur",
+          "role": "Rôle",
+          "created": "Créé",
+          "actions": "Actions"
+        },
+        "roles": {
+          "owner": "Propriétaire",
+          "accountant": "Comptable",
+          "assistant": "Assistant"
+        },
+        "form": {
+          "username": "Nom d'utilisateur",
+          "password": "Mot de passe initial",
+          "confirmPassword": "Confirmer le mot de passe",
+          "newPassword": "Nouveau mot de passe",
+          "role": "Rôle",
+          "create": "Créer l'utilisateur",
+          "save": "Enregistrer",
+          "resetPassword": "Réinitialiser",
+          "submitting": "Traitement…"
+        },
+        "errors": {
+          "usernameTaken": "Ce nom d'utilisateur est déjà utilisé.",
+          "cantDeleteSelf": "Vous ne pouvez pas supprimer votre propre compte.",
+          "cantDemoteSelf": "Vous ne pouvez pas changer votre propre rôle.",
+          "cantEditOtherOwner": "Un propriétaire ne peut pas modifier un autre propriétaire.",
+          "notOwner": "Accès réservé au propriétaire.",
+          "invalidUsername": "Utilisez 3 à 30 caractères: lettres minuscules, chiffres ou _.",
+          "tooShort": "Le mot de passe doit contenir au moins 8 caractères.",
+          "mismatch": "Les mots de passe ne correspondent pas.",
+          "invalidRole": "Rôle invalide.",
+          "notFound": "Utilisateur introuvable."
+        }
+      }
     }
   },
   "admin": {

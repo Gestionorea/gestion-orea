@@ -11,9 +11,15 @@ model User {
   id           String   @id @default(cuid())
   username     String   @unique
   passwordHash String
-  role         String   @default("owner")
+  role         Role     @default(assistant)
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
   @@map("users")
+}
+
+enum Role {
+  owner
+  accountant
+  assistant
 }

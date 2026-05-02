@@ -29,6 +29,7 @@ export default async function PersoLayout({
   const t = await getTranslations('perso');
   const homeHref = `/${locale}/perso`;
   const passwordHref = `/${locale}/perso/admin/mot-de-passe`;
+  const usersHref = `/${locale}/perso/admin/utilisateurs`;
   const renderNavItems = () => (
     <nav className="mt-8 space-y-8">
       <div>
@@ -50,12 +51,12 @@ export default async function PersoLayout({
           >
             {t('nav.password')}
           </Link>
-          <span
-            className="pointer-events-none block text-sm text-gray-400"
-            aria-disabled="true"
+          <Link
+            href={usersHref}
+            className="block text-sm text-black transition hover:text-gray-600"
           >
             {t('nav.users')}
-          </span>
+          </Link>
           <span
             className="pointer-events-none block text-sm text-gray-400"
             aria-disabled="true"

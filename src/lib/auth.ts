@@ -1,13 +1,15 @@
 import { createHmac, timingSafeEqual } from 'crypto';
+import type { Role } from '@prisma/client';
 import { getDb } from '@/lib/db';
 import { verifyPasswordHash } from '@/lib/password';
+import { isRole } from '@/lib/users';
 
 export const SESSION_COOKIE_NAME = 'orea_session';
 
 export type SessionPayload = {
   userId: string;
   username: string;
-  role: string;
+  role: Role;
   exp: number;
 };
 
@@ -16,7 +18,7 @@ const SESSION_MAX_AGE = 7 * 24 * 60 * 60;
 type AuthUser = {
   id: string;
   username: string;
-  role: string;
+  role: Role;
   passwordHash: string;
 };
 
@@ -57,8 +59,10 @@ export async function verifyCredentials(
   username: string,
   password: string,
 ): Promise<AuthUser | null> {
+  const normalizedUsername = username.trim().toLowerCase();
+
   const user = await getDb().user.findUnique({
-    where: { username },
+    where: { username: normalizedUsername },
     select: {
       id: true,
       username: true,
@@ -127,6 +131,7 @@ export async function verifySessionToken(token: string | undefined): Promise<Ses
     typeof payload.userId !== 'string' ||
     typeof payload.username !== 'string' ||
     typeof payload.role !== 'string' ||
+    !isRole(payload.role) ||
     typeof payload.exp !== 'number' ||
     payload.exp <= now
   ) {

@@ -358,6 +358,60 @@
       "password": "Password",
       "users": "Users",
       "permissions": "Permissions"
+    },
+    "admin": {
+      "users": {
+        "eyebrow": "Admin",
+        "title": "Users",
+        "subtitle": "Manage access to the private area.",
+        "addButton": "+ Add user",
+        "newTitle": "Add user",
+        "newSubtitle": "Create access with a role and initial password.",
+        "editTitle": "Edit user",
+        "editSubtitle": "Adjust the username, role, or reset the password.",
+        "resetTitle": "Reset password",
+        "resetSubtitle": "The new password will be shown once after the update.",
+        "resetSuccess": "New password to share:",
+        "edit": "Edit",
+        "delete": "Delete",
+        "deleteConfirm": "Delete this user?",
+        "owner": "Owner",
+        "you": "you",
+        "columns": {
+          "username": "Username",
+          "role": "Role",
+          "created": "Created",
+          "actions": "Actions"
+        },
+        "roles": {
+          "owner": "Owner",
+          "accountant": "Accountant",
+          "assistant": "Assistant"
+        },
+        "form": {
+          "username": "Username",
+          "password": "Initial password",
+          "confirmPassword": "Confirm password",
+          "newPassword": "New password",
+          "role": "Role",
+          "create": "Create user",
+          "save": "Save",
+          "resetPassword": "Reset",
+          "submitting": "Processing…"
+        },
+        "errors": {
+          "usernameTaken": "This username is already taken.",
+          "cantDeleteSelf": "You cannot delete your own account.",
+          "cantDemoteSelf": "You cannot change your own role.",
+          "cantEditOtherOwner": "An owner cannot edit another owner.",
+          "notOwner": "Owner access required.",
+          "invalidUsername": "Use 3 to 30 characters: lowercase letters, numbers, or _.",
+          "tooShort": "The password must be at least 8 characters.",
+          "mismatch": "The passwords do not match.",
+          "invalidRole": "Invalid role.",
+          "notFound": "User not found."
+        }
+      }
     }
   },
   "admin": {
