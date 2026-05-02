@@ -527,6 +527,31 @@
           "personalOwnerForbidden": "Une source personnelle ne doit pas avoir de compagnie proprietaire.",
           "notFound": "Élément introuvable."
         }
+      },
+      "onedrive": {
+        "title": "OneDrive",
+        "eyebrow": "Admin",
+        "config": {
+          "title": "Configuration",
+          "tenant": "Tenant Azure",
+          "client": "Application Azure",
+          "secret": "Secret applicatif",
+          "user": "Compte OneDrive",
+          "present": "Configure",
+          "missing": "Manquant"
+        },
+        "test": {
+          "title": "Tester la connexion",
+          "button": "Lancer le test",
+          "running": "Test en cours",
+          "ok": "Connexion OK",
+          "ko": "Connexion KO",
+          "quota": "Espace utilise",
+          "user": "Compte",
+          "folder": "5 derniers fichiers dans /OREA-Factures/",
+          "folderEmpty": "Le dossier est vide ou n'existe pas encore",
+          "error": "Erreur"
+        }
       }
     },
     "compta": {

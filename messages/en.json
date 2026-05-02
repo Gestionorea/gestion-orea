@@ -527,6 +527,31 @@
           "personalOwnerForbidden": "A personal source cannot have an owner company.",
           "notFound": "Item not found."
         }
+      },
+      "onedrive": {
+        "title": "OneDrive",
+        "eyebrow": "Admin",
+        "config": {
+          "title": "Configuration",
+          "tenant": "Azure tenant",
+          "client": "Azure application",
+          "secret": "Application secret",
+          "user": "OneDrive account",
+          "present": "Configured",
+          "missing": "Missing"
+        },
+        "test": {
+          "title": "Test connection",
+          "button": "Run test",
+          "running": "Test running",
+          "ok": "Connection OK",
+          "ko": "Connection failed",
+          "quota": "Storage used",
+          "user": "Account",
+          "folder": "Last 5 files in /OREA-Factures/",
+          "folderEmpty": "Folder is empty or does not exist yet",
+          "error": "Error"
+        }
       }
     },
     "compta": {

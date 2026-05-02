@@ -1,0 +1,212 @@
+type TokenCache = {
+  accessToken: string;
+  expiresAt: number;
+};
+
+type OneDriveEnv = {
+  tenantId: string;
+  clientId: string;
+  clientSecret: string;
+  userPrincipal: string;
+};
+
+type GraphDriveResponse = {
+  quota?: {
+    total?: number;
+    used?: number;
+  };
+};
+
+type GraphListResponse = {
+  value?: OneDriveItem[];
+};
+
+export type OneDriveItem = {
+  id: string;
+  name: string;
+  size: number;
+  webUrl: string;
+  lastModifiedDateTime: string;
+};
+
+export type PingDriveResult =
+  | { ok: true; userPrincipalName: string; driveQuota: { used: string; total: string } }
+  | { ok: false; error: string; statusCode?: number };
+
+const GRAPH_BASE_URL = 'https://graph.microsoft.com/v1.0';
+let tokenCache: TokenCache | null = null;
+
+class OneDriveError extends Error {
+  statusCode?: number;
+
+  constructor(message: string, statusCode?: number) {
+    super(message);
+    this.statusCode = statusCode;
+  }
+}
+
+function requireEnv(): OneDriveEnv {
+  const required = [
+    'AZURE_TENANT_ID',
+    'AZURE_CLIENT_ID',
+    'AZURE_CLIENT_SECRET',
+    'ONEDRIVE_USER_PRINCIPAL',
+  ] as const;
+
+  for (const key of required) {
+    if (!process.env[key]) {
+      throw new OneDriveError(`OneDrive env var ${key} missing`);
+    }
+  }
+
+  return {
+    tenantId: process.env.AZURE_TENANT_ID as string,
+    clientId: process.env.AZURE_CLIENT_ID as string,
+    clientSecret: process.env.AZURE_CLIENT_SECRET as string,
+    userPrincipal: process.env.ONEDRIVE_USER_PRINCIPAL as string,
+  };
+}
+
+function sanitizeError(value: unknown): string {
+  const fallback = 'OneDrive request failed.';
+  const raw = value instanceof Error ? value.message : typeof value === 'string' ? value : fallback;
+  let message = raw;
+
+  for (const key of ['AZURE_CLIENT_SECRET', 'AZURE_CLIENT_ID', 'AZURE_TENANT_ID'] as const) {
+    const secretValue = process.env[key];
+    if (secretValue) {
+      message = message.split(secretValue).join('[redacted]');
+    }
+  }
+
+  return message;
+}
+
+function formatGb(value?: number): string {
+  if (!value || !Number.isFinite(value)) return '0 GB';
+  const gb = value / 1024 / 1024 / 1024;
+  return `${gb.toFixed(gb >= 100 ? 0 : 1)} GB`;
+}
+
+async function getAccessToken(forceRefresh = false): Promise<string> {
+  const env = requireEnv();
+  const now = Date.now();
+
+  if (!forceRefresh && tokenCache && tokenCache.expiresAt - 60_000 > now) {
+    return tokenCache.accessToken;
+  }
+
+  const response = await fetch(`https://login.microsoftonline.com/${env.tenantId}/oauth2/v2.0/token`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: new URLSearchParams({
+      grant_type: 'client_credentials',
+      client_id: env.clientId,
+      client_secret: env.clientSecret,
+      scope: 'https://graph.microsoft.com/.default',
+    }),
+  });
+
+  if (!response.ok) {
+    tokenCache = null;
+    throw new OneDriveError('Microsoft Graph authentication failed.', response.status);
+  }
+
+  const payload = (await response.json()) as { access_token?: string; expires_in?: number };
+
+  if (!payload.access_token) {
+    tokenCache = null;
+    throw new OneDriveError('Microsoft Graph authentication did not return an access token.');
+  }
+
+  tokenCache = {
+    accessToken: payload.access_token,
+    expiresAt: now + (payload.expires_in ?? 3600) * 1000,
+  };
+
+  return tokenCache.accessToken;
+}
+
+async function graphFetch(path: string, init?: RequestInit): Promise<Response> {
+  const token = await getAccessToken();
+  const response = await fetch(`${GRAPH_BASE_URL}${path}`, {
+    ...init,
+    headers: {
+      ...init?.headers,
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  if (response.status !== 401) return response;
+
+  tokenCache = null;
+  const refreshedToken = await getAccessToken(true);
+
+  return await fetch(`${GRAPH_BASE_URL}${path}`, {
+    ...init,
+    headers: {
+      ...init?.headers,
+      Authorization: `Bearer ${refreshedToken}`,
+    },
+  });
+}
+
+async function graphJson<T>(path: string): Promise<T> {
+  const response = await graphFetch(path);
+
+  if (!response.ok) {
+    throw new OneDriveError(`Microsoft Graph returned ${response.status}.`, response.status);
+  }
+
+  return (await response.json()) as T;
+}
+
+function encodeDrivePath(folderPath: string): string {
+  const normalized = folderPath.startsWith('/') ? folderPath : `/${folderPath}`;
+  return normalized
+    .replace(/\/+$/g, '')
+    .split('/')
+    .map((segment) => encodeURIComponent(segment))
+    .join('/');
+}
+
+export async function pingDrive(): Promise<PingDriveResult> {
+  try {
+    const env = requireEnv();
+    const drive = await graphJson<GraphDriveResponse>(
+      `/users/${encodeURIComponent(env.userPrincipal)}/drive`,
+    );
+
+    return {
+      ok: true,
+      userPrincipalName: env.userPrincipal,
+      driveQuota: {
+        used: formatGb(drive.quota?.used),
+        total: formatGb(drive.quota?.total),
+      },
+    };
+  } catch (error) {
+    return {
+      ok: false,
+      error: sanitizeError(error),
+      statusCode: error instanceof OneDriveError ? error.statusCode : undefined,
+    };
+  }
+}
+
+export async function listFolderItems(folderPath: string, top = 5): Promise<OneDriveItem[]> {
+  const env = requireEnv();
+  const encodedFolderPath = encodeDrivePath(folderPath);
+  const response = await graphFetch(
+    `/users/${encodeURIComponent(env.userPrincipal)}/drive/root:${encodedFolderPath}:/children?$top=${top}&$select=id,name,size,webUrl,lastModifiedDateTime`,
+  );
+
+  if (response.status === 404) return [];
+
+  if (!response.ok) {
+    throw new OneDriveError(`Microsoft Graph returned ${response.status}.`, response.status);
+  }
+
+  const payload = (await response.json()) as GraphListResponse;
+  return payload.value ?? [];
+}

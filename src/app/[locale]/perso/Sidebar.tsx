@@ -124,6 +124,11 @@ export default function Sidebar({ locale, userRole }: SidebarProps) {
             icon: Users,
           },
           {
+            href: `/${locale}/perso/admin/onedrive`,
+            label: t('admin.onedrive.title'),
+            icon: Settings,
+          },
+          {
             href: `/${locale}/perso/admin/immeubles`,
             label: t('nav.compta.properties'),
             icon: Building,
