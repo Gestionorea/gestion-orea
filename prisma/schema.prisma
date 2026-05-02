@@ -43,6 +43,12 @@ enum PaymentMethod {
   other
 }
 
+enum TaxRegime {
+  taxable_qc
+  exempt
+  manual
+}
+
 enum Beneficiary {
   self
   company
@@ -122,6 +128,7 @@ model Transaction {
   gst             Decimal?        @db.Decimal(12, 2)
   qst             Decimal?        @db.Decimal(12, 2)
   amountTotal     Decimal         @db.Decimal(12, 2)
+  taxRegime       TaxRegime       @default(taxable_qc)
   paymentMethod   PaymentMethod
   paymentSourceId String?
   paymentSource   PaymentSource?  @relation(fields: [paymentSourceId], references: [id], onDelete: SetNull)

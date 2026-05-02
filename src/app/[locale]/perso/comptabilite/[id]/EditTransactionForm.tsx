@@ -9,9 +9,12 @@ import type { CompanyItem } from '@/lib/companies';
 import type { PaymentSourceItem } from '@/lib/paymentSources';
 import type { PropertyItem } from '@/lib/properties';
 import type { TransactionRow } from '@/lib/transactions';
+import { fromBeforeTaxQC, fromTotalQC } from '@/lib/taxes';
 
 const PAYMENT_METHODS = ['interac', 'credit_card', 'debit_card', 'cash', 'wire', 'check', 'preauthorized_debit', 'other'] as const;
 const BENEFICIARIES = ['self', 'company', 'property'] as const;
+const TAX_REGIMES = ['taxable_qc', 'exempt', 'manual'] as const;
+type TaxRegime = (typeof TAX_REGIMES)[number];
 
 function SubmitButton() {
   const t = useTranslations('perso.compta');
@@ -36,6 +39,12 @@ export default function EditTransactionForm({
   const [state, formAction] = useActionState(updateTransactionAction, { success: false });
   const [selectedPaymentSourceId, setSelectedPaymentSourceId] = useState(transaction.paymentSourceId ?? '');
   const [selectedCompanyId, setSelectedCompanyId] = useState(transaction.companyId ?? '');
+  const [taxRegime, setTaxRegime] = useState<TaxRegime>(transaction.taxRegime);
+  const [beforeTax, setBeforeTax] = useState(transaction.amountBeforeTax);
+  const [gst, setGst] = useState(transaction.gst ?? '');
+  const [qst, setQst] = useState(transaction.qst ?? '');
+  const [amountTotal, setAmountTotal] = useState(transaction.amountTotal);
+  const [manualNotice, setManualNotice] = useState(false);
   const selectedPaymentSource = paymentSources.find((source) => source.id === selectedPaymentSourceId);
   const errorFor = (field: string) => {
     const error = state.fieldErrors?.[field];
@@ -47,6 +56,54 @@ export default function EditTransactionForm({
     if (source?.ownerCompanyId) {
       setSelectedCompanyId(source.ownerCompanyId);
     }
+  };
+  const handleTaxRegimeChange = (nextRegime: TaxRegime) => {
+    setTaxRegime(nextRegime);
+    setManualNotice(false);
+
+    if (nextRegime === 'exempt') {
+      setBeforeTax(amountTotal);
+      setGst('0.00');
+      setQst('0.00');
+    }
+
+    if (nextRegime === 'taxable_qc' && amountTotal) {
+      const split = fromTotalQC(amountTotal);
+      setBeforeTax(split.beforeTax);
+      setGst(split.gst);
+      setQst(split.qst);
+    }
+  };
+  const handleTotalChange = (value: string) => {
+    setAmountTotal(value);
+
+    if (taxRegime === 'taxable_qc') {
+      const split = fromTotalQC(value);
+      setBeforeTax(split.beforeTax);
+      setGst(split.gst);
+      setQst(split.qst);
+    }
+
+    if (taxRegime === 'exempt') {
+      setBeforeTax(value);
+      setGst('0.00');
+      setQst('0.00');
+    }
+  };
+  const handleBeforeTaxChange = (value: string) => {
+    setBeforeTax(value);
+
+    if (taxRegime === 'taxable_qc') {
+      const split = fromBeforeTaxQC(value);
+      setGst(split.gst);
+      setQst(split.qst);
+      setAmountTotal(split.total);
+    }
+  };
+  const switchTaxesToManual = () => {
+    if (taxRegime !== 'taxable_qc') return;
+    setTaxRegime('manual');
+    setManualNotice(true);
   };
 
   return (
@@ -69,18 +126,59 @@ export default function EditTransactionForm({
         <input name="merchantName" required defaultValue={transaction.merchantName} className="mt-2 w-full border border-gray-300 px-4 py-3" />
         {errorFor('merchantName')}
       </label>
-      {[
-        ['amountBeforeTax', transaction.amountBeforeTax],
-        ['gst', transaction.gst ?? ''],
-        ['qst', transaction.qst ?? ''],
-        ['amountTotal', transaction.amountTotal],
-      ].map(([name, value]) => (
-        <label key={name} className="block text-sm font-medium text-gray-700">
-          {t(`form.${name}` as Parameters<typeof t>[0])}
-          <input name={name} defaultValue={value} required={name === 'amountBeforeTax' || name === 'amountTotal'} inputMode="decimal" className="mt-2 w-full border border-gray-300 px-4 py-3" />
-          {errorFor(name)}
-        </label>
-      ))}
+      <div className="md:col-span-2">
+        <p className="text-sm font-medium text-gray-700">{t('taxRegime.label')}</p>
+        <div className="mt-2 grid gap-2 sm:grid-cols-3">
+          {TAX_REGIMES.map((regime) => (
+            <button
+              key={regime}
+              type="button"
+              onClick={() => handleTaxRegimeChange(regime)}
+              className={`border px-4 py-3 text-xs font-medium uppercase tracking-[0.14em] ${
+                taxRegime === regime
+                  ? 'border-black bg-black text-white'
+                  : 'border-gray-300 text-gray-700 hover:border-black'
+              }`}
+            >
+              {t(`taxRegime.${regime}`)}
+            </button>
+          ))}
+        </div>
+        <input type="hidden" name="taxRegime" value={taxRegime} />
+        <p className="mt-2 text-xs text-gray-500">{t('taxRegime.helpTaxableQC')}</p>
+        {manualNotice ? <p className="mt-2 text-xs text-gray-500">{t('taxRegime.basculeManuel')}</p> : null}
+        {errorFor('taxRegime')}
+      </div>
+      <label className={taxRegime === 'exempt' ? 'block text-sm font-medium text-gray-700 md:col-span-2' : 'block text-sm font-medium text-gray-700'}>
+        {t('form.amountTotal')}
+        <input name="amountTotal" value={amountTotal} onChange={(event) => handleTotalChange(event.target.value)} required inputMode="decimal" className="mt-2 w-full border border-gray-300 px-4 py-3" />
+        {errorFor('amountTotal')}
+      </label>
+      {taxRegime === 'exempt' ? (
+        <>
+          <input type="hidden" name="amountBeforeTax" value={amountTotal} />
+          <input type="hidden" name="gst" value="0.00" />
+          <input type="hidden" name="qst" value="0.00" />
+        </>
+      ) : (
+        <>
+          <label className="block text-sm font-medium text-gray-700">
+            {t('form.amountBeforeTax')}
+            <input name="amountBeforeTax" value={beforeTax} onChange={(event) => handleBeforeTaxChange(event.target.value)} required inputMode="decimal" className="mt-2 w-full border border-gray-300 px-4 py-3" />
+            {errorFor('amountBeforeTax')}
+          </label>
+          <label className="block text-sm font-medium text-gray-700">
+            {t('form.gst')}
+            <input name="gst" value={gst} onFocus={switchTaxesToManual} onChange={(event) => setGst(event.target.value)} readOnly={taxRegime === 'taxable_qc'} inputMode="decimal" className="mt-2 w-full border border-gray-300 px-4 py-3" />
+            {errorFor('gst')}
+          </label>
+          <label className="block text-sm font-medium text-gray-700">
+            {t('form.qst')}
+            <input name="qst" value={qst} onFocus={switchTaxesToManual} onChange={(event) => setQst(event.target.value)} readOnly={taxRegime === 'taxable_qc'} inputMode="decimal" className="mt-2 w-full border border-gray-300 px-4 py-3" />
+            {errorFor('qst')}
+          </label>
+        </>
+      )}
       <label className="block text-sm font-medium text-gray-700 md:col-span-2">
         {t('form.paymentSource')}
         <select

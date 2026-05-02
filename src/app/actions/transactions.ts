@@ -10,6 +10,7 @@ import {
   deleteTransaction,
   isBeneficiary,
   isPaymentMethod,
+  isTaxRegime,
   isTransactionType,
   setTransactionReconciled,
   updateTransaction,
@@ -52,6 +53,7 @@ async function parseAndValidate(formData: FormData): Promise<{
     gst: string | null;
     qst: string | null;
     amountTotal: string;
+    taxRegime: 'taxable_qc' | 'exempt' | 'manual';
     paymentMethod: 'interac' | 'credit_card' | 'debit_card' | 'cash' | 'wire' | 'check' | 'preauthorized_debit' | 'other';
     paymentSourceId: string | null;
     isAdvance: boolean;
@@ -66,13 +68,14 @@ async function parseAndValidate(formData: FormData): Promise<{
   fieldErrors?: Record<string, string>;
 }> {
   const typeRaw = getString(formData, 'type');
+  const taxRegimeRaw = getString(formData, 'taxRegime');
   const paymentMethodRaw = getString(formData, 'paymentMethod');
   const beneficiaryRaw = getString(formData, 'beneficiary');
   const dateRaw = getString(formData, 'date');
   const merchantName = getString(formData, 'merchantName');
-  const amountBeforeTax = getString(formData, 'amountBeforeTax');
-  const gst = getOptional(formData, 'gst');
-  const qst = getOptional(formData, 'qst');
+  let amountBeforeTax = getString(formData, 'amountBeforeTax');
+  let gst = getOptional(formData, 'gst');
+  let qst = getOptional(formData, 'qst');
   const amountTotal = getString(formData, 'amountTotal');
   const propertyId = getOptional(formData, 'propertyId');
   const companyId = getOptional(formData, 'companyId');
@@ -84,19 +87,28 @@ async function parseAndValidate(formData: FormData): Promise<{
   const paymentSource = paymentSourceId ? await getActivePaymentSourceById(paymentSourceId) : null;
 
   if (!isTransactionType(typeRaw)) fieldErrors.type = 'invalid';
+  if (!isTaxRegime(taxRegimeRaw)) fieldErrors.taxRegime = 'invalid';
   if (!isPaymentMethod(paymentMethodRaw)) fieldErrors.paymentMethod = 'invalid';
   if (!isBeneficiary(beneficiaryRaw)) fieldErrors.beneficiary = 'invalid';
   if (!dateRaw || Number.isNaN(date.getTime())) fieldErrors.date = 'invalid';
   if (!merchantName) fieldErrors.merchantName = 'required';
-  if (!isDecimal(amountBeforeTax)) fieldErrors.amountBeforeTax = 'invalid_amount';
-  if (gst && !isDecimal(gst)) fieldErrors.gst = 'invalid_amount';
-  if (qst && !isDecimal(qst)) fieldErrors.qst = 'invalid_amount';
   if (!isDecimal(amountTotal)) fieldErrors.amountTotal = 'invalid_amount';
+  if (taxRegimeRaw === 'exempt' && isDecimal(amountTotal)) {
+    amountBeforeTax = amountTotal;
+    gst = '0.00';
+    qst = '0.00';
+  }
+  if (taxRegimeRaw !== 'exempt') {
+    if (!isDecimal(amountBeforeTax)) fieldErrors.amountBeforeTax = 'invalid_amount';
+    if (gst && !isDecimal(gst)) fieldErrors.gst = 'invalid_amount';
+    if (qst && !isDecimal(qst)) fieldErrors.qst = 'invalid_amount';
+  }
   if (attachmentUrl && !/^https?:\/\/\S+\.\S+/.test(attachmentUrl)) {
     fieldErrors.attachmentUrl = 'invalid_url';
   }
 
   if (
+    taxRegimeRaw === 'taxable_qc' &&
     isDecimal(amountBeforeTax) &&
     (!gst || isDecimal(gst)) &&
     (!qst || isDecimal(qst)) &&
@@ -105,7 +117,7 @@ async function parseAndValidate(formData: FormData): Promise<{
     const expected = new Prisma.Decimal(amountBeforeTax).plus(gst || 0).plus(qst || 0);
     const actual = new Prisma.Decimal(amountTotal);
     if (actual.minus(expected).abs().gt(0.01)) {
-      fieldErrors.amountTotal = 'total_mismatch';
+      fieldErrors.taxRegime = 'taxesInconsistent';
     }
   }
 
@@ -129,6 +141,7 @@ async function parseAndValidate(formData: FormData): Promise<{
       gst,
       qst,
       amountTotal,
+      taxRegime: taxRegimeRaw as 'taxable_qc' | 'exempt' | 'manual',
       paymentMethod: paymentMethodRaw as 'interac' | 'credit_card' | 'debit_card' | 'cash' | 'wire' | 'check' | 'preauthorized_debit' | 'other',
       paymentSourceId,
       isAdvance: paymentSource?.isPersonal ?? false,

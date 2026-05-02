@@ -7,6 +7,7 @@ import { listProperties } from '@/lib/properties';
 import {
   getTransactionYears,
   isPaymentMethod,
+  isTaxRegime,
   isTransactionSortBy,
   isTransactionSortOrder,
   isTransactionType,
@@ -47,6 +48,10 @@ export default async function AccountingPage({
     typeof raw.paymentMethod === 'string' && isPaymentMethod(raw.paymentMethod)
       ? raw.paymentMethod
       : undefined;
+  const taxRegime =
+    typeof raw.taxRegime === 'string' && isTaxRegime(raw.taxRegime)
+      ? raw.taxRegime
+      : undefined;
   const session = await requireAuth();
   const [t, years, properties, companies, categories, result] = await Promise.all([
     getTranslations('perso.compta'),
@@ -60,6 +65,7 @@ export default async function AccountingPage({
       page,
       type,
       paymentMethod,
+      taxRegime,
       propertyId: typeof raw.propertyId === 'string' ? raw.propertyId : undefined,
       companyId: typeof raw.companyId === 'string' ? raw.companyId : undefined,
       categoryId: typeof raw.categoryId === 'string' ? raw.categoryId : undefined,

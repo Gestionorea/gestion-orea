@@ -54,6 +54,12 @@ export default async function TransactionFilters({
           <option key={method} value={method}>{t(`paymentMethods.${method}`)}</option>
         ))}
       </select>
+      <select name="taxRegime" defaultValue={searchParams.taxRegime ?? ''} aria-label={t('filters.taxRegime.label')} className="border border-gray-300 px-3 py-2 text-sm">
+        <option value="">{t('filters.taxRegime.all')}</option>
+        {['taxable_qc', 'exempt', 'manual'].map((regime) => (
+          <option key={regime} value={regime}>{t(`taxRegime.${regime}`)}</option>
+        ))}
+      </select>
       <input
         name="q"
         defaultValue={searchParams.q ?? ''}

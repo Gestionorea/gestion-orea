@@ -93,6 +93,7 @@ export default async function TransactionDetail({
             <DetailRow label={t('detail.fields.tvq')} value={formatMoney(locale, transaction.qst)} />
             <DetailRow label={t('detail.fields.amountTotal')} value={formatMoney(locale, transaction.amountTotal)} />
             <DetailRow label={t('detail.fields.paymentMethod')} value={t(`paymentMethods.${transaction.paymentMethod}`)} />
+            <DetailRow label={t('detail.fields.taxRegime')} value={t(`taxRegime.${transaction.taxRegime}`)} />
             <DetailRow label={t('detail.fields.paymentSource')} value={paymentSource} />
           </dl>
         </Section>

@@ -1,4 +1,4 @@
-import type { Beneficiary, PaymentMethod, TransactionType } from '@prisma/client';
+import type { Beneficiary, PaymentMethod, TaxRegime, TransactionType } from '@prisma/client';
 import { Prisma } from '@prisma/client';
 import { getDb } from '@/lib/db';
 
@@ -14,6 +14,7 @@ export const PAYMENT_METHODS: PaymentMethod[] = [
   'other',
 ];
 export const BENEFICIARIES: Beneficiary[] = ['self', 'company', 'property'];
+export const TAX_REGIMES: TaxRegime[] = ['taxable_qc', 'exempt', 'manual'];
 
 export type TransactionSortBy = 'date' | 'amount' | 'merchant' | 'company' | 'source';
 export type TransactionSortOrder = 'asc' | 'desc';
@@ -27,6 +28,7 @@ export type TransactionRow = {
   gst: string | null;
   qst: string | null;
   amountTotal: string;
+  taxRegime: TaxRegime;
   paymentMethod: PaymentMethod;
   paymentSourceId: string | null;
   paymentSource: {
@@ -74,6 +76,7 @@ export type TransactionInput = {
   gst?: string | null;
   qst?: string | null;
   amountTotal: string;
+  taxRegime: TaxRegime;
   paymentMethod: PaymentMethod;
   paymentSourceId?: string | null;
   isAdvance?: boolean;
@@ -95,6 +98,7 @@ export type TransactionFilters = {
   companyId?: string;
   categoryId?: string;
   paymentMethod?: PaymentMethod;
+  taxRegime?: TaxRegime;
   q?: string;
   merchantName?: string;
   sortBy?: TransactionSortBy;
@@ -161,6 +165,7 @@ function serialize(transaction: {
   gst: Prisma.Decimal | null;
   qst: Prisma.Decimal | null;
   amountTotal: Prisma.Decimal;
+  taxRegime: TaxRegime;
   paymentMethod: PaymentMethod;
   paymentSourceId: string | null;
   paymentSource: {
@@ -225,6 +230,10 @@ export function isBeneficiary(value: string): value is Beneficiary {
   return BENEFICIARIES.includes(value as Beneficiary);
 }
 
+export function isTaxRegime(value: string): value is TaxRegime {
+  return TAX_REGIMES.includes(value as TaxRegime);
+}
+
 export function isTransactionSortBy(value: string): value is TransactionSortBy {
   return ['date', 'amount', 'merchant', 'company', 'source'].includes(value);
 }
@@ -258,6 +267,7 @@ function buildWhere(filters: TransactionFilters): Prisma.TransactionWhereInput {
   if (filters.companyId) where.companyId = filters.companyId;
   if (filters.categoryId) where.categoryId = filters.categoryId;
   if (filters.paymentMethod) where.paymentMethod = filters.paymentMethod;
+  if (filters.taxRegime) where.taxRegime = filters.taxRegime;
   if (filters.merchantName) where.merchantName = filters.merchantName;
   if (filters.q) {
     where.OR = [
@@ -434,6 +444,7 @@ function dataFromInput(input: TransactionInput) {
     gst: decimal(input.gst),
     qst: decimal(input.qst),
     amountTotal: new Prisma.Decimal(input.amountTotal),
+    taxRegime: input.taxRegime,
     paymentMethod: input.paymentMethod,
     paymentSourceId: input.paymentSourceId || null,
     isAdvance: input.isAdvance ?? false,

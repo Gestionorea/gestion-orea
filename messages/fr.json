@@ -572,6 +572,7 @@
           "tvq": "TVQ",
           "amountTotal": "Montant total",
           "paymentMethod": "Mode de paiement",
+          "taxRegime": "Régime de taxes",
           "paymentSource": "Source de paiement",
           "property": "Immeuble",
           "company": "Compagnie",
@@ -613,7 +614,11 @@
         "allCategories": "Toutes les catégories",
         "allPayments": "Tous les paiements",
         "search": "Recherche",
-        "apply": "Filtrer"
+        "apply": "Filtrer",
+        "taxRegime": {
+          "label": "Régime de taxes",
+          "all": "Tous les régimes de taxes"
+        }
       },
       "pagination": {
         "previous": "Précédent",
@@ -707,6 +712,14 @@
         "company": "Compagnie",
         "property": "Immeuble"
       },
+      "taxRegime": {
+        "label": "Régime de taxes",
+        "taxable_qc": "Taxable QC",
+        "exempt": "Exempt",
+        "manual": "Manuel",
+        "helpTaxableQC": "Taxable QC calcule automatiquement TPS et TVQ depuis le total ou le montant avant taxes.",
+        "basculeManuel": "Taxes passées en mode manuel."
+      },
       "form": {
         "type": "Type",
         "date": "Date",
@@ -740,6 +753,7 @@
         "total_mismatch": "Le total doit correspondre au montant avant taxes plus TPS et TVQ.",
         "invalid_url": "Lien invalide.",
         "invalid_source": "Source de paiement invalide.",
+        "taxesInconsistent": "Les taxes ne concordent pas avec le total.",
         "not_found": "Élément introuvable."
       }
     }

@@ -572,6 +572,7 @@
           "tvq": "QST",
           "amountTotal": "Total amount",
           "paymentMethod": "Payment method",
+          "taxRegime": "Tax regime",
           "paymentSource": "Payment source",
           "property": "Property",
           "company": "Company",
@@ -613,7 +614,11 @@
         "allCategories": "All categories",
         "allPayments": "All payments",
         "search": "Search",
-        "apply": "Filter"
+        "apply": "Filter",
+        "taxRegime": {
+          "label": "Tax regime",
+          "all": "All tax regimes"
+        }
       },
       "pagination": {
         "previous": "Previous",
@@ -707,6 +712,14 @@
         "company": "Company",
         "property": "Property"
       },
+      "taxRegime": {
+        "label": "Tax regime",
+        "taxable_qc": "Taxable QC",
+        "exempt": "Exempt",
+        "manual": "Manual",
+        "helpTaxableQC": "Taxable QC automatically calculates GST and QST from the total or before-tax amount.",
+        "basculeManuel": "Taxes switched to manual mode."
+      },
       "form": {
         "type": "Type",
         "date": "Date",
@@ -740,6 +753,7 @@
         "total_mismatch": "The total must match amount before tax plus GST and QST.",
         "invalid_url": "Invalid link.",
         "invalid_source": "Invalid payment source.",
+        "taxesInconsistent": "Taxes do not match the total.",
         "not_found": "Item not found."
       }
     }

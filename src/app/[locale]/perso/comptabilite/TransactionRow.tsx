@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
 import type { MouseEvent } from 'react';
 import { deleteTransactionAction, toggleReconciledAction } from '@/app/actions/transactions';
@@ -35,6 +36,7 @@ export default function TransactionRow({
   canReconcile: boolean;
   labels: TransactionRowLabels;
 }) {
+  const t = useTranslations('perso.compta');
   const router = useRouter();
   const goToDetail = () => router.push(href);
   const stopRowNavigation = (event: MouseEvent) => {
@@ -62,7 +64,14 @@ export default function TransactionRow({
         </Link>
       </td>
       <td className="px-4 py-4 text-gray-600">{labels.type}</td>
-      <td className="px-4 py-4 text-gray-600">${row.amountTotal}</td>
+      <td className="px-4 py-4 text-gray-600">
+        <div className="flex flex-col gap-1">
+          <span>${row.amountTotal}</span>
+          {row.taxRegime === 'taxable_qc' ? null : (
+            <span className="text-xs text-gray-500">{t(`taxRegime.${row.taxRegime}`)}</span>
+          )}
+        </div>
+      </td>
       <td className="px-4 py-4 text-gray-600">{row.category?.name ?? '-'}</td>
       <td className="px-4 py-4 text-gray-600">
         <div className="flex flex-col gap-2">
