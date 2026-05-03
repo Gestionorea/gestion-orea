@@ -37,6 +37,7 @@ const INVOICES_FOLDER = 'siagi/classification/a classer';
 const INVOICE_EXTENSIONS = new Set(['.pdf', '.jpg', '.jpeg', '.png', '.webp']);
 const MAX_AI_CALLS_PER_SYNC = 50;
 const MAX_AI_FILE_SIZE_BYTES = 5 * 1024 * 1024;
+const INVOICE_MATCH_DATE_WINDOW_DAYS = 90;
 
 function isInvoiceFile(filename: string): boolean {
   const lower = filename.toLowerCase();
@@ -67,8 +68,8 @@ function boundsFromInvoices(invoices: InvoiceFile[]): { start: Date; end: Date }
 
   const timestamps = dates.map((date) => date.getTime());
   return {
-    start: addDays(new Date(Math.min(...timestamps)), -5),
-    end: addDays(new Date(Math.max(...timestamps)), 5),
+    start: addDays(new Date(Math.min(...timestamps)), -INVOICE_MATCH_DATE_WINDOW_DAYS),
+    end: addDays(new Date(Math.max(...timestamps)), INVOICE_MATCH_DATE_WINDOW_DAYS),
   };
 }
 
@@ -90,6 +91,7 @@ export async function autoAttachInvoicesAction(
       webUrl: item.webUrl,
       parsedDate: parsed.parsedDate,
       parsedKeywords: parsed.parsedKeywords,
+      parsedAmount: parsed.parsedAmount,
     };
   });
 
@@ -140,6 +142,7 @@ export async function autoAttachInvoicesAction(
     const match: MatchScore | null = findBestMatch({
       transactionDate: transaction.date,
       transactionDescription: transaction.merchantName,
+      transactionAmount: Number(transaction.amountTotal),
       invoices: availableInvoices,
     });
 

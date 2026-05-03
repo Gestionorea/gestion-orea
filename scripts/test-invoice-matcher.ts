@@ -1,7 +1,9 @@
 import {
+  extractAmountFromFilename,
   findBestMatch,
   parseInvoiceFilename,
   type InvoiceFile,
+  type MatchInput,
 } from '../src/lib/invoice-matcher';
 
 function invoice(itemId: string, filename: string): InvoiceFile {
@@ -12,6 +14,7 @@ function invoice(itemId: string, filename: string): InvoiceFile {
     webUrl: `https://example.test/${filename}`,
     parsedDate: parsed.parsedDate,
     parsedKeywords: parsed.parsedKeywords,
+    parsedAmount: parsed.parsedAmount,
   };
 }
 
@@ -66,6 +69,63 @@ const cases = [
     }),
     expectFilename: '2026-01-15_Telecom_Bell_Canada_Internet.pdf',
   },
+  {
+    name: 'facture payee 60 jours apres emission, montant exact',
+    result: findBestMatch({
+      transactionDate: new Date('2026-03-15T00:00:00Z'),
+      transactionDescription: 'PAIEMENT BELL CANADA',
+      transactionAmount: 127.5,
+      invoices: [
+        {
+          itemId: 'inv-6',
+          filename: '2026-01-15_Telecom_Bell-facture_127.50.pdf',
+          webUrl: 'https://example.test/bell',
+          parsedDate: new Date('2026-01-15T00:00:00Z'),
+          parsedKeywords: ['bell', 'facture', 'telecom'],
+          parsedAmount: 127.5,
+        },
+      ],
+    }),
+    expectFilename: '2026-01-15_Telecom_Bell-facture_127.50.pdf',
+  },
+  {
+    name: 'meme date mais montant different',
+    result: findBestMatch({
+      transactionDate: new Date('2026-03-15T00:00:00Z'),
+      transactionDescription: 'X Y Z',
+      transactionAmount: 99.99,
+      invoices: [
+        {
+          itemId: 'inv-7',
+          filename: '2026-03-15_Test_Random_500.00.pdf',
+          webUrl: 'https://example.test/random',
+          parsedDate: new Date('2026-03-15T00:00:00Z'),
+          parsedKeywords: ['random'],
+          parsedAmount: 500,
+        },
+      ],
+    }),
+    expectFilename: null,
+  },
+  {
+    name: 'date plus de 90 jours',
+    result: findBestMatch({
+      transactionDate: new Date('2026-06-01T00:00:00Z'),
+      transactionDescription: 'PAIEMENT BELL CANADA',
+      transactionAmount: 127.5,
+      invoices: [
+        {
+          itemId: 'inv-8',
+          filename: '2026-01-15_Telecom_Bell-facture_127.50.pdf',
+          webUrl: 'https://example.test/bell-far',
+          parsedDate: new Date('2026-01-15T00:00:00Z'),
+          parsedKeywords: ['bell', 'facture', 'telecom'],
+          parsedAmount: 127.5,
+        },
+      ],
+    } satisfies MatchInput),
+    expectFilename: null,
+  },
 ];
 
 let passed = 0;
@@ -80,5 +140,22 @@ for (const testCase of cases) {
   }
 }
 
-console.log(`${passed}/${cases.length} PASS`);
-if (passed !== cases.length) process.exit(1);
+const amountFromFilename = extractAmountFromFilename('2026-02-15_Bell_127.50.pdf');
+if (amountFromFilename === 127.5) {
+  passed += 1;
+  console.log('PASS extract amount from filename');
+} else {
+  console.error('FAIL extract amount from filename', amountFromFilename);
+}
+
+const noAmountFromFilename = extractAmountFromFilename('2026-02-15_Bell.pdf');
+if (noAmountFromFilename === null) {
+  passed += 1;
+  console.log('PASS no amount in filename');
+} else {
+  console.error('FAIL no amount in filename', noAmountFromFilename);
+}
+
+const expected = cases.length + 2;
+console.log(`${passed}/${expected} PASS`);
+if (passed !== expected) process.exit(1);

@@ -4,6 +4,7 @@ export type InvoiceFile = {
   webUrl: string;
   parsedDate: Date | null;
   parsedKeywords: string[];
+  parsedAmount?: number | null;
 };
 
 export type MatchScore = {
@@ -18,6 +19,7 @@ export type MatchScore = {
 export type MatchInput = {
   transactionDate: Date;
   transactionDescription: string;
+  transactionAmount?: number;
   invoices: InvoiceFile[];
 };
 
@@ -43,6 +45,13 @@ const STOPWORDS = new Set([
   'ltee',
   'enr',
 ]);
+
+const MAX_DAYS_DIFF = 90;
+const DEFAULT_THRESHOLD = 30;
+const EXACT_AMOUNT_BONUS = 80;
+const APPROX_AMOUNT_BONUS = 40;
+const KEYWORD_BONUS_MAX = 30;
+const DATE_PENALTY_MAX = 30;
 
 function normalize(value: string): string {
   return value
@@ -83,13 +92,23 @@ function parseDateFromFilename(filename: string): Date | null {
   return date;
 }
 
+export function extractAmountFromFilename(filename: string): number | null {
+  const match = filename.match(/_(\d+\.\d{2})(\.[a-z]+)?$/i);
+  if (!match) return null;
+
+  const amount = Number.parseFloat(match[1]);
+  return Number.isFinite(amount) && amount > 0 ? amount : null;
+}
+
 export function parseInvoiceFilename(filename: string): {
   parsedDate: Date | null;
   parsedKeywords: string[];
+  parsedAmount: number | null;
 } {
   return {
     parsedDate: parseDateFromFilename(filename),
     parsedKeywords: extractKeywords(filename.replace(/^\d{4}-\d{2}-\d{2}_/, '')),
+    parsedAmount: extractAmountFromFilename(filename),
   };
 }
 
@@ -105,7 +124,16 @@ function intersection(left: string[], right: string[]): string[] {
   return left.filter((keyword) => rightSet.has(keyword));
 }
 
-export function findBestMatch(input: MatchInput, threshold = 50): MatchScore | null {
+function amountBonusFor(transactionAmount: number | undefined, invoiceAmount: number | null | undefined): number {
+  if (!transactionAmount || !invoiceAmount) return 0;
+
+  const amountDiff = Math.abs(invoiceAmount - transactionAmount);
+  if (amountDiff <= 0.01) return EXACT_AMOUNT_BONUS;
+  if (amountDiff <= transactionAmount * 0.05) return APPROX_AMOUNT_BONUS;
+  return 0;
+}
+
+export function findBestMatch(input: MatchInput, threshold = DEFAULT_THRESHOLD): MatchScore | null {
   const transactionKeywords = extractKeywords(input.transactionDescription);
   let best: MatchScore | null = null;
 
@@ -113,14 +141,19 @@ export function findBestMatch(input: MatchInput, threshold = 50): MatchScore | n
     if (!invoice.parsedDate) continue;
 
     const daysDiff = daysBetween(input.transactionDate, invoice.parsedDate);
-    if (daysDiff > 5) continue;
+    if (daysDiff > MAX_DAYS_DIFF) continue;
 
     const commonKeywords = intersection(transactionKeywords, invoice.parsedKeywords);
-    if (commonKeywords.length < 2) continue;
-
     const denominator = Math.max(transactionKeywords.length, invoice.parsedKeywords.length, 1);
-    const score = Math.round((commonKeywords.length / denominator) * 100 - daysDiff * 5);
-    if (score <= threshold) continue;
+    const amountBonus = amountBonusFor(input.transactionAmount, invoice.parsedAmount);
+    const keywordBonus =
+      amountBonus > 0
+        ? (commonKeywords.length / denominator) * KEYWORD_BONUS_MAX
+        : (commonKeywords.length / denominator) * 100;
+    const datePenalty =
+      amountBonus > 0 ? Math.min(daysDiff / 3, DATE_PENALTY_MAX) : daysDiff * 5;
+    const score = Math.round(amountBonus + keywordBonus - datePenalty);
+    if (score < threshold) continue;
 
     const candidate: MatchScore = {
       invoiceItemId: invoice.itemId,
