@@ -40,12 +40,15 @@ export default async function TransactionDetail({
   transaction,
   locale,
   canEdit,
+  back,
 }: {
   transaction: TransactionRow;
   locale: string;
   canEdit: boolean;
+  back: string | null;
 }) {
   const t = await getTranslations('perso.compta');
+  const safeBack = back && back.startsWith('/') && !back.startsWith('//') ? back : null;
   const hasJustification = Boolean(transaction.justification?.trim());
   const paymentSource = transaction.paymentSource
     ? `${transaction.paymentSource.name}${transaction.paymentSource.lastDigits ? ` ····${transaction.paymentSource.lastDigits}` : ''}`
@@ -197,14 +200,17 @@ export default async function TransactionDetail({
 
         <div className="flex flex-wrap gap-3 border-t border-gray-200 pt-8">
           <Link
-            href={`/${locale}/perso/comptabilite`}
+            href={safeBack ?? `/${locale}/perso/comptabilite`}
             className="inline-flex border border-gray-300 px-4 py-3 text-xs font-medium uppercase tracking-[0.18em] text-black hover:border-black"
           >
             {t('detail.backToList')}
           </Link>
           {canEdit ? (
             <Link
-              href={{ pathname: `/${locale}/perso/comptabilite/${transaction.id}`, query: { edit: '1' } }}
+              href={{
+                pathname: `/${locale}/perso/comptabilite/${transaction.id}`,
+                query: safeBack ? { edit: '1', back: safeBack } : { edit: '1' },
+              }}
               className="inline-flex bg-black px-4 py-3 text-xs font-medium uppercase tracking-[0.18em] text-white"
             >
               {t('detail.edit')}

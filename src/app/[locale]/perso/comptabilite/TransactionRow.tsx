@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import type { MouseEvent } from 'react';
 import { deleteTransactionAction, toggleReconciledAction } from '@/app/actions/transactions';
 import type { TransactionRow as TransactionRowData, TransactionVisualStatus } from '@/lib/transactions';
@@ -72,7 +72,12 @@ export default function TransactionRow({
 }) {
   const t = useTranslations('perso.compta');
   const router = useRouter();
-  const goToDetail = () => router.push(href);
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const queryString = searchParams.toString();
+  const currentUrl = `${pathname}${queryString ? `?${queryString}` : ''}`;
+  const detailHref = `${href}?back=${encodeURIComponent(currentUrl)}`;
+  const goToDetail = () => router.push(detailHref);
   const visualKey = visualStatusKey(row.visualStatus);
   const visualLabel = visualKey ? t(`visualStatus.${visualKey}`) : null;
   const stopRowNavigation = (event: MouseEvent) => {

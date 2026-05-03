@@ -60,11 +60,13 @@ export default function InlineJustificationInput({
         disabled={isPending}
         placeholder={t('justificationPlaceholder')}
         maxLength={500}
-        className="w-full min-w-[120px] max-w-[200px] border border-gray-300 px-2 py-1 text-sm disabled:cursor-not-allowed disabled:bg-gray-100"
+        className="w-48 border border-gray-300 px-2 py-1 text-sm disabled:cursor-not-allowed disabled:bg-gray-100"
       />
-      {isPending ? <span className="text-xs text-gray-400">...</span> : null}
-      {feedback === 'success' ? <span className="text-xs text-green-600">✓</span> : null}
-      {feedback === 'error' ? <span className="text-xs text-red-600">×</span> : null}
+      <span className="inline-block w-4 text-center text-xs">
+        {isPending ? <span className="text-gray-400">...</span> : null}
+        {feedback === 'success' ? <span className="text-green-600">✓</span> : null}
+        {feedback === 'error' ? <span className="text-red-600">×</span> : null}
+      </span>
     </div>
   );
 }

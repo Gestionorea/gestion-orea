@@ -28,9 +28,11 @@ export default async function EditTransactionPage({
 
   const canEdit = ['owner', 'assistant'].includes(session.role);
   const editRequested = rawSearchParams.edit === '1';
+  const rawBack = rawSearchParams.back;
+  const back = typeof rawBack === 'string' ? rawBack : null;
 
   if (!editRequested || !canEdit) {
-    return <TransactionDetail transaction={transaction} locale={locale} canEdit={canEdit} />;
+    return <TransactionDetail transaction={transaction} locale={locale} canEdit={canEdit} back={back} />;
   }
 
   const [t, properties, companies, categories, paymentSources] = await Promise.all([
