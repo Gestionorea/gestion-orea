@@ -368,6 +368,7 @@
         "reconciliation": "Reconciliation",
         "importStatement": "Import statement",
         "dashboards": "Dashboards",
+        "reports": "Tax reports",
         "properties": "Properties",
         "companies": "Companies",
         "categories": "Categories"
@@ -481,6 +482,30 @@
         "company": "Company",
         "source": "Source",
         "reconciled": "Reconciliation"
+      }
+    },
+    "reports": {
+      "eyebrow": "Accounting",
+      "title": "Tax reports",
+      "subtitle": "Generate your GST/QST reports for filings.",
+      "selectPeriod": "Period",
+      "monthly": "Monthly",
+      "quarterly": "Quarterly",
+      "annual": "Annual",
+      "year": "Year",
+      "month": "Month",
+      "quarter": "Quarter",
+      "generate": "Generate report",
+      "print": "Print",
+      "table": {
+        "salesTaxable": "Taxable sales",
+        "gstCollected": "GST collected",
+        "qstCollected": "QST collected",
+        "purchasesTaxable": "Taxable purchases",
+        "gstPaid": "GST paid",
+        "qstPaid": "QST paid",
+        "gstRemittance": "GST remittance",
+        "qstRemittance": "QST remittance"
       }
     },
     "admin": {
@@ -797,6 +822,10 @@
         "empty": "No data for this period.",
         "topMerchants": "Top merchants",
         "topCompanies": "Top companies",
+        "companyBalance": "Company balances",
+        "monthlyEvolution": "Monthly evolution",
+        "topMerchantsYear": "Top 10 annual merchants",
+        "advancesBalance": "Advance balances",
         "paymentSources": "Payment sources",
         "advances": "Personal advances",
         "unreimbursed": "Unreimbursed",
@@ -814,6 +843,16 @@
         "charts": {
           "monthly": "Income vs expenses by month",
           "categories": "Expenses by category"
+        },
+        "table": {
+          "company": "Company",
+          "income": "Income",
+          "expense": "Expenses",
+          "balance": "Balance",
+          "source": "Source",
+          "destination": "Destination",
+          "advanced": "Advanced",
+          "reimbursed": "Reimbursed"
         },
         "months": {
           "1": "Jan",

@@ -368,6 +368,7 @@
         "reconciliation": "Conciliation",
         "importStatement": "Importer relevé",
         "dashboards": "Dashboards",
+        "reports": "Rapports fiscaux",
         "properties": "Immeubles",
         "companies": "Compagnies",
         "categories": "Catégories"
@@ -481,6 +482,30 @@
         "company": "Compagnie",
         "source": "Source",
         "reconciled": "Conciliation"
+      }
+    },
+    "reports": {
+      "eyebrow": "Comptabilité",
+      "title": "Rapports fiscaux",
+      "subtitle": "Générez vos rapports TPS/TVQ pour les déclarations.",
+      "selectPeriod": "Période",
+      "monthly": "Mensuel",
+      "quarterly": "Trimestriel",
+      "annual": "Annuel",
+      "year": "Année",
+      "month": "Mois",
+      "quarter": "Trimestre",
+      "generate": "Générer rapport",
+      "print": "Imprimer",
+      "table": {
+        "salesTaxable": "Ventes taxables",
+        "gstCollected": "TPS collectée",
+        "qstCollected": "TVQ collectée",
+        "purchasesTaxable": "Achats taxables",
+        "gstPaid": "TPS payée",
+        "qstPaid": "TVQ payée",
+        "gstRemittance": "TPS à remettre",
+        "qstRemittance": "TVQ à remettre"
       }
     },
     "admin": {
@@ -797,6 +822,10 @@
         "empty": "Aucune donnée pour cette période.",
         "topMerchants": "Top fournisseurs",
         "topCompanies": "Top compagnies",
+        "companyBalance": "Solde par compagnie",
+        "monthlyEvolution": "Évolution mensuelle",
+        "topMerchantsYear": "Top 10 fournisseurs annuels",
+        "advancesBalance": "Soldes des avances",
         "paymentSources": "Sources de paiement",
         "advances": "Avances perso",
         "unreimbursed": "Non remboursées",
@@ -814,6 +843,16 @@
         "charts": {
           "monthly": "Entrées vs dépenses par mois",
           "categories": "Dépenses par catégorie"
+        },
+        "table": {
+          "company": "Compagnie",
+          "income": "Entrées",
+          "expense": "Dépenses",
+          "balance": "Solde",
+          "source": "Source",
+          "destination": "Destination",
+          "advanced": "Avancé",
+          "reimbursed": "Remboursé"
         },
         "months": {
           "1": "Jan",

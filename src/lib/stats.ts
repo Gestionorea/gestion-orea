@@ -103,6 +103,132 @@ export async function topCompanies(year: number): Promise<{
   return [...totals.values()].sort((a, b) => b.total - a.total);
 }
 
+export async function getCompanyBalances(year: number): Promise<{
+  companyId: string;
+  companyName: string;
+  income: number;
+  expense: number;
+  balance: number;
+}[]> {
+  const rows = await getDb().transaction.findMany({
+    where: { date: yearRange(year) },
+    select: {
+      type: true,
+      amountTotal: true,
+      company: { select: { id: true, name: true } },
+    },
+  });
+  const totals = new Map<string, {
+    companyId: string;
+    companyName: string;
+    income: number;
+    expense: number;
+  }>();
+
+  for (const row of rows) {
+    const companyId = row.company?.id ?? 'none';
+    const current = totals.get(companyId) ?? {
+      companyId,
+      companyName: row.company?.name ?? '__none__',
+      income: 0,
+      expense: 0,
+    };
+    current[row.type] += Number(row.amountTotal);
+    totals.set(companyId, current);
+  }
+
+  return [...totals.values()]
+    .map((row) => ({ ...row, balance: row.income - row.expense }))
+    .sort((a, b) => b.balance - a.balance);
+}
+
+export async function getMonthlyEvolution(
+  months: number = 12,
+): Promise<{ month: string; income: number; expense: number }[]> {
+  const now = new Date();
+  const start = new Date(now.getFullYear(), now.getMonth() - months + 1, 1);
+  const end = new Date(now.getFullYear(), now.getMonth() + 1, 1);
+  const buckets = Array.from({ length: months }, (_, index) => {
+    const date = new Date(start.getFullYear(), start.getMonth() + index, 1);
+    return {
+      month: `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`,
+      income: 0,
+      expense: 0,
+    };
+  });
+  const rows = await getDb().transaction.findMany({
+    where: { date: { gte: start, lt: end } },
+    select: { date: true, type: true, amountTotal: true },
+  });
+  const bucketByMonth = new Map(buckets.map((bucket) => [bucket.month, bucket]));
+
+  for (const row of rows) {
+    const key = `${row.date.getFullYear()}-${String(row.date.getMonth() + 1).padStart(2, '0')}`;
+    const bucket = bucketByMonth.get(key);
+    if (bucket) bucket[row.type] += Number(row.amountTotal);
+  }
+
+  return buckets;
+}
+
+export async function getTopMerchantsYear(
+  year: number,
+  limit: number = 10,
+): Promise<{ merchantName: string; total: number; count: number }[]> {
+  return topMerchants(year, limit);
+}
+
+export async function getAdvancesBalance(): Promise<{
+  sourceCompany: string;
+  destCompany: string;
+  totalAdvanced: number;
+  totalReimbursed: number;
+  balance: number;
+}[]> {
+  const rows = await getDb().transaction.findMany({
+    where: { isAdvance: true },
+    select: {
+      amountTotal: true,
+      company: { select: { name: true } },
+      property: { select: { company: { select: { name: true } } } },
+      paymentSource: {
+        select: {
+          name: true,
+          ownerCompany: { select: { name: true } },
+        },
+      },
+      reimbursementTransaction: {
+        select: { amountTotal: true },
+      },
+    },
+  });
+  const totals = new Map<string, {
+    sourceCompany: string;
+    destCompany: string;
+    totalAdvanced: number;
+    totalReimbursed: number;
+  }>();
+
+  for (const row of rows) {
+    const sourceCompany = row.paymentSource?.ownerCompany?.name ?? row.paymentSource?.name ?? '__none__';
+    const destCompany = row.company?.name ?? row.property?.company?.name ?? '__none__';
+    const key = `${sourceCompany}|${destCompany}`;
+    const current = totals.get(key) ?? {
+      sourceCompany,
+      destCompany,
+      totalAdvanced: 0,
+      totalReimbursed: 0,
+    };
+    current.totalAdvanced += Number(row.amountTotal);
+    current.totalReimbursed += Number(row.reimbursementTransaction?.amountTotal ?? 0);
+    totals.set(key, current);
+  }
+
+  return [...totals.values()]
+    .map((row) => ({ ...row, balance: row.totalAdvanced - row.totalReimbursed }))
+    .sort((a, b) => b.balance - a.balance);
+}
+
 export async function byPaymentSource(year: number): Promise<{
   sourceId: string | null;
   sourceName: string;

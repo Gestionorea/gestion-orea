@@ -1,6 +1,10 @@
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { requireAuth } from '@/lib/permissions';
 import {
+  getAdvancesBalance,
+  getCompanyBalances,
+  getMonthlyEvolution,
+  getTopMerchantsYear,
   advancesSummary,
   byPaymentSource,
   statsByCategory,
@@ -10,11 +14,15 @@ import {
   yearSummary,
 } from '@/lib/stats';
 import { getTransactionYears, slugifyMerchantName } from '@/lib/transactions';
+import AdvancesBalanceCard from './AdvancesBalanceCard';
 import AdvancesSummary from './AdvancesSummary';
 import CategoryPie from './CategoryPie';
+import CompanyBalanceCard from './CompanyBalanceCard';
 import MonthlyChart from './MonthlyChart';
+import MonthlyEvolutionCard from './MonthlyEvolutionCard';
 import PaymentSourceBreakdown from './PaymentSourceBreakdown';
 import StatsCard from './StatsCard';
+import TopMerchantsYearCard from './TopMerchantsYearCard';
 import TopList from './TopList';
 import YearSelector from './YearSelector';
 
@@ -39,7 +47,21 @@ export default async function DashboardsPage({
   await requireAuth();
   const raw = await searchParams;
   const year = Number(raw.year) || new Date().getFullYear();
-  const [t, years, monthly, categories, merchants, companies, sources, advances, summary] = await Promise.all([
+  const [
+    t,
+    years,
+    monthly,
+    categories,
+    merchants,
+    companies,
+    sources,
+    advances,
+    summary,
+    companyBalances,
+    monthlyEvolution,
+    topMerchantsYear,
+    advancesBalance,
+  ] = await Promise.all([
     getTranslations('perso.compta.dashboards'),
     getTransactionYears(),
     statsByMonth(year),
@@ -49,6 +71,10 @@ export default async function DashboardsPage({
     byPaymentSource(year),
     advancesSummary(),
     yearSummary(year),
+    getCompanyBalances(year),
+    getMonthlyEvolution(12),
+    getTopMerchantsYear(year, 10),
+    getAdvancesBalance(),
   ]);
 
   const monthData = monthly.map((item) => ({
@@ -68,6 +94,13 @@ export default async function DashboardsPage({
     ...item,
     sourceName: item.sourceName === '__none__' ? t('noneSource') : item.sourceName,
   }));
+  const monthlyEvolutionData = monthlyEvolution.map((item) => {
+    const [itemYear, itemMonth] = item.month.split('-').map(Number);
+    const label = new Intl.DateTimeFormat(locale, { month: 'short', year: '2-digit' }).format(
+      new Date(itemYear, itemMonth - 1, 1),
+    );
+    return { ...item, month: label };
+  });
 
   return (
     <div className="py-8">
@@ -132,6 +165,50 @@ export default async function DashboardsPage({
           reimbursedLabel={t('reimbursed')}
           summary={advances}
           locale={locale}
+        />
+      </div>
+
+      <div className="mt-8 grid gap-6 xl:grid-cols-2">
+        <CompanyBalanceCard
+          title={t('companyBalance')}
+          emptyLabel={t('empty')}
+          noneLabel={t('noneCompany')}
+          locale={locale}
+          rows={companyBalances}
+          labels={{
+            company: t('table.company'),
+            income: t('table.income'),
+            expense: t('table.expense'),
+            balance: t('table.balance'),
+          }}
+        />
+        <MonthlyEvolutionCard
+          title={t('monthlyEvolution')}
+          incomeLabel={t('income')}
+          expenseLabel={t('expense')}
+          data={monthlyEvolutionData}
+        />
+      </div>
+
+      <div className="mt-8 grid gap-6 xl:grid-cols-2">
+        <TopMerchantsYearCard
+          title={t('topMerchantsYear')}
+          emptyLabel={t('empty')}
+          data={topMerchantsYear}
+        />
+        <AdvancesBalanceCard
+          title={t('advancesBalance')}
+          emptyLabel={t('empty')}
+          noneLabel={t('noneCompany')}
+          locale={locale}
+          rows={advancesBalance}
+          labels={{
+            source: t('table.source'),
+            destination: t('table.destination'),
+            advanced: t('table.advanced'),
+            reimbursed: t('table.reimbursed'),
+            balance: t('table.balance'),
+          }}
         />
       </div>
     </div>
