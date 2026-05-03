@@ -196,6 +196,7 @@ model Transaction {
   bankStatementImportId      String?
   bankStatementImport        BankStatementImport? @relation(fields: [bankStatementImportId], references: [id], onDelete: SetNull)
   dedupHash                  String?              @unique
+  deletedAt                  DateTime?
   createdAt                  DateTime             @default(now())
   updatedAt                  DateTime             @updatedAt
 
@@ -208,4 +209,5 @@ model Transaction {
   @@index([reconciledAt])
   @@index([isAdvance, reimbursedAt])
   @@index([bankStatementImportId])
+  @@index([deletedAt])
 }

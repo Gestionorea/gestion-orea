@@ -18,6 +18,7 @@ import {
   Receipt,
   Settings,
   Tag,
+  Trash2,
   Upload,
   Users,
   Wallet,
@@ -141,6 +142,15 @@ export default function Sidebar({ locale, userRole }: SidebarProps) {
         label: t('nav.compta.dashboards'),
         icon: BarChart3,
       },
+      ...(isOwner
+        ? [
+            {
+              href: `/${locale}/perso/comptabilite/corbeille`,
+              label: t('nav.compta.trash'),
+              icon: Trash2,
+            },
+          ]
+        : []),
     ];
 
     const dataChildren: NavItem[] = isOwner

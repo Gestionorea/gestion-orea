@@ -11,6 +11,8 @@ export type BulkDeleteResult =
 function revalidateAccountingPaths() {
   revalidatePath('/fr/perso/comptabilite');
   revalidatePath('/en/perso/comptabilite');
+  revalidatePath('/fr/perso/comptabilite/corbeille');
+  revalidatePath('/en/perso/comptabilite/corbeille');
   revalidatePath('/fr/perso/comptabilite/conciliation');
   revalidatePath('/en/perso/comptabilite/conciliation');
 }
@@ -44,8 +46,9 @@ export async function bulkDeleteByIds(formData: FormData): Promise<BulkDeleteRes
     return { ok: false, error: 'Aucune transaction selectionnee' };
   }
 
-  const result = await getDb().transaction.deleteMany({
-    where: { id: { in: ids } },
+  const result = await getDb().transaction.updateMany({
+    where: { id: { in: ids }, deletedAt: null },
+    data: { deletedAt: new Date() },
   });
 
   revalidateAccountingPaths();
@@ -68,10 +71,12 @@ export async function bulkDeleteByMonth(formData: FormData): Promise<BulkDeleteR
 
   const periodStart = new Date(year, month - 1, 1);
   const periodEnd = new Date(year, month, 1);
-  const result = await getDb().transaction.deleteMany({
+  const result = await getDb().transaction.updateMany({
     where: {
       date: { gte: periodStart, lt: periodEnd },
+      deletedAt: null,
     },
+    data: { deletedAt: new Date() },
   });
 
   revalidateAccountingPaths();

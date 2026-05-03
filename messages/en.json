@@ -361,7 +361,8 @@
         "transactions": "Transactions",
         "reconciliation": "Reconciliation",
         "importStatement": "Import statement",
-        "dashboards": "Dashboards"
+        "dashboards": "Dashboards",
+        "trash": "Trash"
       },
       "data": {
         "title": "Data",
@@ -704,6 +705,27 @@
         "confirmDelete": "Delete permanently",
         "deleting": "Deleting...",
         "selectAll": "Select all"
+      },
+      "trash": {
+        "eyebrow": "Accounting",
+        "title": "Trash",
+        "subtitle": "Recently deleted transactions. You can restore them.",
+        "banner": "{count} transactions in the trash. Restore them or delete them permanently.",
+        "empty": "The trash is empty.",
+        "selectedCount": "{count} selected",
+        "selectAll": "Select all",
+        "filterFrom": "Deleted after",
+        "filterTo": "Deleted before",
+        "filterApply": "Filter",
+        "restore": "Restore",
+        "restoreCount": "Restore {count}",
+        "hardDelete": "Delete permanently",
+        "hardDeleteCount": "Delete permanently {count}",
+        "hardDeleteDescription": "This action permanently deletes the selected transactions from the database.",
+        "deletedAt": "Deleted on",
+        "deletedBy": "By",
+        "restoreSuccess": "{count} transactions restored",
+        "hardDeleteSuccess": "{count} transactions permanently deleted"
       },
       "inlineEdit": {
         "noCategory": "— None —",

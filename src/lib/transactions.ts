@@ -286,6 +286,7 @@ function yearRange(year: number, month?: number) {
 function buildWhere(filters: TransactionFilters): Prisma.TransactionWhereInput {
   const where: Prisma.TransactionWhereInput = {
     date: yearRange(filters.year, filters.month),
+    deletedAt: null,
   };
 
   if (filters.type) where.type = filters.type;
@@ -461,8 +462,8 @@ export async function getMerchantSummary(merchantNameOrSlug: string): Promise<{
 }
 
 export async function getTransactionById(id: string): Promise<TransactionRow | null> {
-  const transaction = await getDb().transaction.findUnique({
-    where: { id },
+  const transaction = await getDb().transaction.findFirst({
+    where: { id, deletedAt: null },
     include: transactionInclude,
   });
 

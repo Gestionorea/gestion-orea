@@ -361,7 +361,8 @@
         "transactions": "Transactions",
         "reconciliation": "Conciliation",
         "importStatement": "Importer relevé",
-        "dashboards": "Tableaux de bord"
+        "dashboards": "Tableaux de bord",
+        "trash": "Corbeille"
       },
       "data": {
         "title": "Données",
@@ -704,6 +705,27 @@
         "confirmDelete": "Supprimer definitivement",
         "deleting": "Suppression...",
         "selectAll": "Tout selectionner"
+      },
+      "trash": {
+        "eyebrow": "Comptabilité",
+        "title": "Corbeille",
+        "subtitle": "Transactions supprimées récemment. Vous pouvez les restaurer.",
+        "banner": "{count} transactions dans la corbeille. Restaurez-les ou supprimez-les définitivement.",
+        "empty": "La corbeille est vide.",
+        "selectedCount": "{count} sélectionnée(s)",
+        "selectAll": "Tout sélectionner",
+        "filterFrom": "Supprimée après le",
+        "filterTo": "Supprimée avant le",
+        "filterApply": "Filtrer",
+        "restore": "Restaurer",
+        "restoreCount": "Restaurer {count}",
+        "hardDelete": "Supprimer définitivement",
+        "hardDeleteCount": "Supprimer définitivement {count}",
+        "hardDeleteDescription": "Cette action supprime définitivement les transactions sélectionnées de la base de données.",
+        "deletedAt": "Supprimée le",
+        "deletedBy": "Par",
+        "restoreSuccess": "{count} transactions restaurées",
+        "hardDeleteSuccess": "{count} transactions supprimées définitivement"
       },
       "inlineEdit": {
         "noCategory": "— Aucune —",
