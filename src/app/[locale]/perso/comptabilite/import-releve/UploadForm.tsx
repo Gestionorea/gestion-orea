@@ -11,6 +11,7 @@ import {
 import { commitImportAction, type CommitImportResult } from '@/app/actions/commit-import';
 import type { PaymentSourceItem } from '@/lib/paymentSources';
 import PreviewTable from './PreviewTable';
+import SyncButtons from './SyncButtons';
 
 function SubmitButton() {
   const t = useTranslations('perso.importStatement.form');
@@ -87,99 +88,103 @@ export default function UploadForm({
   }, []);
 
   return (
-    <form ref={formRef} action={analyzeFormAction} className="mt-8 grid max-w-3xl gap-5">
-      <input type="hidden" name="categoryOverrides" value={JSON.stringify(categoryOverrides)} />
+    <div className="mt-8 grid max-w-3xl gap-6">
+      <SyncButtons />
 
-      {analyzeState?.ok === false ? (
-        <div className="border border-red-300 bg-red-50 px-4 py-3 text-sm text-red-800">
-          {analyzeState.error}
-        </div>
-      ) : null}
+      <form ref={formRef} action={analyzeFormAction} className="grid gap-5">
+        <input type="hidden" name="categoryOverrides" value={JSON.stringify(categoryOverrides)} />
 
-      {commitState?.ok === false ? (
-        <div className="border border-red-300 bg-red-50 px-4 py-3 text-sm text-red-800">
-          <p className="font-medium">{t('commit.errorTitle')}</p>
-          <p className="mt-1">{commitState.error}</p>
-        </div>
-      ) : null}
+        {analyzeState?.ok === false ? (
+          <div className="border border-red-300 bg-red-50 px-4 py-3 text-sm text-red-800">
+            {analyzeState.error}
+          </div>
+        ) : null}
 
-      {commitState?.ok === true ? (
-        <div className="border border-green-300 bg-green-50 px-4 py-3 text-sm text-green-900">
-          <p className="font-medium">{t('commit.successTitle')}</p>
-          <p className="mt-1">
-            {commitState.categorizedCount > 0
-              ? t('commit.successDetailWithCategories', {
-                  imported: commitState.importedCount,
-                  categorized: commitState.categorizedCount,
-                  duplicates: commitState.duplicateCount,
-                })
-              : t('commit.successDetail', {
-                  imported: commitState.importedCount,
-                  duplicates: commitState.duplicateCount,
-                })}
-          </p>
-          <Link
-            href={`/${locale}/perso/comptabilite`}
-            className="mt-3 inline-flex border border-green-700 px-3 py-2 text-xs font-medium uppercase tracking-[0.16em] text-green-900 hover:bg-green-100"
+        {commitState?.ok === false ? (
+          <div className="border border-red-300 bg-red-50 px-4 py-3 text-sm text-red-800">
+            <p className="font-medium">{t('commit.errorTitle')}</p>
+            <p className="mt-1">{commitState.error}</p>
+          </div>
+        ) : null}
+
+        {commitState?.ok === true ? (
+          <div className="border border-green-300 bg-green-50 px-4 py-3 text-sm text-green-900">
+            <p className="font-medium">{t('commit.successTitle')}</p>
+            <p className="mt-1">
+              {commitState.categorizedCount > 0
+                ? t('commit.successDetailWithCategories', {
+                    imported: commitState.importedCount,
+                    categorized: commitState.categorizedCount,
+                    duplicates: commitState.duplicateCount,
+                  })
+                : t('commit.successDetail', {
+                    imported: commitState.importedCount,
+                    duplicates: commitState.duplicateCount,
+                  })}
+            </p>
+            <Link
+              href={`/${locale}/perso/comptabilite`}
+              className="mt-3 inline-flex border border-green-700 px-3 py-2 text-xs font-medium uppercase tracking-[0.16em] text-green-900 hover:bg-green-100"
+            >
+              {t('commit.viewTransactions')}
+            </Link>
+          </div>
+        ) : null}
+
+        <label className="grid gap-2 text-sm">
+          <span className="font-medium text-black">{t('form.paymentSource')}</span>
+          <select
+            name="paymentSourceId"
+            required
+            defaultValue=""
+            className="border border-gray-300 px-3 py-2 text-sm"
           >
-            {t('commit.viewTransactions')}
-          </Link>
-        </div>
-      ) : null}
+            <option value="" disabled>{t('form.paymentSourcePlaceholder')}</option>
+            {paymentSources.map((source) => (
+              <option key={source.id} value={source.id}>
+                {paymentSourceLabel(source)}
+              </option>
+            ))}
+          </select>
+        </label>
 
-      <label className="grid gap-2 text-sm">
-        <span className="font-medium text-black">{t('form.paymentSource')}</span>
-        <select
-          name="paymentSourceId"
-          required
-          defaultValue=""
-          className="border border-gray-300 px-3 py-2 text-sm"
-        >
-          <option value="" disabled>{t('form.paymentSourcePlaceholder')}</option>
-          {paymentSources.map((source) => (
-            <option key={source.id} value={source.id}>
-              {paymentSourceLabel(source)}
-            </option>
-          ))}
-        </select>
-      </label>
-
-      <label className="grid gap-2 text-sm">
-        <span className="font-medium text-black">{t('form.file')}</span>
-        <input
-          name="file"
-          type="file"
-          required
-          accept=".csv,.xlsx,.xls"
-          className="border border-gray-300 px-3 py-2 text-sm"
-        />
-      </label>
-
-      <div>
-        <SubmitButton />
-      </div>
-
-      {analyzeState?.ok === true && commitState?.ok !== true ? (
-        <div className="grid gap-4">
-          <div>
-            <h2 className="font-serif text-xl tracking-[0.06em] text-black">{t('preview.title')}</h2>
-          </div>
-          <PreviewTable
-            rows={analyzeState.preview}
-            warnings={analyzeState.warnings}
-            categories={analyzeState.categories}
-            onCategoryOverridesChange={handleCategoryOverridesChange}
+        <label className="grid gap-2 text-sm">
+          <span className="font-medium text-black">{t('form.file')}</span>
+          <input
+            name="file"
+            type="file"
+            required
+            accept=".csv,.xlsx,.xls"
+            className="border border-gray-300 px-3 py-2 text-sm"
           />
-          {newRowsCount === 0 ? (
-            <div className="border border-gray-300 bg-gray-50 px-4 py-3 text-sm text-gray-700">
-              {t('commit.noNewRows')}
-            </div>
-          ) : null}
-          <div>
-            <CommitButton formAction={commitFormAction} count={newRowsCount} />
-          </div>
+        </label>
+
+        <div>
+          <SubmitButton />
         </div>
-      ) : null}
-    </form>
+
+        {analyzeState?.ok === true && commitState?.ok !== true ? (
+          <div className="grid gap-4">
+            <div>
+              <h2 className="font-serif text-xl tracking-[0.06em] text-black">{t('preview.title')}</h2>
+            </div>
+            <PreviewTable
+              rows={analyzeState.preview}
+              warnings={analyzeState.warnings}
+              categories={analyzeState.categories}
+              onCategoryOverridesChange={handleCategoryOverridesChange}
+            />
+            {newRowsCount === 0 ? (
+              <div className="border border-gray-300 bg-gray-50 px-4 py-3 text-sm text-gray-700">
+                {t('commit.noNewRows')}
+              </div>
+            ) : null}
+            <div>
+              <CommitButton formAction={commitFormAction} count={newRowsCount} />
+            </div>
+          </div>
+        ) : null}
+      </form>
+    </div>
   );
 }

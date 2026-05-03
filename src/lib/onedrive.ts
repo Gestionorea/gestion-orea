@@ -19,6 +19,7 @@ type GraphDriveResponse = {
 
 type GraphListResponse = {
   value?: OneDriveItem[];
+  '@odata.nextLink'?: string;
 };
 
 export type OneDriveItem = {
@@ -27,6 +28,7 @@ export type OneDriveItem = {
   size: number;
   webUrl: string;
   lastModifiedDateTime: string;
+  folder?: { childCount?: number };
 };
 
 export type PingDriveResult =
@@ -163,6 +165,30 @@ async function graphFetch(path: string, init?: RequestInit): Promise<Response> {
   });
 }
 
+async function graphFetchUrl(url: string, init?: RequestInit): Promise<Response> {
+  const token = await getAccessToken();
+  const response = await fetch(url, {
+    ...init,
+    headers: {
+      ...init?.headers,
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  if (response.status !== 401) return response;
+
+  tokenCache = null;
+  const refreshedToken = await getAccessToken(true);
+
+  return await fetch(url, {
+    ...init,
+    headers: {
+      ...init?.headers,
+      Authorization: `Bearer ${refreshedToken}`,
+    },
+  });
+}
+
 async function graphJson<T>(path: string): Promise<T> {
   const response = await graphFetch(path);
 
@@ -180,6 +206,17 @@ function encodeDrivePath(folderPath: string): string {
     .split('/')
     .map((segment) => encodeURIComponent(segment))
     .join('/');
+}
+
+function normalizeFolderPath(folderPath: string): string {
+  return folderPath
+    .replace(/^\/+/g, '')
+    .replace(/\/+$/g, '')
+    .replace(/\/+/g, '/');
+}
+
+function joinDrivePath(...parts: string[]): string {
+  return normalizeFolderPath(parts.filter(Boolean).join('/'));
 }
 
 export async function pingDrive(): Promise<PingDriveResult> {
@@ -221,4 +258,121 @@ export async function listFolderItems(folderPath: string, top = 5): Promise<OneD
 
   const payload = (await response.json()) as GraphListResponse;
   return payload.value ?? [];
+}
+
+export async function downloadItemContent(itemId: string): Promise<Buffer> {
+  const env = requireEnv();
+  const response = await graphFetch(
+    `/users/${encodeURIComponent(env.userPrincipal)}/drive/items/${encodeURIComponent(itemId)}/content`,
+  );
+
+  if (!response.ok) {
+    throw new OneDriveError(`Microsoft Graph returned ${response.status}.`, response.status);
+  }
+
+  return Buffer.from(await response.arrayBuffer());
+}
+
+export async function listFolderItemsByPath(folderPath: string): Promise<OneDriveItem[]> {
+  const env = requireEnv();
+  const encodedFolderPath = encodeDrivePath(folderPath);
+  let nextUrl: string | null =
+    `${GRAPH_BASE_URL}/users/${encodeURIComponent(env.userPrincipal)}/drive/root:${encodedFolderPath}:/children?$top=200&$select=id,name,size,webUrl,lastModifiedDateTime,folder`;
+  const items: OneDriveItem[] = [];
+
+  while (nextUrl) {
+    const response = await graphFetchUrl(nextUrl);
+    if (response.status === 404) return [];
+
+    if (!response.ok) {
+      throw new OneDriveError(`Microsoft Graph returned ${response.status}.`, response.status);
+    }
+
+    const payload = (await response.json()) as GraphListResponse;
+    items.push(...(payload.value ?? []));
+    nextUrl = payload['@odata.nextLink'] ?? null;
+  }
+
+  return items;
+}
+
+export async function uploadFileToFolder(
+  folderPath: string,
+  filename: string,
+  contents: Buffer,
+): Promise<OneDriveItem> {
+  const env = requireEnv();
+  const filePath = encodeDrivePath(joinDrivePath(folderPath, filename));
+  const response = await graphFetch(
+    `/users/${encodeURIComponent(env.userPrincipal)}/drive/root:${filePath}:/content`,
+    {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/octet-stream' },
+      body: new Blob([new Uint8Array(contents)]),
+    },
+  );
+
+  if (!response.ok) {
+    throw new OneDriveError(`Microsoft Graph returned ${response.status}.`, response.status);
+  }
+
+  return (await response.json()) as OneDriveItem;
+}
+
+async function folderExists(folderPath: string): Promise<boolean> {
+  const env = requireEnv();
+  const encodedFolderPath = encodeDrivePath(folderPath);
+  const response = await graphFetch(
+    `/users/${encodeURIComponent(env.userPrincipal)}/drive/root:${encodedFolderPath}`,
+  );
+
+  if (response.status === 404) return false;
+
+  if (!response.ok) {
+    throw new OneDriveError(`Microsoft Graph returned ${response.status}.`, response.status);
+  }
+
+  return true;
+}
+
+async function createFolder(parentPath: string, folderName: string): Promise<void> {
+  const env = requireEnv();
+  const encodedParentPath = parentPath ? encodeDrivePath(parentPath) : '';
+  const parentSelector = encodedParentPath
+    ? `/drive/root:${encodedParentPath}:/children`
+    : '/drive/root/children';
+  const response = await graphFetch(
+    `/users/${encodeURIComponent(env.userPrincipal)}${parentSelector}`,
+    {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        name: folderName,
+        folder: {},
+        '@microsoft.graph.conflictBehavior': 'fail',
+      }),
+    },
+  );
+
+  if (response.status === 409) return;
+
+  if (!response.ok) {
+    throw new OneDriveError(`Microsoft Graph returned ${response.status}.`, response.status);
+  }
+}
+
+export async function ensureFolderExists(folderPath: string): Promise<void> {
+  const normalized = normalizeFolderPath(folderPath);
+  if (!normalized) return;
+
+  const parts = normalized.split('/');
+  let currentPath = '';
+
+  for (const part of parts) {
+    const nextPath = joinDrivePath(currentPath, part);
+    if (!(await folderExists(nextPath))) {
+      await createFolder(currentPath, part);
+    }
+    currentPath = nextPath;
+  }
 }

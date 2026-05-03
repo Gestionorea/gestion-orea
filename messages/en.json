@@ -421,6 +421,20 @@
         "viewTransactions": "View transactions",
         "noNewRows": "No new transaction to import (everything is already in the database).",
         "errorTitle": "Import error"
+      },
+      "sync": {
+        "title": "Automatic sync",
+        "subtitle": "Import files already deposited in OneDrive",
+        "syncReleves": "Sync OneDrive statements",
+        "syncInvoices": "Auto-attach invoices",
+        "syncing": "Syncing...",
+        "result": {
+          "filesProcessed": "{count} files processed",
+          "filesImported": "{count} statements imported",
+          "filesSkipped": "{count} already imported",
+          "matchesCreated": "{count} invoices attached automatically",
+          "errors": "Errors:"
+        }
       }
     },
     "admin": {

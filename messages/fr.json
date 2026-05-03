@@ -421,6 +421,20 @@
         "viewTransactions": "Voir les transactions",
         "noNewRows": "Aucune nouvelle transaction à importer (tout est déjà en base).",
         "errorTitle": "Erreur d'importation"
+      },
+      "sync": {
+        "title": "Synchronisation automatique",
+        "subtitle": "Importer des fichiers déjà déposés dans OneDrive",
+        "syncReleves": "Sync OneDrive Relevés",
+        "syncInvoices": "Auto-attacher factures",
+        "syncing": "Synchronisation en cours...",
+        "result": {
+          "filesProcessed": "{count} fichiers traités",
+          "filesImported": "{count} relevés importés",
+          "filesSkipped": "{count} déjà importés",
+          "matchesCreated": "{count} factures attachées automatiquement",
+          "errors": "Erreurs:"
+        }
       }
     },
     "admin": {
