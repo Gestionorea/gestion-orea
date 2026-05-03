@@ -15,6 +15,7 @@ import {
   Receipt,
   Settings,
   Tag,
+  Upload,
   Users,
   Wallet,
   type LucideIcon,
@@ -165,6 +166,11 @@ export default function Sidebar({ locale, userRole }: SidebarProps) {
             href: `/${locale}/perso/comptabilite`,
             label: t('nav.compta.transactions'),
             icon: Receipt,
+          },
+          {
+            href: `/${locale}/perso/comptabilite/import-releve`,
+            label: t('nav.compta.importStatement'),
+            icon: Upload,
           },
           {
             href: `/${locale}/perso/comptabilite/dashboards`,

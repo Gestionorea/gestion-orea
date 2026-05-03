@@ -365,10 +365,28 @@
       "compta": {
         "title": "Accounting",
         "transactions": "Transactions",
+        "importStatement": "Import statement",
         "dashboards": "Dashboards",
         "properties": "Properties",
         "companies": "Companies",
         "categories": "Categories"
+      }
+    },
+    "importStatement": {
+      "eyebrow": "Accounting",
+      "title": "Import bank statement",
+      "subtitle": "Select the account or card, then upload the CSV or Excel file.",
+      "wipBanner": "Work in progress — parser not active yet. Analysis will return an error.",
+      "form": {
+        "paymentSource": "Payment source",
+        "paymentSourcePlaceholder": "Select an account or card",
+        "file": "File (CSV or Excel)",
+        "submit": "Analyze",
+        "submitting": "Analyzing..."
+      },
+      "errors": {
+        "missingSource": "Payment source required",
+        "missingFile": "File required"
       }
     },
     "admin": {

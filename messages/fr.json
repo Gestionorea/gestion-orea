@@ -365,10 +365,28 @@
       "compta": {
         "title": "Comptabilité",
         "transactions": "Transactions",
+        "importStatement": "Importer relevé",
         "dashboards": "Dashboards",
         "properties": "Immeubles",
         "companies": "Compagnies",
         "categories": "Catégories"
+      }
+    },
+    "importStatement": {
+      "eyebrow": "Comptabilité",
+      "title": "Importer un relevé bancaire",
+      "subtitle": "Sélectionnez le compte ou la carte, puis téléversez le fichier CSV ou Excel.",
+      "wipBanner": "Page en développement — le parser n'est pas encore actif. L'analyse retournera une erreur.",
+      "form": {
+        "paymentSource": "Source de paiement",
+        "paymentSourcePlaceholder": "Choisir un compte ou une carte",
+        "file": "Fichier (CSV ou Excel)",
+        "submit": "Analyser",
+        "submitting": "Analyse en cours..."
+      },
+      "errors": {
+        "missingSource": "Source de paiement requise",
+        "missingFile": "Fichier requis"
       }
     },
     "admin": {
