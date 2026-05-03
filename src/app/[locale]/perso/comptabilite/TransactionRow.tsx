@@ -178,7 +178,7 @@ export default function TransactionRow({
         </div>
       </td>
       <td className="px-4 py-4 text-gray-600">{row.property?.name ?? '-'}</td>
-      <td className="px-4 py-4 text-gray-600">{row.company?.name ?? '-'}</td>
+      <td className="px-4 py-4 text-gray-600">{row.companyDisplay ?? row.company?.name ?? '-'}</td>
       <td className="px-4 py-4 text-gray-600">
         {canReconcile ? (
           <form action={toggleReconciledAction} className="flex items-center gap-2" onClick={stopRowNavigation}>

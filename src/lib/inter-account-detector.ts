@@ -22,12 +22,19 @@ type DetectorDb = {
   paymentSource: {
     findUnique: (args: {
       where: { id: string };
-      select: { ownerCompanyId: true };
-    }) => Promise<{ ownerCompanyId: string | null } | null>;
+      select: {
+        ownerCompanyId: true;
+        coOwners: { select: { companyId: true } };
+      };
+    }) => Promise<{ ownerCompanyId: string | null; coOwners?: Array<{ companyId: string }> } | null>;
     findMany: (args: {
       where: {
         archived: false;
         ownerCompanyId?: string | null;
+        OR?: Array<
+          | { ownerCompanyId: { in: string[] } }
+          | { coOwners: { some: { companyId: { in: string[] } } } }
+        >;
         kind?: 'card';
         id?: { not: string };
       };
@@ -79,26 +86,37 @@ function isMobileDeposit(description: string): boolean {
   return /\bdepot\s+mobile\b/i.test(normalizeDescription(description));
 }
 
-async function ownerCompanyIdForSource(db: DetectorDb, paymentSourceId: string): Promise<string | null> {
+async function ownerCompanyIdsForSource(db: DetectorDb, paymentSourceId: string): Promise<string[]> {
   const source = await db.paymentSource.findUnique({
     where: { id: paymentSourceId },
-    select: { ownerCompanyId: true },
+    select: {
+      ownerCompanyId: true,
+      coOwners: { select: { companyId: true } },
+    },
   });
 
-  return source?.ownerCompanyId ?? null;
+  if (!source) return [];
+  const coOwnerIds = source.coOwners?.map((owner) => owner.companyId) ?? [];
+  if (coOwnerIds.length > 0) return coOwnerIds;
+  return source.ownerCompanyId ? [source.ownerCompanyId] : [];
 }
 
 async function findSourcesForOwner(
   db: DetectorDb,
   paymentSourceId: string,
-  ownerCompanyId: string | null,
+  ownerCompanyIds: string[],
   kind?: 'card',
 ): Promise<string[]> {
+  if (ownerCompanyIds.length === 0) return [];
+
   const sources = await db.paymentSource.findMany({
     where: {
       archived: false,
       id: { not: paymentSourceId },
-      ownerCompanyId,
+      OR: [
+        { ownerCompanyId: { in: ownerCompanyIds } },
+        { coOwners: { some: { companyId: { in: ownerCompanyIds } } } },
+      ],
       ...(kind ? { kind } : {}),
     },
     select: { id: true },
@@ -144,13 +162,13 @@ export async function detectInterAccountTransfer(
   db: DetectorDb = getDb(),
 ): Promise<DetectionMatch | null> {
   const normalizedDescription = normalizeDescription(input.description);
-  const ownerCompanyId = await ownerCompanyIdForSource(db, input.paymentSourceId);
+  const ownerCompanyIds = await ownerCompanyIdsForSource(db, input.paymentSourceId);
 
   if (input.type === 'expense') {
     if (isInteracTransfer(input.description)) return null;
 
     if (isCardPayment(input.description)) {
-      const cardSourceIds = await findSourcesForOwner(db, input.paymentSourceId, ownerCompanyId, 'card');
+      const cardSourceIds = await findSourcesForOwner(db, input.paymentSourceId, ownerCompanyIds, 'card');
       const match = await findUniqueTransactionMatch(db, input, cardSourceIds, 'expense', 3);
       if (!match || !match.paymentSourceId) return null;
 
@@ -164,7 +182,7 @@ export async function detectInterAccountTransfer(
   }
 
   if (input.type === 'income' && isMobileDeposit(normalizedDescription)) {
-    const otherSourceIds = await findSourcesForOwner(db, input.paymentSourceId, ownerCompanyId);
+    const otherSourceIds = await findSourcesForOwner(db, input.paymentSourceId, ownerCompanyIds);
     const match = await findUniqueTransactionMatch(db, input, otherSourceIds, 'expense', 0);
     if (!match || !match.paymentSourceId) return null;
 

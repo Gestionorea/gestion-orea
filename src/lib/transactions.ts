@@ -40,6 +40,7 @@ export type TransactionRow = {
     isPersonal: boolean;
     ownerCompanyId: string | null;
     ownerCompany: { id: string; name: string } | null;
+    coOwners?: Array<{ id: string; companyId: string; companyName: string; percent: number }>;
   } | null;
   isAdvance: boolean;
   reimbursedAt: Date | null;
@@ -50,8 +51,9 @@ export type TransactionRow = {
   propertyId: string | null;
   companyId: string | null;
   categoryId: string | null;
-  property: { id: string; name: string } | null;
+  property: { id: string; name: string; coOwners?: Array<{ id: string; companyId: string; companyName: string; percent: number }> } | null;
   company: { id: string; name: string } | null;
+  companyDisplay?: string | null;
   category: { id: string; name: string } | null;
   createdBy: { id: string; username: string } | null;
   createdAt: Date;
@@ -110,7 +112,21 @@ export type TransactionFilters = {
 };
 
 const transactionInclude = {
-  property: { select: { id: true, name: true } },
+  property: {
+    select: {
+      id: true,
+      name: true,
+      coOwners: {
+        select: {
+          id: true,
+          companyId: true,
+          percent: true,
+          company: { select: { id: true, name: true } },
+        },
+        orderBy: { percent: 'desc' },
+      },
+    },
+  },
   company: { select: { id: true, name: true } },
   category: { select: { id: true, name: true } },
   paymentSource: {
@@ -121,6 +137,15 @@ const transactionInclude = {
       isPersonal: true,
       ownerCompanyId: true,
       ownerCompany: { select: { id: true, name: true } },
+      coOwners: {
+        select: {
+          id: true,
+          companyId: true,
+          percent: true,
+          company: { select: { id: true, name: true } },
+        },
+        orderBy: { percent: 'desc' },
+      },
     },
   },
   createdBy: { select: { id: true, username: true } },
@@ -178,6 +203,12 @@ function serialize(transaction: {
     isPersonal: boolean;
     ownerCompanyId: string | null;
     ownerCompany: { id: string; name: string } | null;
+    coOwners: Array<{
+      id: string;
+      companyId: string;
+      percent: Prisma.Decimal;
+      company: { id: string; name: string };
+    }>;
   } | null;
   isAdvance: boolean;
   reimbursedAt: Date | null;
@@ -188,7 +219,16 @@ function serialize(transaction: {
   propertyId: string | null;
   companyId: string | null;
   categoryId: string | null;
-  property: { id: string; name: string } | null;
+  property: {
+    id: string;
+    name: string;
+    coOwners: Array<{
+      id: string;
+      companyId: string;
+      percent: Prisma.Decimal;
+      company: { id: string; name: string };
+    }>;
+  } | null;
   company: { id: string; name: string } | null;
   category: { id: string; name: string } | null;
   createdBy: { id: string; username: string } | null;
@@ -210,8 +250,42 @@ function serialize(transaction: {
     merchantName: string;
   } | null;
 }, visualStatus?: TransactionVisualStatus): TransactionRow {
+  const paymentSourceCoOwners =
+    transaction.paymentSource?.coOwners.map((owner) => ({
+      id: owner.id,
+      companyId: owner.companyId,
+      companyName: owner.company.name,
+      percent: Number(owner.percent),
+    })) ?? [];
+  const propertyCoOwners =
+    transaction.property?.coOwners.map((owner) => ({
+      id: owner.id,
+      companyId: owner.companyId,
+      companyName: owner.company.name,
+      percent: Number(owner.percent),
+    })) ?? [];
+  const companyDisplay =
+    paymentSourceCoOwners.length > 1
+      ? paymentSourceCoOwners.map((owner) => owner.companyName).join(' / ')
+      : propertyCoOwners.length > 1
+        ? propertyCoOwners.map((owner) => owner.companyName).join(' / ')
+        : transaction.company?.name ?? null;
+
   return {
     ...transaction,
+    paymentSource: transaction.paymentSource
+      ? {
+          ...transaction.paymentSource,
+          coOwners: paymentSourceCoOwners,
+        }
+      : null,
+    property: transaction.property
+      ? {
+          ...transaction.property,
+          coOwners: propertyCoOwners,
+        }
+      : null,
+    companyDisplay,
     amountBeforeTax: transaction.amountBeforeTax.toFixed(2),
     gst: transaction.gst?.toFixed(2) ?? null,
     qst: transaction.qst?.toFixed(2) ?? null,

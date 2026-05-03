@@ -654,6 +654,19 @@
           "notFound": "Élément introuvable."
         }
       },
+      "coOwners": {
+        "title": "Co-propriétaires",
+        "subtitle": "Définissez les compagnies propriétaires et leur pourcentage. Laissez vide pour utiliser le propriétaire principal à 100%.",
+        "add": "+ Ajouter compagnie",
+        "remove": "Retirer",
+        "percent": "Pourcentage",
+        "none": "Aucune",
+        "monoOwner": "Mono-propriétaire: {owner} 100%",
+        "sumStatus": "Total: {total}%",
+        "save": "Sauvegarder les co-propriétaires",
+        "saving": "Sauvegarde...",
+        "saveSuccess": "Co-propriétaires sauvegardés."
+      },
       "onedrive": {
         "title": "OneDrive",
         "eyebrow": "Admin",

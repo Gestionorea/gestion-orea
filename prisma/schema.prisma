@@ -70,25 +70,43 @@ enum PaymentSourceKind {
 }
 
 model Company {
-  id             String          @id @default(cuid())
-  name           String          @unique
-  createdAt      DateTime        @default(now())
-  updatedAt      DateTime        @updatedAt
-  properties     Property[]
-  transactions   Transaction[]
-  paymentSources PaymentSource[] @relation("CompanyPaymentSources")
+  id                      String                   @id @default(cuid())
+  name                    String                   @unique
+  createdAt               DateTime                 @default(now())
+  updatedAt               DateTime                 @updatedAt
+  properties              Property[]
+  transactions            Transaction[]
+  paymentSources          PaymentSource[]          @relation("CompanyPaymentSources")
+  paymentSourceOwnerships PaymentSourceOwnership[]
+  propertyOwnerships      PropertyOwnership[]
 }
 
 model Property {
-  id           String        @id @default(cuid())
+  id           String              @id @default(cuid())
   name         String
   address      String?
   companyId    String?
-  company      Company?      @relation(fields: [companyId], references: [id], onDelete: SetNull)
-  createdAt    DateTime      @default(now())
-  updatedAt    DateTime      @updatedAt
+  company      Company?            @relation(fields: [companyId], references: [id], onDelete: SetNull)
+  createdAt    DateTime            @default(now())
+  updatedAt    DateTime            @updatedAt
   transactions Transaction[]
+  coOwners     PropertyOwnership[]
 
+  @@index([companyId])
+}
+
+model PropertyOwnership {
+  id         String   @id @default(cuid())
+  propertyId String
+  property   Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  companyId  String
+  company    Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  percent    Decimal  @db.Decimal(5, 2)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@unique([propertyId, companyId])
+  @@index([propertyId])
   @@index([companyId])
 }
 
@@ -117,23 +135,39 @@ model InteracContact {
 }
 
 model PaymentSource {
-  id                     String                @id @default(cuid())
+  id                     String                   @id @default(cuid())
   name                   String
   kind                   PaymentSourceKind
   lastDigits             String?
-  isPersonal             Boolean               @default(false)
+  isPersonal             Boolean                  @default(false)
   ownerCompanyId         String?
-  ownerCompany           Company?              @relation("CompanyPaymentSources", fields: [ownerCompanyId], references: [id], onDelete: SetNull)
-  archived               Boolean               @default(false)
+  ownerCompany           Company?                 @relation("CompanyPaymentSources", fields: [ownerCompanyId], references: [id], onDelete: SetNull)
+  archived               Boolean                  @default(false)
   statementColumnMapping Json?
-  createdAt              DateTime              @default(now())
-  updatedAt              DateTime              @updatedAt
+  createdAt              DateTime                 @default(now())
+  updatedAt              DateTime                 @updatedAt
   transactions           Transaction[]
   bankStatementImports   BankStatementImport[]
+  coOwners               PaymentSourceOwnership[]
 
   @@index([ownerCompanyId])
   @@index([isPersonal])
   @@index([archived])
+}
+
+model PaymentSourceOwnership {
+  id              String        @id @default(cuid())
+  paymentSourceId String
+  paymentSource   PaymentSource @relation(fields: [paymentSourceId], references: [id], onDelete: Cascade)
+  companyId       String
+  company         Company       @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  percent         Decimal       @db.Decimal(5, 2)
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  @@unique([paymentSourceId, companyId])
+  @@index([paymentSourceId])
+  @@index([companyId])
 }
 
 model BankStatementImport {

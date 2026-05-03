@@ -654,6 +654,19 @@
           "notFound": "Item not found."
         }
       },
+      "coOwners": {
+        "title": "Co-owners",
+        "subtitle": "Define owner companies and their percentage. Leave empty to use the principal owner at 100%.",
+        "add": "+ Add company",
+        "remove": "Remove",
+        "percent": "Percent",
+        "none": "None",
+        "monoOwner": "Single owner: {owner} 100%",
+        "sumStatus": "Total: {total}%",
+        "save": "Save co-owners",
+        "saving": "Saving...",
+        "saveSuccess": "Co-owners saved."
+      },
       "onedrive": {
         "title": "OneDrive",
         "eyebrow": "Admin",
