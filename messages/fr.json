@@ -365,6 +365,7 @@
       "compta": {
         "title": "Comptabilité",
         "transactions": "Transactions",
+        "reconciliation": "Conciliation",
         "importStatement": "Importer relevé",
         "dashboards": "Dashboards",
         "properties": "Immeubles",
@@ -456,6 +457,30 @@
           "matchesCreated": "{count} factures attachées automatiquement",
           "errors": "Erreurs:"
         }
+      }
+    },
+    "reconciliation": {
+      "eyebrow": "Comptabilité",
+      "title": "Conciliation des transactions",
+      "subtitle": "Marquez les transactions comme conciliées avec votre comptable.",
+      "stats": "{reconciled}/{total} conciliées ({percent}%)",
+      "filterAll": "Toutes",
+      "filterReconciled": "Conciliées",
+      "filterUnreconciled": "Non conciliées",
+      "selectAll": "Tout sélectionner",
+      "bulkReconcile": "Concilier {count} sélectionnées",
+      "bulkUnreconcile": "Déconcilier {count} sélectionnées",
+      "exportXlsx": "Exporter Excel",
+      "exporting": "Export en cours...",
+      "notReconciled": "Non conciliée",
+      "columns": {
+        "date": "Date",
+        "merchant": "Marchand",
+        "total": "Total",
+        "category": "Catégorie",
+        "company": "Compagnie",
+        "source": "Source",
+        "reconciled": "Conciliation"
       }
     },
     "admin": {

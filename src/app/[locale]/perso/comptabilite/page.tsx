@@ -17,6 +17,7 @@ import TransactionFilters from './TransactionFilters';
 import TransactionList from './TransactionList';
 import MonthNavigator from './MonthNavigator';
 import YearTabs from './YearTabs';
+import { ExportXlsxButton } from './conciliation/ConciliationList';
 
 export default async function AccountingPage({
   params,
@@ -87,6 +88,19 @@ export default async function AccountingPage({
   );
   const activeMonth = isAllMonthMode ? 'all' : String(month);
   const activeSearchParams = { ...normalizedSearchParams, year: String(year), month: activeMonth };
+  const exportFilters = {
+    year,
+    month,
+    type,
+    paymentMethod,
+    taxRegime,
+    propertyId: typeof raw.propertyId === 'string' ? raw.propertyId : undefined,
+    companyId: typeof raw.companyId === 'string' ? raw.companyId : undefined,
+    categoryId: typeof raw.categoryId === 'string' ? raw.categoryId : undefined,
+    q: typeof raw.q === 'string' ? raw.q : undefined,
+    sortBy,
+    sortOrder,
+  };
 
   return (
     <div className="py-8">
@@ -102,14 +116,17 @@ export default async function AccountingPage({
             })}
           </p>
         </div>
-        {canMutate ? (
-          <Link
-            href={`/${locale}/perso/comptabilite/nouvelle`}
-            className="inline-flex bg-black px-4 py-3 text-xs font-medium uppercase tracking-[0.18em] text-white"
-          >
-            {t('newButton')}
-          </Link>
-        ) : null}
+        <div className="flex flex-wrap gap-3">
+          <ExportXlsxButton filters={exportFilters} />
+          {canMutate ? (
+            <Link
+              href={`/${locale}/perso/comptabilite/nouvelle`}
+              className="inline-flex bg-black px-4 py-3 text-xs font-medium uppercase tracking-[0.18em] text-white"
+            >
+              {t('newButton')}
+            </Link>
+          ) : null}
+        </div>
       </div>
       <YearTabs years={years} activeYear={year} locale={locale} />
       <MonthNavigator

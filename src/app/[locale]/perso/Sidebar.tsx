@@ -8,6 +8,7 @@ import {
   BarChart3,
   Briefcase,
   Building,
+  CheckSquare,
   CreditCard,
   Home,
   Lock,
@@ -89,6 +90,7 @@ export default function Sidebar({ locale, userRole }: SidebarProps) {
   const [collapsed, setCollapsed] = useState(false);
   const storageLoadedRef = useRef(false);
   const isOwner = userRole === 'owner';
+  const canReconcile = userRole === 'owner' || userRole === 'accountant';
 
   useEffect(() => {
     try {
@@ -167,6 +169,15 @@ export default function Sidebar({ locale, userRole }: SidebarProps) {
             label: t('nav.compta.transactions'),
             icon: Receipt,
           },
+          ...(canReconcile
+            ? [
+                {
+                  href: `/${locale}/perso/comptabilite/conciliation`,
+                  label: t('nav.compta.reconciliation'),
+                  icon: CheckSquare,
+                },
+              ]
+            : []),
           {
             href: `/${locale}/perso/comptabilite/import-releve`,
             label: t('nav.compta.importStatement'),
@@ -189,7 +200,7 @@ export default function Sidebar({ locale, userRole }: SidebarProps) {
           ]
         : []),
     ];
-  }, [isOwner, locale, t]);
+  }, [canReconcile, isOwner, locale, t]);
 
   return (
     <aside

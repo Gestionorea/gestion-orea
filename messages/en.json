@@ -365,6 +365,7 @@
       "compta": {
         "title": "Accounting",
         "transactions": "Transactions",
+        "reconciliation": "Reconciliation",
         "importStatement": "Import statement",
         "dashboards": "Dashboards",
         "properties": "Properties",
@@ -456,6 +457,30 @@
           "matchesCreated": "{count} invoices attached automatically",
           "errors": "Errors:"
         }
+      }
+    },
+    "reconciliation": {
+      "eyebrow": "Accounting",
+      "title": "Transaction reconciliation",
+      "subtitle": "Mark transactions as reconciled with your accountant.",
+      "stats": "{reconciled}/{total} reconciled ({percent}%)",
+      "filterAll": "All",
+      "filterReconciled": "Reconciled",
+      "filterUnreconciled": "Unreconciled",
+      "selectAll": "Select all",
+      "bulkReconcile": "Reconcile {count} selected",
+      "bulkUnreconcile": "Unreconcile {count} selected",
+      "exportXlsx": "Export Excel",
+      "exporting": "Exporting...",
+      "notReconciled": "Not reconciled",
+      "columns": {
+        "date": "Date",
+        "merchant": "Merchant",
+        "total": "Total",
+        "category": "Category",
+        "company": "Company",
+        "source": "Source",
+        "reconciled": "Reconciliation"
       }
     },
     "admin": {
