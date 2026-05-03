@@ -1,6 +1,8 @@
 import { getTranslations } from 'next-intl/server';
+import type { CategoryItem } from '@/lib/categories';
 import { slugifyMerchantName, type TransactionRow, type TransactionSortBy, type TransactionSortOrder } from '@/lib/transactions';
 import TransactionListClient, { type TransactionListItem, type TransactionListLabels } from './TransactionListClient';
+import type { InlineCategoryOption } from './InlineCategorySelect';
 
 export default async function TransactionList({
   rows,
@@ -8,6 +10,7 @@ export default async function TransactionList({
   canMutate,
   canReconcile,
   canDelete = false,
+  categories = [],
   sortBy = 'date',
   sortOrder = 'desc',
   searchParams = {},
@@ -18,6 +21,7 @@ export default async function TransactionList({
   canMutate: boolean;
   canReconcile: boolean;
   canDelete?: boolean;
+  categories?: CategoryItem[];
   sortBy?: TransactionSortBy;
   sortOrder?: TransactionSortOrder;
   searchParams?: Record<string, string>;
@@ -32,6 +36,7 @@ export default async function TransactionList({
       type: t('columns.type'),
       total: t('columns.total'),
       category: t('columns.category'),
+      justification: t('inlineEdit.justificationHeader'),
       paymentSource: t('columns.paymentSource'),
       property: t('columns.property'),
       company: t('columns.company'),
@@ -57,6 +62,11 @@ export default async function TransactionList({
       readOnly: t('readOnly'),
     },
   }));
+  const categoryOptions: InlineCategoryOption[] = categories.map((category) => ({
+    id: category.id,
+    name: category.name,
+    type: category.type,
+  }));
 
   return (
     <TransactionListClient
@@ -65,6 +75,7 @@ export default async function TransactionList({
       canMutate={canMutate}
       canReconcile={canReconcile}
       canDelete={canDelete}
+      categories={categoryOptions}
       sortBy={sortBy}
       sortOrder={sortOrder}
       searchParams={searchParams}

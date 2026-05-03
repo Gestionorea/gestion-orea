@@ -171,6 +171,7 @@ export default async function AccountingPage({
         canMutate={canMutate}
         canReconcile={canReconcile}
         canDelete={canDelete}
+        categories={categories}
         sortBy={sortBy}
         sortOrder={sortOrder}
         searchParams={activeSearchParams}

@@ -6,6 +6,8 @@ import { useRouter } from 'next/navigation';
 import type { MouseEvent } from 'react';
 import { deleteTransactionAction, toggleReconciledAction } from '@/app/actions/transactions';
 import type { TransactionRow as TransactionRowData, TransactionVisualStatus } from '@/lib/transactions';
+import InlineCategorySelect, { type InlineCategoryOption } from './InlineCategorySelect';
+import InlineJustificationInput from './InlineJustificationInput';
 
 export type TransactionRowLabels = {
   type: string;
@@ -50,6 +52,7 @@ export default function TransactionRow({
   canMutate,
   canReconcile,
   canDelete = false,
+  categories = [],
   selected = false,
   onToggleSelected,
   labels,
@@ -61,6 +64,7 @@ export default function TransactionRow({
   canMutate: boolean;
   canReconcile: boolean;
   canDelete?: boolean;
+  categories?: InlineCategoryOption[];
   selected?: boolean;
   onToggleSelected?: (id: string) => void;
   labels: TransactionRowLabels;
@@ -124,7 +128,28 @@ export default function TransactionRow({
           )}
         </div>
       </td>
-      <td className="px-4 py-4 text-gray-600">{row.category?.name ?? '-'}</td>
+      <td className="px-4 py-4 text-gray-600">
+        {canMutate ? (
+          <InlineCategorySelect
+            transactionId={row.id}
+            currentCategoryId={row.categoryId}
+            categories={categories}
+          />
+        ) : (
+          <div className="grid gap-1">
+            <span>{row.category?.name ?? '-'}</span>
+            {row.justification ? <span className="text-xs text-gray-500">{row.justification}</span> : null}
+          </div>
+        )}
+      </td>
+      {canMutate ? (
+        <td className="px-4 py-4 text-gray-600">
+          <InlineJustificationInput
+            transactionId={row.id}
+            currentJustification={row.justification}
+          />
+        </td>
+      ) : null}
       <td className="px-4 py-4 text-gray-600">
         <div className="flex flex-col gap-2">
           <span>

@@ -5,6 +5,7 @@ import { useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import type { TransactionRow, TransactionSortBy, TransactionSortOrder } from '@/lib/transactions';
 import BulkDeleteBar from './BulkDeleteBar';
+import type { InlineCategoryOption } from './InlineCategorySelect';
 import ClickableTransactionRow, { type TransactionRowLabels } from './TransactionRow';
 
 export type TransactionListItem = {
@@ -22,6 +23,7 @@ export type TransactionListLabels = {
     type: string;
     total: string;
     category: string;
+    justification: string;
     paymentSource: string;
     property: string;
     company: string;
@@ -36,6 +38,7 @@ export default function TransactionListClient({
   canMutate,
   canReconcile,
   canDelete,
+  categories,
   sortBy,
   sortOrder,
   searchParams,
@@ -47,6 +50,7 @@ export default function TransactionListClient({
   canMutate: boolean;
   canReconcile: boolean;
   canDelete: boolean;
+  categories: InlineCategoryOption[];
   sortBy: TransactionSortBy;
   sortOrder: TransactionSortOrder;
   searchParams: Record<string, string>;
@@ -148,6 +152,7 @@ export default function TransactionListClient({
               <th className="px-4 py-3 font-medium">{labels.columns.type}</th>
               {renderSortableHeader('total', labels.columns.total)}
               <th className="px-4 py-3 font-medium">{labels.columns.category}</th>
+              {canMutate ? <th className="px-4 py-3 font-medium">{labels.columns.justification}</th> : null}
               {renderSortableHeader('paymentSource', labels.columns.paymentSource)}
               <th className="px-4 py-3 font-medium">{labels.columns.property}</th>
               {renderSortableHeader('company', labels.columns.company)}
@@ -166,6 +171,7 @@ export default function TransactionListClient({
                 canMutate={canMutate}
                 canReconcile={canReconcile}
                 canDelete={canDelete}
+                categories={categories}
                 selected={validSelectedIds.includes(item.row.id)}
                 onToggleSelected={toggleRow}
                 labels={item.labels}

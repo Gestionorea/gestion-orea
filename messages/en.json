@@ -705,6 +705,11 @@
         "deleting": "Deleting...",
         "selectAll": "Select all"
       },
+      "inlineEdit": {
+        "noCategory": "— None —",
+        "justificationPlaceholder": "Quick note...",
+        "justificationHeader": "Justification"
+      },
       "detail": {
         "eyebrow": "Transaction",
         "sectionFinancials": "Financial details",
