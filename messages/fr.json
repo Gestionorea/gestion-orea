@@ -406,11 +406,26 @@
         "typeIncome": "Entrée",
         "typeExpense": "Sortie",
         "categoryNone": "— Aucune —",
+        "createCategory": "+ Créer nouvelle catégorie...",
         "suggestion": "Suggestion: {reason}",
         "suggestionConfidenceHigh": "Suggestion certaine",
         "suggestionConfidenceMedium": "Suggestion probable",
         "suggestionConfidenceLow": "Suggestion incertaine",
         "footer": "{newCount} nouvelles, {duplicateCount} doublons"
+      },
+      "createCategory": {
+        "title": "Nouvelle catégorie",
+        "name": "Nom",
+        "type": "Type",
+        "typeIncome": "Revenu",
+        "typeExpense": "Dépense",
+        "typeBoth": "Les deux",
+        "description": "Description (optionnel)",
+        "submit": "Créer",
+        "cancel": "Annuler",
+        "submitting": "Création...",
+        "similarFound": "Une catégorie similaire existe: \"{name}\"",
+        "useSimilar": "Utiliser \"{name}\""
       },
       "commit": {
         "submit": "Importer {count} transactions",
@@ -508,7 +523,9 @@
         },
         "errors": {
           "required": "Ce champ est obligatoire.",
-          "invalid": "Valeur invalide."
+          "invalid": "Valeur invalide.",
+          "duplicate": "Une catégorie similaire existe déjà: \"{name}\"",
+          "viewExisting": "Voir cette catégorie"
         }
       },
       "companies": {

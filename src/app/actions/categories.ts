@@ -2,17 +2,24 @@
 
 import { redirect } from 'next/navigation';
 import {
+  CategoryDuplicateError,
   createCategory,
   deleteCategory,
+  getCategoryById,
   isCategoryType,
   updateCategory,
+  type CategoryItem,
 } from '@/lib/categories';
 import { requireOwner } from '@/lib/permissions';
 
 export type CategoryActionState = {
   success: boolean;
+  category?: Pick<CategoryItem, 'id' | 'name' | 'type' | 'description'>;
   error?: string;
   fieldErrors?: Record<string, string>;
+  similarCategoryId?: string;
+  similarCategoryName?: string;
+  similarCategory?: Pick<CategoryItem, 'id' | 'name' | 'type' | 'description'>;
 };
 
 function getString(formData: FormData, key: string): string {
@@ -45,7 +52,25 @@ export async function createCategoryAction(
   const input = parseInput(formData);
   const error = validate(input);
   if (error || !input.type) return error ?? { success: false, fieldErrors: { type: 'invalid' } };
-  await createCategory({ ...input, type: input.type });
+  const redirectAfterCreate = getString(formData, 'redirect') !== 'false';
+
+  try {
+    const category = await createCategory({ ...input, type: input.type });
+    if (!redirectAfterCreate) return { success: true, category };
+  } catch (error) {
+    if (error instanceof CategoryDuplicateError) {
+      return {
+        success: false,
+        error: 'duplicate',
+        similarCategoryId: error.similarCategory.id,
+        similarCategoryName: error.similarCategory.name,
+        similarCategory: error.similarCategory,
+      };
+    }
+
+    throw error;
+  }
+
   redirect('/fr/perso/admin/categories');
 }
 
@@ -66,4 +91,9 @@ export async function deleteCategoryAction(formData: FormData): Promise<void> {
   await requireOwner();
   await deleteCategory(getString(formData, 'id'));
   redirect('/fr/perso/admin/categories');
+}
+
+export async function getCategoryAction(id: string): Promise<Pick<CategoryItem, 'id' | 'name' | 'type' | 'description'> | null> {
+  await requireOwner();
+  return await getCategoryById(id);
 }

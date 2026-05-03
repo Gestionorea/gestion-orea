@@ -3,6 +3,9 @@
 import { useTranslations } from 'next-intl';
 import { useEffect, useMemo, useState } from 'react';
 import type { PreviewCategory, PreviewRow } from '@/app/actions/analyze-statement';
+import CreateCategoryModal from './CreateCategoryModal';
+
+const CREATE_CATEGORY_VALUE = '__create_category__';
 
 export default function PreviewTable({
   rows,
@@ -18,6 +21,8 @@ export default function PreviewTable({
   const t = useTranslations('perso.importStatement.preview');
   const newCount = rows.filter((row) => row.status === 'new').length;
   const duplicateCount = rows.length - newCount;
+  const [availableCategories, setAvailableCategories] = useState<PreviewCategory[]>(categories);
+  const [createCategoryRowNumber, setCreateCategoryRowNumber] = useState<number | null>(null);
   const initialOverrides = useMemo(
     () =>
       Object.fromEntries(
@@ -35,11 +40,15 @@ export default function PreviewTable({
   }, [initialOverrides]);
 
   useEffect(() => {
+    setAvailableCategories(categories);
+  }, [categories]);
+
+  useEffect(() => {
     onCategoryOverridesChange(categoryOverrides);
   }, [categoryOverrides, onCategoryOverridesChange]);
 
   function categoriesForRow(row: PreviewRow): PreviewCategory[] {
-    return categories.filter((category) => category.type === 'both' || category.type === row.type);
+    return availableCategories.filter((category) => category.type === 'both' || category.type === row.type);
   }
 
   function confidenceLabel(row: PreviewRow): string {
@@ -47,6 +56,8 @@ export default function PreviewTable({
     if (row.suggestionConfidence === 'medium') return t('suggestionConfidenceMedium');
     return t('suggestionConfidenceLow');
   }
+
+  const createCategoryRow = rows.find((row) => row.rowNumber === createCategoryRowNumber) ?? null;
 
   return (
     <section className="grid gap-4">
@@ -92,15 +103,21 @@ export default function PreviewTable({
                       disabled={isDuplicate}
                       value={categoryOverrides[row.rowNumber] ?? ''}
                       onChange={(event) => {
-                        const value = event.target.value || null;
+                        const value = event.target.value;
+                        if (value === CREATE_CATEGORY_VALUE) {
+                          setCreateCategoryRowNumber(row.rowNumber);
+                          return;
+                        }
+
                         setCategoryOverrides((current) => ({
                           ...current,
-                          [row.rowNumber]: value,
+                          [row.rowNumber]: value || null,
                         }));
                       }}
                       className="w-full border border-gray-300 bg-white px-2 py-2 text-sm disabled:cursor-not-allowed disabled:bg-gray-100"
                     >
                       <option value="">{t('categoryNone')}</option>
+                      <option value={CREATE_CATEGORY_VALUE}>{t('createCategory')}</option>
                       {categoriesForRow(row).map((category) => (
                         <option key={category.id} value={category.id}>
                           {category.name}
@@ -137,6 +154,23 @@ export default function PreviewTable({
           </tfoot>
         </table>
       </div>
+
+      {createCategoryRow ? (
+        <CreateCategoryModal
+          defaultType={createCategoryRow.type}
+          onCancel={() => setCreateCategoryRowNumber(null)}
+          onCreated={(category) => {
+            setAvailableCategories((current) =>
+              current.some((item) => item.id === category.id) ? current : [...current, category],
+            );
+            setCategoryOverrides((current) => ({
+              ...current,
+              [createCategoryRow.rowNumber]: category.id,
+            }));
+            setCreateCategoryRowNumber(null);
+          }}
+        />
+      ) : null}
     </section>
   );
 }

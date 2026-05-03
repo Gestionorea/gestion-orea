@@ -406,11 +406,26 @@
         "typeIncome": "Income",
         "typeExpense": "Expense",
         "categoryNone": "— None —",
+        "createCategory": "+ Create new category...",
         "suggestion": "Suggestion: {reason}",
         "suggestionConfidenceHigh": "High-confidence suggestion",
         "suggestionConfidenceMedium": "Likely suggestion",
         "suggestionConfidenceLow": "Low-confidence suggestion",
         "footer": "{newCount} new, {duplicateCount} duplicates"
+      },
+      "createCategory": {
+        "title": "New category",
+        "name": "Name",
+        "type": "Type",
+        "typeIncome": "Income",
+        "typeExpense": "Expense",
+        "typeBoth": "Both",
+        "description": "Description (optional)",
+        "submit": "Create",
+        "cancel": "Cancel",
+        "submitting": "Creating...",
+        "similarFound": "A similar category exists: \"{name}\"",
+        "useSimilar": "Use \"{name}\""
       },
       "commit": {
         "submit": "Import {count} transactions",
@@ -508,7 +523,9 @@
         },
         "errors": {
           "required": "This field is required.",
-          "invalid": "Invalid value."
+          "invalid": "Invalid value.",
+          "duplicate": "A similar category already exists: \"{name}\"",
+          "viewExisting": "View this category"
         }
       },
       "companies": {

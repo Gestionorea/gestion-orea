@@ -1,5 +1,7 @@
 import { normalizeDescription } from './dedup-hash';
 import { getDb } from './db';
+import { listCategories } from './categories';
+import { detectCategoryByKeywords } from './keyword-detector';
 
 export type SuggestionInput = {
   paymentSourceId: string;
@@ -44,6 +46,7 @@ function chunks<T>(items: T[], size: number): T[][] {
 export async function suggestCategoryBatch(inputs: SuggestionInput[]): Promise<Map<number, Suggestion>> {
   const suggestions = new Map<number, Suggestion>();
   if (inputs.length === 0) return suggestions;
+  const allCategories = await listCategories();
 
   const normalizedInputs: NormalizedInput[] = inputs.map((input, index) => {
     const normDesc = normalizeDescription(input.description);
@@ -137,7 +140,16 @@ export async function suggestCategoryBatch(inputs: SuggestionInput[]): Promise<M
   }
 
   for (const input of normalizedInputs) {
-    suggestions.set(input.index, suggestionByKey.get(input.key) ?? none());
+    const historical = suggestionByKey.get(input.key) ?? none();
+    if (historical.confidence === 'none' || historical.confidence === 'low') {
+      const keywordSuggestion = detectCategoryByKeywords(input.description, allCategories);
+      if (keywordSuggestion.confidence === 'high' || keywordSuggestion.confidence === 'medium') {
+        suggestions.set(input.index, keywordSuggestion);
+        continue;
+      }
+    }
+
+    suggestions.set(input.index, historical);
   }
 
   return suggestions;
