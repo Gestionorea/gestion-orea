@@ -7,7 +7,10 @@ const APPLY = process.argv.includes('--apply');
 const XLSX_DIR = '/Users/olivierlemieux/Desktop/import orea';
 const FILE_COMPAGNIES = `${XLSX_DIR}/Compagnie_1777829263.xlsx`;
 const FILE_COMPTES = `${XLSX_DIR}/Compte_de_banque_1777829142.xlsx`;
-const FILE_IMMEUBLES = `${XLSX_DIR}/immeubles.xlsx`;
+const FILES_IMMEUBLES = [
+  `${XLSX_DIR}/immeubles.xlsx`,
+  `${XLSX_DIR}/immeubles (1).xlsx`,
+];
 
 type CompanyImport = {
   name: string;
@@ -151,23 +154,34 @@ async function readAccounts(): Promise<AccountImport[]> {
 }
 
 async function readProperties(): Promise<PropertyImport[]> {
-  const workbook = new ExcelJS.Workbook();
-  await workbook.xlsx.readFile(FILE_IMMEUBLES);
-  const worksheet = workbook.worksheets[0];
-  const out: PropertyImport[] = [];
+  const seen = new Map<string, PropertyImport>();
 
-  worksheet.eachRow((row, rowIndex) => {
-    if (rowIndex < 2) return;
+  for (const file of FILES_IMMEUBLES) {
+    const workbook = new ExcelJS.Workbook();
+    try {
+      await workbook.xlsx.readFile(file);
+    } catch (error) {
+      console.warn(`Skip immeubles file (not found or unreadable): ${file}`);
+      continue;
+    }
+    const worksheet = workbook.worksheets[0];
+    if (!worksheet) continue;
 
-    const adresse = textValue(row.getCell(1).value);
-    const ville = textValue(row.getCell(2).value);
-    const companyName = textValue(row.getCell(8).value);
-    if (!adresse || !companyName) return;
+    worksheet.eachRow((row, rowIndex) => {
+      if (rowIndex < 2) return;
 
-    out.push({ adresse, ville, companyName });
-  });
+      const adresse = textValue(row.getCell(1).value);
+      const ville = textValue(row.getCell(2).value);
+      const companyName = textValue(row.getCell(8).value);
+      if (!adresse || !companyName) return;
 
-  return out;
+      const key = normalizeName(adresse);
+      if (seen.has(key)) return; // dedupe across files
+      seen.set(key, { adresse, ville, companyName });
+    });
+  }
+
+  return [...seen.values()];
 }
 
 async function loadCompanyMaps() {
@@ -205,7 +219,7 @@ async function main() {
         files_read: {
           companies: FILE_COMPAGNIES,
           accounts: FILE_COMPTES,
-          properties: FILE_IMMEUBLES,
+          properties: FILES_IMMEUBLES,
         },
         rows_read: {
           companies: companiesData.length,
