@@ -49,6 +49,12 @@ export default async function TransactionDetail({
 }) {
   const t = await getTranslations('perso.compta');
   const safeBack = back && back.startsWith('/') && !back.startsWith('//') ? back : null;
+  const currentDetailUrl = `/${locale}/perso/comptabilite/${transaction.id}${
+    safeBack ? `?back=${encodeURIComponent(safeBack)}` : ''
+  }`;
+  const merchantHref = `/${locale}/perso/comptabilite/fournisseur/${slugifyMerchantName(
+    transaction.merchantName,
+  )}?back=${encodeURIComponent(currentDetailUrl)}`;
   const hasJustification = Boolean(transaction.justification?.trim());
   const paymentSource = transaction.paymentSource
     ? `${transaction.paymentSource.name}${transaction.paymentSource.lastDigits ? ` ····${transaction.paymentSource.lastDigits}` : ''}`
@@ -191,7 +197,7 @@ export default async function TransactionDetail({
 
         <Section title={t('detail.sectionLinks')}>
           <Link
-            href={`/${locale}/perso/comptabilite/fournisseur/${slugifyMerchantName(transaction.merchantName)}`}
+            href={merchantHref}
             className="text-sm font-medium text-black underline"
           >
             {t('detail.viewMerchantHistory')}

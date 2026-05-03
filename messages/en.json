@@ -824,6 +824,7 @@
       },
       "merchant": {
         "eyebrow": "Merchant",
+        "backToList": "Back to list",
         "total": "Total",
         "count": "Transactions",
         "topCategory": "Top category"

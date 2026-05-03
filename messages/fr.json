@@ -824,6 +824,7 @@
       },
       "merchant": {
         "eyebrow": "Fournisseur",
+        "backToList": "Retour à la liste",
         "total": "Total",
         "count": "Transactions",
         "topCategory": "Catégorie principale"

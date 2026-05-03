@@ -28,6 +28,9 @@ export default async function TransactionList({
   basePath?: string;
 }) {
   const t = await getTranslations('perso.compta');
+  const listPath = basePath ?? `/${locale}/perso/comptabilite`;
+  const queryString = new URLSearchParams(searchParams).toString();
+  const currentUrl = `${listPath}${queryString ? `?${queryString}` : ''}`;
   const labels: TransactionListLabels = {
     columns: {
       select: t('bulkDelete.selectAll'),
@@ -47,7 +50,7 @@ export default async function TransactionList({
   const items: TransactionListItem[] = rows.map((row) => ({
     row,
     href: `/${locale}/perso/comptabilite/${row.id}`,
-    merchantHref: `/${locale}/perso/comptabilite/fournisseur/${slugifyMerchantName(row.merchantName)}`,
+    merchantHref: `/${locale}/perso/comptabilite/fournisseur/${slugifyMerchantName(row.merchantName)}?back=${encodeURIComponent(currentUrl)}`,
     labels: {
       type: t(`types.${row.type}`),
       advanceBadge: t('advance.badge'),

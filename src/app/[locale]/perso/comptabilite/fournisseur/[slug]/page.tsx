@@ -12,6 +12,17 @@ import TransactionList from '../../TransactionList';
 import YearTabs from '../../YearTabs';
 import MerchantSummary from './MerchantSummary';
 
+function safeBackUrl(value: string | string[] | undefined): string | null {
+  if (typeof value !== 'string') return null;
+
+  try {
+    const decoded = decodeURIComponent(value);
+    return decoded.startsWith('/') && !decoded.startsWith('//') ? decoded : null;
+  } catch {
+    return value.startsWith('/') && !value.startsWith('//') ? value : null;
+  }
+}
+
 export default async function MerchantPage({
   params,
   searchParams,
@@ -33,6 +44,7 @@ export default async function MerchantPage({
   const sortBy = typeof raw.sortBy === 'string' && isTransactionSortBy(raw.sortBy) ? raw.sortBy : 'date';
   const sortOrder =
     typeof raw.sortOrder === 'string' && isTransactionSortOrder(raw.sortOrder) ? raw.sortOrder : 'desc';
+  const back = safeBackUrl(raw.back);
   const [years, result] = await Promise.all([
     getTransactionYears(),
     getTransactionsByMerchant(summary.merchantName, year, sortBy, sortOrder),
@@ -43,7 +55,7 @@ export default async function MerchantPage({
 
   return (
     <div className="py-8">
-      <MerchantSummary locale={locale} summary={summary} />
+      <MerchantSummary locale={locale} summary={summary} back={back} />
       <YearTabs years={years} activeYear={year} locale={locale} />
       <p className="mt-8 text-sm text-gray-500">
         {t('summary', {
