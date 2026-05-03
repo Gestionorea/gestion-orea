@@ -4,6 +4,7 @@ import type { PaymentMethod, PaymentSourceKind } from '@prisma/client';
 import { Prisma } from '@prisma/client';
 import { computeDedupHash } from '@/lib/dedup-hash';
 import { getDb } from '@/lib/db';
+import { detectInterAccountTransfer } from '@/lib/inter-account-detector';
 import { requireOwner } from '@/lib/permissions';
 import { parseStatement } from '@/lib/statement-parser';
 
@@ -14,6 +15,7 @@ export type CommitImportResult =
       importedCount: number;
       duplicateCount: number;
       categorizedCount: number;
+      linkingSummary: { linked: number; unmatched: number };
     }
   | { ok: false; error: string; duplicateCount?: number };
 
@@ -54,6 +56,64 @@ function parseCategoryOverrides(value: FormDataEntryValue | null): Map<number, s
   } catch {
     return new Map();
   }
+}
+
+async function linkInterAccountTransfers(importId: string): Promise<{ linked: number; unmatched: number }> {
+  const db = getDb();
+  const newlyCreated = await db.transaction.findMany({
+    where: { bankStatementImportId: importId },
+    select: {
+      id: true,
+      paymentSourceId: true,
+      date: true,
+      amountTotal: true,
+      merchantName: true,
+      type: true,
+      isAdvance: true,
+      reimbursementTransactionId: true,
+    },
+  });
+  const linkingSummary = { linked: 0, unmatched: 0 };
+
+  for (const newTx of newlyCreated) {
+    if (!newTx.paymentSourceId || newTx.isAdvance || newTx.reimbursementTransactionId) {
+      linkingSummary.unmatched += 1;
+      continue;
+    }
+
+    const match = await detectInterAccountTransfer({
+      newTransactionId: newTx.id,
+      paymentSourceId: newTx.paymentSourceId,
+      date: newTx.date,
+      amountTotal: Math.round(Number(newTx.amountTotal) * 100),
+      description: newTx.merchantName,
+      type: newTx.type,
+    });
+
+    if (!match) {
+      linkingSummary.unmatched += 1;
+      continue;
+    }
+
+    const sourceTransactionId = newTx.type === 'expense' ? newTx.id : match.matchedTransactionId;
+    const destinationTransactionId = newTx.type === 'expense' ? match.matchedTransactionId : newTx.id;
+
+    try {
+      await db.transaction.update({
+        where: { id: sourceTransactionId },
+        data: {
+          isAdvance: true,
+          reimbursementTransactionId: destinationTransactionId,
+          reimbursedAt: newTx.date,
+        },
+      });
+      linkingSummary.linked += 1;
+    } catch {
+      linkingSummary.unmatched += 1;
+    }
+  }
+
+  return linkingSummary;
 }
 
 export async function commitImportAction(
@@ -173,6 +233,7 @@ export async function commitImportAction(
       },
       { timeout: 60000 },
     );
+    const linkingSummary = await linkInterAccountTransfers(importId);
 
     return {
       ok: true,
@@ -180,6 +241,7 @@ export async function commitImportAction(
       importedCount: rowsToImport.length,
       duplicateCount,
       categorizedCount,
+      linkingSummary,
     };
   } catch (error) {
     if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
