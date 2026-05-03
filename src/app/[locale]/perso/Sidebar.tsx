@@ -10,6 +10,8 @@ import {
   Building,
   CheckSquare,
   CreditCard,
+  Database,
+  HardDrive,
   Home,
   Lock,
   Menu,
@@ -114,42 +116,74 @@ export default function Sidebar({ locale, userRole }: SidebarProps) {
   }, [collapsed]);
 
   const navItems = useMemo<NavItem[]>(() => {
-    const adminChildren: NavItem[] = isOwner
+    const comptaChildren: NavItem[] = [
+      {
+        href: `/${locale}/perso/comptabilite`,
+        label: t('nav.compta.transactions'),
+        icon: Receipt,
+      },
+      {
+        href: `/${locale}/perso/comptabilite/import-releve`,
+        label: t('nav.compta.importStatement'),
+        icon: Upload,
+      },
+      ...(canReconcile
+        ? [
+            {
+              href: `/${locale}/perso/comptabilite/conciliation`,
+              label: t('nav.compta.reconciliation'),
+              icon: CheckSquare,
+            },
+          ]
+        : []),
+      {
+        href: `/${locale}/perso/comptabilite/dashboards`,
+        label: t('nav.compta.dashboards'),
+        icon: BarChart3,
+      },
+    ];
+
+    const dataChildren: NavItem[] = isOwner
       ? [
           {
-            href: `/${locale}/perso/admin/mot-de-passe`,
-            label: t('nav.password'),
-            icon: Lock,
-          },
-          {
-            href: `/${locale}/perso/admin/utilisateurs`,
-            label: t('nav.users'),
-            icon: Users,
-          },
-          {
-            href: `/${locale}/perso/admin/onedrive`,
-            label: t('admin.onedrive.title'),
-            icon: Settings,
-          },
-          {
-            href: `/${locale}/perso/admin/immeubles`,
-            label: t('nav.compta.properties'),
-            icon: Building,
-          },
-          {
             href: `/${locale}/perso/admin/compagnies`,
-            label: t('nav.compta.companies'),
+            label: t('nav.data.companies'),
             icon: Briefcase,
           },
           {
+            href: `/${locale}/perso/admin/immeubles`,
+            label: t('nav.data.properties'),
+            icon: Building,
+          },
+          {
             href: `/${locale}/perso/admin/categories`,
-            label: t('nav.compta.categories'),
+            label: t('nav.data.categories'),
             icon: Tag,
           },
           {
             href: `/${locale}/perso/admin/sources-paiement`,
-            label: t('nav.paymentSources'),
+            label: t('nav.data.paymentSources'),
             icon: CreditCard,
+          },
+        ]
+      : [];
+
+    const settingsChildren: NavItem[] = isOwner
+      ? [
+          {
+            href: `/${locale}/perso/admin/mot-de-passe`,
+            label: t('nav.settings.password'),
+            icon: Lock,
+          },
+          {
+            href: `/${locale}/perso/admin/utilisateurs`,
+            label: t('nav.settings.users'),
+            icon: Users,
+          },
+          {
+            href: `/${locale}/perso/admin/onedrive`,
+            label: t('nav.settings.onedrive'),
+            icon: HardDrive,
           },
         ]
       : [];
@@ -163,39 +197,23 @@ export default function Sidebar({ locale, userRole }: SidebarProps) {
       {
         label: t('nav.compta.title'),
         icon: Wallet,
-        children: [
-          {
-            href: `/${locale}/perso/comptabilite`,
-            label: t('nav.compta.transactions'),
-            icon: Receipt,
-          },
-          ...(canReconcile
-            ? [
-                {
-                  href: `/${locale}/perso/comptabilite/conciliation`,
-                  label: t('nav.compta.reconciliation'),
-                  icon: CheckSquare,
-                },
-              ]
-            : []),
-          {
-            href: `/${locale}/perso/comptabilite/import-releve`,
-            label: t('nav.compta.importStatement'),
-            icon: Upload,
-          },
-          {
-            href: `/${locale}/perso/comptabilite/dashboards`,
-            label: t('nav.compta.dashboards'),
-            icon: BarChart3,
-          },
-        ],
+        children: comptaChildren,
       },
-      ...(adminChildren.length > 0
+      ...(dataChildren.length > 0
         ? [
             {
-              label: t('nav.admin'),
+              label: t('nav.data.title'),
+              icon: Database,
+              children: dataChildren,
+            },
+          ]
+        : []),
+      ...(settingsChildren.length > 0
+        ? [
+            {
+              label: t('nav.settings.title'),
               icon: Settings,
-              children: adminChildren,
+              children: settingsChildren,
             },
           ]
         : []),

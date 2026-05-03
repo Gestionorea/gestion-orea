@@ -355,22 +355,26 @@
       "toggle": "Toggle sidebar"
     },
     "nav": {
-      "menu": "Menu",
       "home": "Home",
-      "admin": "Admin",
-      "password": "Password",
-      "users": "Users",
-      "paymentSources": "Payment sources",
-      "permissions": "Permissions",
       "compta": {
         "title": "Accounting",
         "transactions": "Transactions",
         "reconciliation": "Reconciliation",
         "importStatement": "Import statement",
-        "dashboards": "Dashboards",
-        "properties": "Properties",
+        "dashboards": "Dashboards"
+      },
+      "data": {
+        "title": "Data",
         "companies": "Companies",
-        "categories": "Categories"
+        "properties": "Properties",
+        "categories": "Categories",
+        "paymentSources": "Payment sources"
+      },
+      "settings": {
+        "title": "Settings",
+        "password": "My password",
+        "users": "Users",
+        "onedrive": "OneDrive"
       }
     },
     "importStatement": {

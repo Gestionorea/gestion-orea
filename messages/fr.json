@@ -355,22 +355,26 @@
       "toggle": "Replier la barre laterale"
     },
     "nav": {
-      "menu": "Menu",
       "home": "Accueil",
-      "admin": "Admin",
-      "password": "Mot de passe",
-      "users": "Utilisateurs",
-      "paymentSources": "Sources de paiement",
-      "permissions": "Permissions",
       "compta": {
         "title": "Comptabilité",
         "transactions": "Transactions",
         "reconciliation": "Conciliation",
         "importStatement": "Importer relevé",
-        "dashboards": "Dashboards",
-        "properties": "Immeubles",
+        "dashboards": "Tableaux de bord"
+      },
+      "data": {
+        "title": "Données",
         "companies": "Compagnies",
-        "categories": "Catégories"
+        "properties": "Immeubles",
+        "categories": "Catégories",
+        "paymentSources": "Sources de paiement"
+      },
+      "settings": {
+        "title": "Paramètres",
+        "password": "Mon mot de passe",
+        "users": "Utilisateurs",
+        "onedrive": "OneDrive"
       }
     },
     "importStatement": {
