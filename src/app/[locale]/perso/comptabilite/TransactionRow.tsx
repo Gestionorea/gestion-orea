@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import type { MouseEvent } from 'react';
-import { deleteTransactionAction, toggleReconciledAction } from '@/app/actions/transactions';
+import { toggleReconciledAction } from '@/app/actions/transactions';
 import type { TransactionRow as TransactionRowData, TransactionVisualStatus } from '@/lib/transactions';
 import InlineCategorySelect, { type InlineCategoryOption } from './InlineCategorySelect';
 import InlineJustificationInput from './InlineJustificationInput';
@@ -17,8 +17,6 @@ export type TransactionRowLabels = {
   reconciledUnmark: string;
   reconciledNo: string;
   reconciledTitle: string;
-  delete: string;
-  readOnly: string;
 };
 
 function visualRowClass(status: TransactionVisualStatus): string {
@@ -199,16 +197,6 @@ export default function TransactionRow({
           <span title={labels.reconciledTitle}>✓</span>
         ) : (
           <span className="text-gray-400">{labels.reconciledNo}</span>
-        )}
-      </td>
-      <td className="px-4 py-4">
-        {canMutate ? (
-          <form action={deleteTransactionAction} onClick={stopRowNavigation}>
-            <input type="hidden" name="id" value={row.id} />
-            <button className="text-red-700 hover:text-red-900">{labels.delete}</button>
-          </form>
-        ) : (
-          <span className="text-gray-400">{labels.readOnly}</span>
         )}
       </td>
     </tr>

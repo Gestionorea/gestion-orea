@@ -44,7 +44,6 @@ export default async function TransactionList({
       property: t('columns.property'),
       company: t('columns.company'),
       reconciled: t('columns.reconciled'),
-      actions: t('columns.actions'),
     },
   };
   const items: TransactionListItem[] = rows.map((row) => ({
@@ -61,8 +60,6 @@ export default async function TransactionList({
       reconciledTitle: row.reconciledAt
         ? `${t('reconciled.yes')} ${row.reconciledBy ? t('reconciled.by', { username: row.reconciledBy.username }) : ''}`
         : t('reconciled.mark'),
-      delete: t('delete'),
-      readOnly: t('readOnly'),
     },
   }));
   const categoryOptions: InlineCategoryOption[] = categories.map((category) => ({

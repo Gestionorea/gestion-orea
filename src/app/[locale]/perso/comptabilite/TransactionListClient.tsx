@@ -28,7 +28,6 @@ export type TransactionListLabels = {
     property: string;
     company: string;
     reconciled: string;
-    actions: string;
   };
 };
 
@@ -157,7 +156,6 @@ export default function TransactionListClient({
               <th className="px-4 py-3 font-medium">{labels.columns.property}</th>
               {renderSortableHeader('company', labels.columns.company)}
               <th className="px-4 py-3 font-medium">{labels.columns.reconciled}</th>
-              <th className="px-4 py-3 font-medium">{labels.columns.actions}</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-200">
