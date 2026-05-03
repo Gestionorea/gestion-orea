@@ -689,6 +689,22 @@
       "editTitle": "Modifier la transaction",
       "delete": "Supprimer",
       "readOnly": "Lecture seule",
+      "bulkDelete": {
+        "deleteMonth": "Supprimer le mois",
+        "deleteMonthTitle": "Supprimer toutes les transactions de {month}",
+        "deleteMonthConfirmTitle": "Supprimer {month} ?",
+        "deleteMonthConfirmDescription": "Cette action supprime DEFINITIVEMENT les {count} transactions de {month}. Action irreversible.",
+        "selectedCount": "{count} transaction(s) selectionnee(s)",
+        "deleteSelected": "Supprimer les {count} selectionnees",
+        "confirmTitle": "Supprimer ces transactions ?",
+        "confirmDescription": "Cette action est DEFINITIVE et irreversible.",
+        "expectedCount": "{count} transaction(s) seront supprimees",
+        "typeToConfirm": "Tape SUPPRIMER pour confirmer:",
+        "cancel": "Annuler",
+        "confirmDelete": "Supprimer definitivement",
+        "deleting": "Suppression...",
+        "selectAll": "Tout selectionner"
+      },
       "detail": {
         "eyebrow": "Transaction",
         "sectionFinancials": "Détails financiers",

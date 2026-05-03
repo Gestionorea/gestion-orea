@@ -689,6 +689,22 @@
       "editTitle": "Edit transaction",
       "delete": "Delete",
       "readOnly": "Read-only",
+      "bulkDelete": {
+        "deleteMonth": "Delete month",
+        "deleteMonthTitle": "Delete all transactions from {month}",
+        "deleteMonthConfirmTitle": "Delete {month}?",
+        "deleteMonthConfirmDescription": "This action will PERMANENTLY delete the {count} transactions from {month}. This cannot be undone.",
+        "selectedCount": "{count} transaction(s) selected",
+        "deleteSelected": "Delete {count} selected",
+        "confirmTitle": "Delete these transactions?",
+        "confirmDescription": "This action is PERMANENT and cannot be undone.",
+        "expectedCount": "{count} transaction(s) will be deleted",
+        "typeToConfirm": "Type SUPPRIMER to confirm:",
+        "cancel": "Cancel",
+        "confirmDelete": "Delete permanently",
+        "deleting": "Deleting...",
+        "selectAll": "Select all"
+      },
       "detail": {
         "eyebrow": "Transaction",
         "sectionFinancials": "Financial details",

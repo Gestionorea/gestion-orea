@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { requireAuth } from '@/lib/permissions';
 import { listCategories } from '@/lib/categories';
 import { listCompanies } from '@/lib/companies';
+import { getDb } from '@/lib/db';
 import { listProperties } from '@/lib/properties';
 import {
   getTransactionYears,
@@ -18,6 +19,7 @@ import TransactionList from './TransactionList';
 import MonthNavigator from './MonthNavigator';
 import YearTabs from './YearTabs';
 import { ExportXlsxButton } from './conciliation/ConciliationList';
+import DeleteMonthButton from './DeleteMonthButton';
 
 export default async function AccountingPage({
   params,
@@ -60,7 +62,8 @@ export default async function AccountingPage({
       ? raw.taxRegime
       : undefined;
   const session = await requireAuth();
-  const [t, years, properties, companies, categories, result] = await Promise.all([
+  const canDelete = session.role === 'owner';
+  const [t, years, properties, companies, categories, result, monthDeleteCount] = await Promise.all([
     getTranslations('perso.compta'),
     getTransactionYears(),
     listProperties(),
@@ -80,9 +83,22 @@ export default async function AccountingPage({
       sortBy,
       sortOrder,
     }),
+    canDelete && !isAllMonthMode
+      ? getDb().transaction.count({
+          where: {
+            date: {
+              gte: new Date(year, parsedMonth - 1, 1),
+              lt: new Date(year, parsedMonth, 1),
+            },
+          },
+        })
+      : Promise.resolve(0),
   ]);
   const canMutate = ['owner', 'assistant'].includes(session.role);
   const canReconcile = ['owner', 'accountant'].includes(session.role);
+  const monthLabel = new Intl.DateTimeFormat(locale, { month: 'long', year: 'numeric' }).format(
+    new Date(year, parsedMonth - 1, 1),
+  );
   const normalizedSearchParams = Object.fromEntries(
     Object.entries(raw).map(([key, value]) => [key, Array.isArray(value) ? value[0] ?? '' : value ?? '']),
   );
@@ -117,6 +133,14 @@ export default async function AccountingPage({
           </p>
         </div>
         <div className="flex flex-wrap gap-3">
+          {canDelete && !isAllMonthMode && monthDeleteCount > 0 ? (
+            <DeleteMonthButton
+              year={year}
+              month={parsedMonth}
+              monthLabel={monthLabel}
+              count={monthDeleteCount}
+            />
+          ) : null}
           <ExportXlsxButton filters={exportFilters} />
           {canMutate ? (
             <Link
@@ -146,6 +170,7 @@ export default async function AccountingPage({
         locale={locale}
         canMutate={canMutate}
         canReconcile={canReconcile}
+        canDelete={canDelete}
         sortBy={sortBy}
         sortOrder={sortOrder}
         searchParams={activeSearchParams}

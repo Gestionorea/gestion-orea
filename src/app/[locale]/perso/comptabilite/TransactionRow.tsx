@@ -49,6 +49,9 @@ export default function TransactionRow({
   merchantHref,
   canMutate,
   canReconcile,
+  canDelete = false,
+  selected = false,
+  onToggleSelected,
   labels,
 }: {
   row: TransactionRowData;
@@ -57,6 +60,9 @@ export default function TransactionRow({
   merchantHref: string;
   canMutate: boolean;
   canReconcile: boolean;
+  canDelete?: boolean;
+  selected?: boolean;
+  onToggleSelected?: (id: string) => void;
   labels: TransactionRowLabels;
 }) {
   const t = useTranslations('perso.compta');
@@ -80,6 +86,18 @@ export default function TransactionRow({
       }}
       tabIndex={0}
     >
+      {canDelete ? (
+        <td className="px-4 py-4">
+          <input
+            type="checkbox"
+            checked={selected}
+            onChange={() => onToggleSelected?.(row.id)}
+            onClick={stopRowNavigation}
+            className="h-4 w-4 border-gray-300"
+            aria-label={row.merchantName}
+          />
+        </td>
+      ) : null}
       <td className="px-4 py-4 text-gray-600">
         <div className="flex items-center gap-3">
           {visualLabel ? (
