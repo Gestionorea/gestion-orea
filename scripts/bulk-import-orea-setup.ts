@@ -58,6 +58,28 @@ function normalizeName(value: string): string {
     .replace(/\s+/g, ' ');
 }
 
+// Mapping manuel des variantes orthographiques (audit 2026-05-03).
+// Les noms a gauche (referencees dans comptes/immeubles) sont remappes vers
+// les noms canoniques a droite (ceux de la XLSX Compagnie).
+// Format: clef = nom normalise tel qu'apparait dans comptes/immeubles
+//         valeur = nom canonique tel qu'apparait dans Compagnie XLSX
+const COMPANY_ALIASES: Record<string, string> = {
+  'lemieux gestion de finance inc': 'Lemieux Gestion de finance',
+  '9522-6536 quebec inc': '9522-6536 Qu\u00e9bec inc. (LeVi Solutions 2,0)',
+  '9471-7584 quebec inc': '9471-7584 Qu\u00e9bec inc. (fortin)',
+  '9497-2270 quebec inc': '9497-2270 QU\u00c9BEC INC. (king george)',
+  'investissement bg & levi corp inc': 'Investissements BG & Levi Corp Inc.',
+};
+
+function resolveCompanyAlias(rawName: string): string {
+  const norm = normalizeName(rawName);
+  return COMPANY_ALIASES[norm] ?? rawName;
+}
+
+// Lignes XLSX a ignorer (parasites, tests).
+const COMPANY_NAMES_TO_SKIP = new Set([normalizeName('Name')]);
+const PROPERTY_ADDRESSES_TO_SKIP = new Set([normalizeName('999 Rue Test')]);
+
 function textValue(value: ExcelJS.CellValue | undefined): string {
   if (value == null) return '';
   if (value instanceof Date) return value.toISOString();
@@ -115,6 +137,7 @@ async function readCompanies(): Promise<CompanyImport[]> {
     const status = textValue(row.getCell(2).value);
     const address = textValue(row.getCell(12).value) || null;
     if (!name) return;
+    if (COMPANY_NAMES_TO_SKIP.has(normalizeName(name))) return; // skip parasites
 
     out.push({ name, status, address });
   });
@@ -131,7 +154,7 @@ async function readAccounts(): Promise<AccountImport[]> {
   worksheet.eachRow((row, rowIndex) => {
     if (rowIndex < 4) return;
 
-    const ownerCompanyName = textValue(row.getCell(1).value);
+    const ownerCompanyName = resolveCompanyAlias(textValue(row.getCell(1).value));
     const status = textValue(row.getCell(2).value);
     const numero = textValue(row.getCell(3).value);
     const description = textValue(row.getCell(6).value) || null;
@@ -172,8 +195,9 @@ async function readProperties(): Promise<PropertyImport[]> {
 
       const adresse = textValue(row.getCell(1).value);
       const ville = textValue(row.getCell(2).value);
-      const companyName = textValue(row.getCell(8).value);
+      const companyName = resolveCompanyAlias(textValue(row.getCell(8).value));
       if (!adresse || !companyName) return;
+      if (PROPERTY_ADDRESSES_TO_SKIP.has(normalizeName(adresse))) return; // skip parasites
 
       const key = normalizeName(adresse);
       if (seen.has(key)) return; // dedupe across files
