@@ -6,6 +6,7 @@ import { useEffect, useMemo, useRef, useState, useTransition, type KeyboardEvent
 import { getInlineCategorySuggestions, type InlineSuggestion } from '@/app/actions/inline-category-suggestions';
 import { updateTransactionCategory } from '@/app/actions/inline-update-transaction';
 import CreateCategoryModal from '@/app/[locale]/perso/comptabilite/import-releve/CreateCategoryModal';
+import { expandSynonyms, matchesExpandedSearch } from '@/lib/category-synonyms';
 
 export type InlineCategoryOption = {
   id: string;
@@ -22,10 +23,6 @@ type InlineCategoryComboboxProps = {
 };
 
 type Feedback = 'idle' | 'success' | 'error';
-
-function categoryMatchesSearch(category: InlineCategoryOption, search: string) {
-  return category.name.toLowerCase().includes(search.trim().toLowerCase());
-}
 
 function mergeCategories(categories: InlineCategoryOption[], newCategory: InlineCategoryOption) {
   const byId = new Map(categories.map((category) => [category.id, category]));
@@ -58,10 +55,12 @@ export default function InlineCategoryCombobox({
   );
   const displayLabel = currentCategory?.name ?? t('noCategory');
   const trimmedSearch = search.trim();
-  const filteredCategories = useMemo(
-    () => (trimmedSearch ? categories.filter((category) => categoryMatchesSearch(category, trimmedSearch)) : categories),
-    [categories, trimmedSearch],
-  );
+  const filteredCategories = useMemo(() => {
+    if (!trimmedSearch) return categories;
+
+    const expandedTerms = expandSynonyms(trimmedSearch);
+    return categories.filter((category) => matchesExpandedSearch(category.name, expandedTerms));
+  }, [categories, trimmedSearch]);
   const exactMatchExists = useMemo(
     () => categories.some((category) => category.name.toLowerCase() === trimmedSearch.toLowerCase()),
     [categories, trimmedSearch],
