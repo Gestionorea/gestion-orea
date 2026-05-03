@@ -407,6 +407,12 @@
         "typeExpense": "Sortie",
         "categoryNone": "— Aucune —",
         "createCategory": "+ Créer nouvelle catégorie...",
+        "visualStatus": {
+          "invoiceOk": "Facture attachée",
+          "missingInvoice": "Facture manquante",
+          "recurringOk": "Récurrent vérifié",
+          "income": "Revenu"
+        },
         "suggestion": "Suggestion: {reason}",
         "suggestionConfidenceHigh": "Suggestion certaine",
         "suggestionConfidenceMedium": "Suggestion probable",
@@ -713,6 +719,12 @@
       "advance": {
         "badge": "AVANCE PERSO",
         "reimbursed": "REMBOURSE"
+      },
+      "visualStatus": {
+        "invoiceOk": "Facture attachée",
+        "missingInvoice": "Facture manquante",
+        "recurringOk": "Récurrent vérifié",
+        "income": "Revenu"
       },
       "filters": {
         "allMonths": "Tous les mois",

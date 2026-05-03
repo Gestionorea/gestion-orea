@@ -1,5 +1,6 @@
 import type { Beneficiary, PaymentMethod, TaxRegime, TransactionType } from '@prisma/client';
 import { Prisma } from '@prisma/client';
+import { suggestCategoryBatch } from '@/lib/categorization-learning';
 import { getDb } from '@/lib/db';
 
 export const TRANSACTION_TYPES: TransactionType[] = ['income', 'expense'];
@@ -18,6 +19,7 @@ export const TAX_REGIMES: TaxRegime[] = ['taxable_qc', 'exempt', 'manual'];
 
 export type TransactionSortBy = 'date' | 'amount' | 'merchant' | 'company' | 'source';
 export type TransactionSortOrder = 'asc' | 'desc';
+export type TransactionVisualStatus = 'invoice_ok' | 'missing_invoice' | 'recurring_ok' | 'income' | 'neutral';
 
 export type TransactionRow = {
   id: string;
@@ -59,6 +61,7 @@ export type TransactionRow = {
   reimbursementTransactionId: string | null;
   reimbursementTransaction: RelatedTransaction | null;
   reimbursementOf: RelatedTransaction | null;
+  visualStatus: TransactionVisualStatus;
 };
 
 export type RelatedTransaction = {
@@ -206,7 +209,7 @@ function serialize(transaction: {
     amountTotal: Prisma.Decimal;
     merchantName: string;
   } | null;
-}): TransactionRow {
+}, visualStatus?: TransactionVisualStatus): TransactionRow {
   return {
     ...transaction,
     amountBeforeTax: transaction.amountBeforeTax.toFixed(2),
@@ -215,7 +218,30 @@ function serialize(transaction: {
     amountTotal: transaction.amountTotal.toFixed(2),
     reimbursementTransaction: serializeRelated(transaction.reimbursementTransaction),
     reimbursementOf: serializeRelated(transaction.reimbursementOf),
+    visualStatus: visualStatus ?? baseVisualStatus(transaction),
   };
+}
+
+function baseVisualStatus(transaction: {
+  type: TransactionType;
+  attachmentUrl: string | null;
+}): TransactionVisualStatus {
+  if (transaction.type === 'income') return 'income';
+  if (transaction.attachmentUrl) return 'invoice_ok';
+  return 'missing_invoice';
+}
+
+function visualStatusForSuggestion(
+  transaction: {
+    type: TransactionType;
+    attachmentUrl: string | null;
+  },
+  suggestionConfidence?: 'high' | 'medium' | 'low' | 'none',
+): TransactionVisualStatus {
+  if (transaction.type === 'income') return 'income';
+  if (transaction.attachmentUrl) return 'invoice_ok';
+  if (suggestionConfidence === 'high') return 'recurring_ok';
+  return 'missing_invoice';
 }
 
 export function isTransactionType(value: string): value is TransactionType {
@@ -338,8 +364,21 @@ export async function listTransactions(filters: TransactionFilters) {
     }),
   ]);
 
+  const expenseRows = rows.filter((row) => row.type === 'expense' && row.paymentSourceId);
+  const suggestions = await suggestCategoryBatch(
+    expenseRows.map((row) => ({
+      paymentSourceId: row.paymentSourceId as string,
+      description: row.merchantName,
+    })),
+  );
+  const suggestionById = new Map(
+    expenseRows.map((row, index) => [row.id, suggestions.get(index)]),
+  );
+
   return {
-    rows: rows.map(serialize),
+    rows: rows.map((row) =>
+      serialize(row, visualStatusForSuggestion(row, suggestionById.get(row.id)?.confidence)),
+    ),
     count,
     pageSize,
     incomeTotal: income._sum.amountTotal?.toFixed(2) ?? '0.00',

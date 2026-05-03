@@ -3,6 +3,7 @@
 import { useTranslations } from 'next-intl';
 import { useEffect, useMemo, useState } from 'react';
 import type { PreviewCategory, PreviewRow } from '@/app/actions/analyze-statement';
+import type { TransactionVisualStatus } from '@/lib/transactions';
 import CreateCategoryModal from './CreateCategoryModal';
 
 const CREATE_CATEGORY_VALUE = '__create_category__';
@@ -57,6 +58,37 @@ export default function PreviewTable({
     return t('suggestionConfidenceLow');
   }
 
+  function previewVisualStatus(row: PreviewRow): TransactionVisualStatus {
+    if (row.type === 'income') return 'income';
+    if (row.status === 'duplicate') return 'neutral';
+    if (row.suggestionConfidence === 'high') return 'recurring_ok';
+    return 'missing_invoice';
+  }
+
+  function visualRowClass(status: TransactionVisualStatus): string {
+    if (status === 'invoice_ok') return 'bg-green-50 hover:bg-green-100';
+    if (status === 'missing_invoice') return 'bg-red-50 hover:bg-red-100';
+    if (status === 'recurring_ok') return 'bg-yellow-50 hover:bg-yellow-100';
+    if (status === 'income') return 'bg-white hover:bg-gray-50';
+    return 'bg-gray-50';
+  }
+
+  function visualBadgeClass(status: TransactionVisualStatus): string {
+    if (status === 'invoice_ok') return 'bg-green-500';
+    if (status === 'missing_invoice') return 'bg-red-500';
+    if (status === 'recurring_ok') return 'bg-yellow-500';
+    if (status === 'income') return 'bg-blue-400';
+    return '';
+  }
+
+  function visualStatusLabel(status: TransactionVisualStatus): string | null {
+    if (status === 'invoice_ok') return t('visualStatus.invoiceOk');
+    if (status === 'missing_invoice') return t('visualStatus.missingInvoice');
+    if (status === 'recurring_ok') return t('visualStatus.recurringOk');
+    if (status === 'income') return t('visualStatus.income');
+    return null;
+  }
+
   const createCategoryRow = rows.find((row) => row.rowNumber === createCategoryRowNumber) ?? null;
 
   return (
@@ -88,10 +120,26 @@ export default function PreviewTable({
           <tbody className="divide-y divide-gray-200 bg-white">
             {rows.map((row) => {
               const isDuplicate = row.status === 'duplicate';
+              const visualStatus = previewVisualStatus(row);
+              const visualLabel = visualStatusLabel(visualStatus);
 
               return (
-                <tr key={row.rowNumber} className={isDuplicate ? 'bg-gray-50 text-gray-500' : 'text-gray-900'}>
-                  <td className="whitespace-nowrap px-3 py-3">{row.rowNumber}</td>
+                <tr
+                  key={row.rowNumber}
+                  className={`${visualRowClass(visualStatus)} ${isDuplicate ? 'text-gray-500' : 'text-gray-900'}`}
+                >
+                  <td className="whitespace-nowrap px-3 py-3">
+                    <div className="flex items-center gap-2">
+                      {visualLabel ? (
+                        <span
+                          className={`h-3 w-3 shrink-0 rounded-full ${visualBadgeClass(visualStatus)}`}
+                          title={visualLabel}
+                          aria-label={visualLabel}
+                        />
+                      ) : null}
+                      <span>{row.rowNumber}</span>
+                    </div>
+                  </td>
                   <td className="whitespace-nowrap px-3 py-3">{row.date}</td>
                   <td className="max-w-sm px-3 py-3">{row.description}</td>
                   <td className="whitespace-nowrap px-3 py-3 text-right tabular-nums">{row.amountTotal}</td>

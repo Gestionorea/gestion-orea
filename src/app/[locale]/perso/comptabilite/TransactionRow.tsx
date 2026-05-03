@@ -5,7 +5,7 @@ import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
 import type { MouseEvent } from 'react';
 import { deleteTransactionAction, toggleReconciledAction } from '@/app/actions/transactions';
-import type { TransactionRow as TransactionRowData } from '@/lib/transactions';
+import type { TransactionRow as TransactionRowData, TransactionVisualStatus } from '@/lib/transactions';
 
 export type TransactionRowLabels = {
   type: string;
@@ -18,6 +18,29 @@ export type TransactionRowLabels = {
   delete: string;
   readOnly: string;
 };
+
+function visualRowClass(status: TransactionVisualStatus): string {
+  if (status === 'invoice_ok') return 'bg-green-50 hover:bg-green-100';
+  if (status === 'missing_invoice') return 'bg-red-50 hover:bg-red-100';
+  if (status === 'recurring_ok') return 'bg-yellow-50 hover:bg-yellow-100';
+  return 'bg-white hover:bg-gray-50';
+}
+
+function visualBadgeClass(status: TransactionVisualStatus): string {
+  if (status === 'invoice_ok') return 'bg-green-500';
+  if (status === 'missing_invoice') return 'bg-red-500';
+  if (status === 'recurring_ok') return 'bg-yellow-500';
+  if (status === 'income') return 'bg-blue-400';
+  return '';
+}
+
+function visualStatusKey(status: TransactionVisualStatus): 'invoiceOk' | 'missingInvoice' | 'recurringOk' | 'income' | null {
+  if (status === 'invoice_ok') return 'invoiceOk';
+  if (status === 'missing_invoice') return 'missingInvoice';
+  if (status === 'recurring_ok') return 'recurringOk';
+  if (status === 'income') return 'income';
+  return null;
+}
 
 export default function TransactionRow({
   row,
@@ -39,13 +62,15 @@ export default function TransactionRow({
   const t = useTranslations('perso.compta');
   const router = useRouter();
   const goToDetail = () => router.push(href);
+  const visualKey = visualStatusKey(row.visualStatus);
+  const visualLabel = visualKey ? t(`visualStatus.${visualKey}`) : null;
   const stopRowNavigation = (event: MouseEvent) => {
     event.stopPropagation();
   };
 
   return (
     <tr
-      className="cursor-pointer transition hover:bg-gray-50"
+      className={`cursor-pointer transition ${visualRowClass(row.visualStatus)}`}
       onClick={goToDetail}
       onKeyDown={(event) => {
         if (event.key === 'Enter' || event.key === ' ') {
@@ -56,7 +81,16 @@ export default function TransactionRow({
       tabIndex={0}
     >
       <td className="px-4 py-4 text-gray-600">
-        {new Intl.DateTimeFormat(locale, { dateStyle: 'medium' }).format(row.date)}
+        <div className="flex items-center gap-3">
+          {visualLabel ? (
+            <span
+              className={`h-3 w-3 shrink-0 rounded-full ${visualBadgeClass(row.visualStatus)}`}
+              title={visualLabel}
+              aria-label={visualLabel}
+            />
+          ) : null}
+          <span>{new Intl.DateTimeFormat(locale, { dateStyle: 'medium' }).format(row.date)}</span>
+        </div>
       </td>
       <td className="px-4 py-4 font-medium text-black">
         <Link href={merchantHref} className="hover:underline" onClick={stopRowNavigation}>

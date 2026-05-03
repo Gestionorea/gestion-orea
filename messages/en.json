@@ -407,6 +407,12 @@
         "typeExpense": "Expense",
         "categoryNone": "— None —",
         "createCategory": "+ Create new category...",
+        "visualStatus": {
+          "invoiceOk": "Invoice attached",
+          "missingInvoice": "Missing invoice",
+          "recurringOk": "Verified recurring",
+          "income": "Income"
+        },
         "suggestion": "Suggestion: {reason}",
         "suggestionConfidenceHigh": "High-confidence suggestion",
         "suggestionConfidenceMedium": "Likely suggestion",
@@ -713,6 +719,12 @@
       "advance": {
         "badge": "PERSONAL ADVANCE",
         "reimbursed": "REIMBURSED"
+      },
+      "visualStatus": {
+        "invoiceOk": "Invoice attached",
+        "missingInvoice": "Missing invoice",
+        "recurringOk": "Verified recurring",
+        "income": "Income"
       },
       "filters": {
         "allMonths": "All months",
