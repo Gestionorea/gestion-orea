@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { useLocale, useTranslations } from 'next-intl';
-import { useActionState, useCallback, useEffect, useRef, useState } from 'react';
+import { useActionState, useCallback, useRef, useState, useTransition } from 'react';
 import { useFormStatus } from 'react-dom';
 import {
   analyzeStatementAction,
@@ -29,19 +29,20 @@ function SubmitButton() {
 }
 
 function CommitButton({
-  formAction,
   count,
+  pending,
+  onCommit,
 }: {
-  formAction: (payload: FormData) => void;
   count: number;
+  pending: boolean;
+  onCommit: () => void;
 }) {
   const t = useTranslations('perso.importStatement.commit');
-  const { pending } = useFormStatus();
 
   return (
     <button
-      type="submit"
-      formAction={formAction}
+      type="button"
+      onClick={onCommit}
       disabled={pending || count === 0}
       className="border border-black bg-black px-4 py-3 text-xs font-medium uppercase tracking-[0.18em] text-white disabled:cursor-not-allowed disabled:border-gray-300 disabled:bg-gray-400"
     >
@@ -63,29 +64,45 @@ export default function UploadForm({
   const locale = useLocale();
   const formRef = useRef<HTMLFormElement>(null);
   const [categoryOverrides, setCategoryOverrides] = useState<Record<number, string | null>>({});
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [selectedPaymentSourceId, setSelectedPaymentSourceId] = useState('');
+  const [commitState, setCommitState] = useState<CommitImportResult | null>(null);
+  const [isCommitPending, startCommitTransition] = useTransition();
   const [analyzeState, analyzeFormAction] = useActionState<AnalyzeStatementResult | null, FormData>(
     analyzeStatementAction,
-    null,
-  );
-  const [commitState, commitFormAction] = useActionState<CommitImportResult | null, FormData>(
-    commitImportAction,
     null,
   );
   const newRowsCount = analyzeState?.ok
     ? analyzeState.preview.filter((row) => row.status === 'new').length
     : 0;
 
-  useEffect(() => {
-    if (commitState?.ok) {
-      formRef.current?.reset();
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setCategoryOverrides({});
-    }
-  }, [commitState]);
-
   const handleCategoryOverridesChange = useCallback((overrides: Record<number, string | null>) => {
     setCategoryOverrides(overrides);
   }, []);
+
+  const handleCommit = useCallback(() => {
+    if (!selectedFile || !selectedPaymentSourceId) {
+      setCommitState({ ok: false, error: "Veuillez re-selectionner le fichier pour finaliser l'import." });
+      return;
+    }
+
+    startCommitTransition(async () => {
+      const formData = new FormData();
+      formData.append('paymentSourceId', selectedPaymentSourceId);
+      formData.append('file', selectedFile);
+      formData.append('categoryOverrides', JSON.stringify(categoryOverrides));
+
+      const result = await commitImportAction(null, formData);
+      setCommitState(result);
+
+      if (result.ok) {
+        formRef.current?.reset();
+        setSelectedFile(null);
+        setSelectedPaymentSourceId('');
+        setCategoryOverrides({});
+      }
+    });
+  }, [categoryOverrides, selectedFile, selectedPaymentSourceId]);
 
   return (
     <div className="mt-8 grid max-w-3xl gap-6">
@@ -136,7 +153,11 @@ export default function UploadForm({
           <select
             name="paymentSourceId"
             required
-            defaultValue=""
+            value={selectedPaymentSourceId}
+            onChange={(event) => {
+              setSelectedPaymentSourceId(event.target.value);
+              setCommitState(null);
+            }}
             className="border border-gray-300 px-3 py-2 text-sm"
           >
             <option value="" disabled>{t('form.paymentSourcePlaceholder')}</option>
@@ -155,6 +176,10 @@ export default function UploadForm({
             type="file"
             required
             accept=".csv,.xlsx,.xls"
+            onChange={(event) => {
+              setSelectedFile(event.target.files?.[0] ?? null);
+              setCommitState(null);
+            }}
             className="border border-gray-300 px-3 py-2 text-sm"
           />
         </label>
@@ -165,6 +190,11 @@ export default function UploadForm({
 
         {analyzeState?.ok === true && commitState?.ok !== true ? (
           <div className="grid gap-4">
+            {!selectedFile ? (
+              <div className="border border-yellow-300 bg-yellow-50 px-4 py-3 text-sm text-yellow-900">
+                Veuillez re-selectionner le fichier pour finaliser l'import.
+              </div>
+            ) : null}
             <div>
               <h2 className="font-serif text-xl tracking-[0.06em] text-black">{t('preview.title')}</h2>
             </div>
@@ -180,7 +210,7 @@ export default function UploadForm({
               </div>
             ) : null}
             <div>
-              <CommitButton formAction={commitFormAction} count={newRowsCount} />
+              <CommitButton count={newRowsCount} pending={isCommitPending} onCommit={handleCommit} />
             </div>
           </div>
         ) : null}
