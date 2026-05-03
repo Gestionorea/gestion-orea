@@ -368,7 +368,6 @@
         "reconciliation": "Conciliation",
         "importStatement": "Importer relevé",
         "dashboards": "Dashboards",
-        "reports": "Rapports fiscaux",
         "properties": "Immeubles",
         "companies": "Compagnies",
         "categories": "Catégories"
@@ -489,30 +488,6 @@
         "company": "Compagnie",
         "source": "Source",
         "reconciled": "Conciliation"
-      }
-    },
-    "reports": {
-      "eyebrow": "Comptabilité",
-      "title": "Rapports fiscaux",
-      "subtitle": "Générez vos rapports TPS/TVQ pour les déclarations.",
-      "selectPeriod": "Période",
-      "monthly": "Mensuel",
-      "quarterly": "Trimestriel",
-      "annual": "Annuel",
-      "year": "Année",
-      "month": "Mois",
-      "quarter": "Trimestre",
-      "generate": "Générer rapport",
-      "print": "Imprimer",
-      "table": {
-        "salesTaxable": "Ventes taxables",
-        "gstCollected": "TPS collectée",
-        "qstCollected": "TVQ collectée",
-        "purchasesTaxable": "Achats taxables",
-        "gstPaid": "TPS payée",
-        "qstPaid": "TVQ payée",
-        "gstRemittance": "TPS à remettre",
-        "qstRemittance": "TVQ à remettre"
       }
     },
     "admin": {
