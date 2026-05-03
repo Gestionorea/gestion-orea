@@ -2,7 +2,7 @@ import { parse } from 'csv-parse/sync';
 import ExcelJS from 'exceljs';
 import { Decimal } from '@prisma/client/runtime/library';
 
-export type StatementFormat = 'desjardins_bank_account';
+export type StatementFormat = 'desjardins_bank_account' | 'desjardins_credit_card_pdf';
 
 export type ParsedRow = {
   date: Date;
@@ -32,7 +32,7 @@ type StatementAdapter = {
   parseRows: (records: string[][]) => ParseResult;
 };
 
-type FileType = 'csv' | 'xlsx';
+type FileType = 'csv' | 'xlsx' | 'pdf';
 
 const DESJARDINS_CODES = new Set(['EOP', 'ET1']);
 
@@ -40,12 +40,19 @@ const adapters: Record<StatementFormat, StatementAdapter> = {
   desjardins_bank_account: {
     parseRows: parseDesjardinsBankAccount,
   },
+  desjardins_credit_card_pdf: {
+    parseRows: () => {
+      throw new StatementParserError('PDF statements must be parsed through the PDF extractor.');
+    },
+  },
 };
 
 function detectFileType(input: ParseInput): FileType {
   const filename = input.filename.toLowerCase();
+  const pdfSignature = input.buffer.subarray(0, 4).toString('hex').toLowerCase() === '25504446';
   const zipSignature = input.buffer.subarray(0, 2).toString('hex').toLowerCase() === '504b';
 
+  if (filename.endsWith('.pdf') || pdfSignature) return 'pdf';
   if (filename.endsWith('.xlsx') || zipSignature) return 'xlsx';
   return 'csv';
 }
@@ -200,6 +207,26 @@ export async function parseStatement(input: ParseInput): Promise<ParseResult> {
   if (input.buffer.length === 0) throw new StatementParserError('Statement file is empty.');
 
   const fileType = detectFileType(input);
+  if (fileType === 'pdf') {
+    const { extractPdfStatement, pdfTransactionsToParsedRows } = await import('./pdf-statement-extractor');
+    const result = await extractPdfStatement({
+      base64: input.buffer.toString('base64'),
+      filename: input.filename,
+    });
+
+    if (!result.ok) {
+      throw new StatementParserError(`PDF extraction failed: ${result.error}`);
+    }
+
+    return {
+      format: 'desjardins_credit_card_pdf',
+      rows: pdfTransactionsToParsedRows(result.data.transactions),
+      warnings: result.data.warnings ?? [],
+      totalRowsRead: result.data.transactions.length,
+      rowsSkipped: 0,
+    };
+  }
+
   const records = fileType === 'csv' ? parseCsvRecords(input.buffer) : await parseXlsxRecords(input.buffer);
   if (records.length === 0) throw new StatementParserError('Statement file is empty.');
 
