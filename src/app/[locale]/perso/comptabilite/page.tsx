@@ -32,8 +32,10 @@ export default async function AccountingPage({
   const currentYear = now.getFullYear();
   const currentMonth = now.getMonth() + 1;
   const year = Number(raw.year) || currentYear;
-  const rawMonth = Number(raw.month);
-  const month = Number.isInteger(rawMonth) && rawMonth >= 1 && rawMonth <= 12 ? rawMonth : currentMonth;
+  const isAllMonthMode = raw.month === 'all';
+  const rawMonth = typeof raw.month === 'string' ? Number(raw.month) : NaN;
+  const parsedMonth = Number.isInteger(rawMonth) && rawMonth >= 1 && rawMonth <= 12 ? rawMonth : currentMonth;
+  const month = isAllMonthMode ? undefined : parsedMonth;
   const page = Math.max(Number(raw.page) || 1, 1);
   const type = typeof raw.type === 'string' && isTransactionType(raw.type) ? raw.type : undefined;
   const legacySort = typeof raw.sort === 'string' ? raw.sort : '';
@@ -83,7 +85,8 @@ export default async function AccountingPage({
   const normalizedSearchParams = Object.fromEntries(
     Object.entries(raw).map(([key, value]) => [key, Array.isArray(value) ? value[0] ?? '' : value ?? '']),
   );
-  const activeSearchParams = { ...normalizedSearchParams, year: String(year), month: String(month) };
+  const activeMonth = isAllMonthMode ? 'all' : String(month);
+  const activeSearchParams = { ...normalizedSearchParams, year: String(year), month: activeMonth };
 
   return (
     <div className="py-8">
@@ -109,7 +112,12 @@ export default async function AccountingPage({
         ) : null}
       </div>
       <YearTabs years={years} activeYear={year} locale={locale} />
-      <MonthNavigator year={year} month={month} locale={locale} searchParams={normalizedSearchParams} />
+      <MonthNavigator
+        year={year}
+        month={isAllMonthMode ? 'all' : parsedMonth}
+        locale={locale}
+        searchParams={normalizedSearchParams}
+      />
       <TransactionFilters
         properties={properties}
         companies={companies}

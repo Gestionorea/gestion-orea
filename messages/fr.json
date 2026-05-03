@@ -652,7 +652,9 @@
       },
       "monthNavigator": {
         "previous": "Mois précédent",
-        "next": "Mois suivant"
+        "next": "Mois suivant",
+        "allLabel": "Toute l'année {year}",
+        "allButton": "Tout voir"
       },
       "sort": {
         "dateDesc": "Date récente",
