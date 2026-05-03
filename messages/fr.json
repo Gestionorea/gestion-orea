@@ -415,6 +415,11 @@
           "recurringOk": "Récurrent vérifié",
           "income": "Revenu"
         },
+        "badges": {
+          "historical": "{count} transactions similaires",
+          "interacContact": "Contact Interac connu: {name}",
+          "interAccountAdvance": "Avance inter-comptes probable"
+        },
         "suggestion": "Suggestion: {reason}",
         "suggestionConfidenceHigh": "Suggestion certaine",
         "suggestionConfidenceMedium": "Suggestion probable",

@@ -415,6 +415,11 @@
           "recurringOk": "Verified recurring",
           "income": "Income"
         },
+        "badges": {
+          "historical": "{count} similar transactions",
+          "interacContact": "Known Interac contact: {name}",
+          "interAccountAdvance": "Likely inter-account advance"
+        },
         "suggestion": "Suggestion: {reason}",
         "suggestionConfidenceHigh": "High-confidence suggestion",
         "suggestionConfidenceMedium": "Likely suggestion",

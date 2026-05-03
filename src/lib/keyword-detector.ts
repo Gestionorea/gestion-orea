@@ -16,6 +16,11 @@ export type KeywordDetection = {
 
 export const KEYWORD_RULES: KeywordRule[] = [
   {
+    keywords: ['visa desjardins', 'paiement visa desjardins'],
+    categoryNamePattern: /(avance|paiement.*carte|carte.*credit|carte.*crédit)/i,
+    defaultName: 'Avance inter-comptes',
+  },
+  {
     keywords: ['visa', 'mastercard', 'mc'],
     categoryNamePattern: /(carte|visa|paiement.*credit|paiement.*crédit)/i,
     defaultName: 'Paiement carte',
@@ -69,6 +74,11 @@ export const KEYWORD_RULES: KeywordRule[] = [
 
 function normalizeKeyword(value: string): string {
   return normalizeDescription(value);
+}
+
+export function isInterAccountAdvanceDescription(description: string): boolean {
+  const normalized = normalizeDescription(description);
+  return KEYWORD_RULES[0].keywords.some((keyword) => normalized.includes(normalizeKeyword(keyword)));
 }
 
 export function detectCategoryByKeywords(

@@ -23,6 +23,7 @@ export type PreviewRow = {
   suggestedCategoryId: string | null;
   suggestionConfidence: Suggestion['confidence'];
   suggestionReason: string;
+  context?: Suggestion['context'];
 };
 
 export type AnalyzeStatementResult =
@@ -139,6 +140,7 @@ export async function analyzeStatementAction(
         suggestedCategoryId: suggestion.categoryId,
         suggestionConfidence: suggestion.confidence,
         suggestionReason: suggestion.reason,
+        context: suggestion.context,
       };
     }),
     warnings: result.warnings,

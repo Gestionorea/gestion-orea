@@ -89,6 +89,32 @@ export default function PreviewTable({
     return null;
   }
 
+  function contextBadges(row: PreviewRow): { key: string; label: string; className: string }[] {
+    const badges: { key: string; label: string; className: string }[] = [];
+    if (row.context?.historicalCount && row.context.historicalCount > 0) {
+      badges.push({
+        key: 'historical',
+        label: t('badges.historical', { count: row.context.historicalCount }),
+        className: 'border-blue-200 bg-blue-50 text-blue-800',
+      });
+    }
+    if (row.context?.interacContactName) {
+      badges.push({
+        key: 'interac',
+        label: t('badges.interacContact', { name: row.context.interacContactName }),
+        className: 'border-emerald-200 bg-emerald-50 text-emerald-800',
+      });
+    }
+    if (row.context?.isInterAccountAdvance) {
+      badges.push({
+        key: 'advance',
+        label: t('badges.interAccountAdvance'),
+        className: 'border-amber-200 bg-amber-50 text-amber-900',
+      });
+    }
+    return badges;
+  }
+
   const createCategoryRow = rows.find((row) => row.rowNumber === createCategoryRowNumber) ?? null;
 
   return (
@@ -122,6 +148,7 @@ export default function PreviewTable({
               const isDuplicate = row.status === 'duplicate';
               const visualStatus = previewVisualStatus(row);
               const visualLabel = visualStatusLabel(visualStatus);
+              const badges = contextBadges(row);
 
               return (
                 <tr
@@ -141,7 +168,23 @@ export default function PreviewTable({
                     </div>
                   </td>
                   <td className="whitespace-nowrap px-3 py-3">{row.date}</td>
-                  <td className="max-w-sm px-3 py-3">{row.description}</td>
+                  <td className="max-w-sm px-3 py-3">
+                    <div className="grid gap-2">
+                      <span>{row.description}</span>
+                      {row.status === 'new' && badges.length > 0 ? (
+                        <div className="flex flex-wrap gap-1">
+                          {badges.map((badge) => (
+                            <span
+                              key={`${row.rowNumber}-${badge.key}`}
+                              className={`inline-flex border px-2 py-0.5 text-[11px] font-medium ${badge.className}`}
+                            >
+                              {badge.label}
+                            </span>
+                          ))}
+                        </div>
+                      ) : null}
+                    </div>
+                  </td>
                   <td className="whitespace-nowrap px-3 py-3 text-right tabular-nums">{row.amountTotal}</td>
                   <td className="whitespace-nowrap px-3 py-3">
                     {row.type === 'income' ? t('typeIncome') : t('typeExpense')}

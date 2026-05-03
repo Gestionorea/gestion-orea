@@ -1,7 +1,8 @@
 import { normalizeDescription } from './dedup-hash';
 import { getDb } from './db';
 import { listCategories } from './categories';
-import { detectCategoryByKeywords } from './keyword-detector';
+import { detectCategoryByKeywords, isInterAccountAdvanceDescription } from './keyword-detector';
+import { extractInteracName, findInteracContact } from './interac-contacts';
 
 export type SuggestionInput = {
   paymentSourceId: string;
@@ -12,6 +13,11 @@ export type Suggestion = {
   categoryId: string | null;
   confidence: 'high' | 'medium' | 'low' | 'none';
   reason: string;
+  context?: {
+    historicalCount?: number;
+    interacContactName?: string;
+    isInterAccountAdvance?: boolean;
+  };
 };
 
 type NormalizedInput = SuggestionInput & {
@@ -25,8 +31,8 @@ const MAJORITY_THRESHOLD = 0.67;
 const RECENT_TRANSACTION_LIMIT = 1000;
 const KEY_CHUNK_SIZE = 500;
 
-function none(reason = "Pas assez d'historique"): Suggestion {
-  return { categoryId: null, confidence: 'none', reason };
+function none(reason = "Pas assez d'historique", context?: Suggestion['context']): Suggestion {
+  return { categoryId: null, confidence: 'none', reason, context };
 }
 
 function confidenceForRatio(ratio: number): Suggestion['confidence'] {
@@ -101,8 +107,10 @@ export async function suggestCategoryBatch(inputs: SuggestionInput[]): Promise<M
     for (const chunk of chunks(Array.from(uniqueByNormDesc.values()), KEY_CHUNK_SIZE)) {
       for (const input of chunk) {
         const matches = transactionsByNormDesc.get(input.normDesc) ?? [];
+        const context: Suggestion['context'] =
+          matches.length > 0 ? { historicalCount: matches.length } : undefined;
         if (matches.length < MIN_OCCURRENCES) {
-          suggestionByKey.set(input.key, none());
+          suggestionByKey.set(input.key, none(undefined, context));
           continue;
         }
 
@@ -119,13 +127,13 @@ export async function suggestCategoryBatch(inputs: SuggestionInput[]): Promise<M
           Array.from(counts.entries()).sort((left, right) => right[1].count - left[1].count)[0] ?? [];
 
         if (!topCategoryId || !top) {
-          suggestionByKey.set(input.key, none());
+          suggestionByKey.set(input.key, none(undefined, context));
           continue;
         }
 
         const ratio = top.count / matches.length;
         if (ratio < MAJORITY_THRESHOLD) {
-          suggestionByKey.set(input.key, none('Pas de majorité claire'));
+          suggestionByKey.set(input.key, none('Pas de majorité claire', context));
           continue;
         }
 
@@ -134,22 +142,55 @@ export async function suggestCategoryBatch(inputs: SuggestionInput[]): Promise<M
           categoryId: topCategoryId,
           confidence: confidenceForRatio(ratio),
           reason: `${top.count}/${matches.length} transactions historiques (${input.normDesc}) classées ${categoryName}`,
+          context,
         });
       }
     }
   }
 
+  const interacContactByName = new Map<string, Awaited<ReturnType<typeof findInteracContact>>>();
+
   for (const input of normalizedInputs) {
     const historical = suggestionByKey.get(input.key) ?? none();
-    if (historical.confidence === 'none' || historical.confidence === 'low') {
-      const keywordSuggestion = detectCategoryByKeywords(input.description, allCategories);
-      if (keywordSuggestion.confidence === 'high' || keywordSuggestion.confidence === 'medium') {
-        suggestions.set(input.index, keywordSuggestion);
+    const context: Suggestion['context'] = { ...(historical.context ?? {}) };
+
+    if (isInterAccountAdvanceDescription(input.description)) {
+      context.isInterAccountAdvance = true;
+    }
+
+    if (historical.confidence !== 'none' && historical.confidence !== 'low') {
+      suggestions.set(input.index, { ...historical, context });
+      continue;
+    }
+
+    const interacName = extractInteracName(input.description);
+    if (interacName) {
+      context.interacContactName = interacName;
+      if (!interacContactByName.has(interacName)) {
+        interacContactByName.set(interacName, await findInteracContact(interacName));
+      }
+
+      const contact = interacContactByName.get(interacName);
+      if (contact?.defaultCategoryId) {
+        suggestions.set(input.index, {
+          categoryId: contact.defaultCategoryId,
+          confidence: 'high',
+          reason: `Contact Interac connu (${contact.occurrences} occurrences)`,
+          context,
+        });
         continue;
       }
     }
 
-    suggestions.set(input.index, historical);
+    if (historical.confidence === 'none' || historical.confidence === 'low') {
+      const keywordSuggestion = detectCategoryByKeywords(input.description, allCategories);
+      if (keywordSuggestion.confidence === 'high' || keywordSuggestion.confidence === 'medium') {
+        suggestions.set(input.index, { ...keywordSuggestion, context });
+        continue;
+      }
+    }
+
+    suggestions.set(input.index, { ...historical, context });
   }
 
   return suggestions;

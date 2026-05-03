@@ -5,6 +5,7 @@ import { Prisma } from '@prisma/client';
 import { computeDedupHash } from '@/lib/dedup-hash';
 import { getDb } from '@/lib/db';
 import { detectInterAccountTransfer } from '@/lib/inter-account-detector';
+import { extractInteracName, upsertInteracContact } from '@/lib/interac-contacts';
 import { requireOwner } from '@/lib/permissions';
 import { parseStatement } from '@/lib/statement-parser';
 
@@ -234,6 +235,19 @@ export async function commitImportAction(
       { timeout: 60000 },
     );
     const linkingSummary = await linkInterAccountTransfers(importId);
+    try {
+      for (const { row } of rowsToImport) {
+        const categoryId = categoryOverrides.get(row.rawRowNumber);
+        if (!categoryId) continue;
+
+        const interacName = extractInteracName(row.description);
+        if (!interacName) continue;
+
+        await upsertInteracContact(interacName, categoryId);
+      }
+    } catch {
+      // Learning is advisory; a failed contact update should not roll back a completed import.
+    }
 
     return {
       ok: true,

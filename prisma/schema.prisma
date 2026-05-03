@@ -93,13 +93,27 @@ model Property {
 }
 
 model Category {
-  id           String        @id @default(cuid())
-  name         String        @unique
-  type         CategoryType  @default(both)
-  description  String?
-  createdAt    DateTime      @default(now())
-  updatedAt    DateTime      @updatedAt
-  transactions Transaction[]
+  id              String           @id @default(cuid())
+  name            String           @unique
+  type            CategoryType     @default(both)
+  description     String?
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  transactions    Transaction[]
+  interacContacts InteracContact[]
+}
+
+model InteracContact {
+  id                String    @id @default(cuid())
+  name              String    @unique
+  defaultCategoryId String?
+  defaultCategory   Category? @relation(fields: [defaultCategoryId], references: [id], onDelete: SetNull)
+  occurrences       Int       @default(1)
+  lastSeenAt        DateTime  @default(now())
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  @@index([defaultCategoryId])
 }
 
 model PaymentSource {
