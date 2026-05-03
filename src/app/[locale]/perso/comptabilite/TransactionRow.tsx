@@ -25,6 +25,7 @@ function visualRowClass(status: TransactionVisualStatus): string {
   if (status === 'invoice_ok') return 'bg-green-50 hover:bg-green-100';
   if (status === 'missing_invoice') return 'bg-red-50 hover:bg-red-100';
   if (status === 'recurring_ok') return 'bg-yellow-50 hover:bg-yellow-100';
+  if (status === 'income') return 'bg-green-100 hover:bg-green-200';
   return 'bg-white hover:bg-gray-50';
 }
 
@@ -32,7 +33,7 @@ function visualBadgeClass(status: TransactionVisualStatus): string {
   if (status === 'invoice_ok') return 'bg-green-500';
   if (status === 'missing_invoice') return 'bg-red-500';
   if (status === 'recurring_ok') return 'bg-yellow-500';
-  if (status === 'income') return 'bg-blue-400';
+  if (status === 'income') return 'bg-green-600';
   return '';
 }
 
@@ -122,7 +123,9 @@ export default function TransactionRow({
       <td className="px-4 py-4 text-gray-600">{labels.type}</td>
       <td className="px-4 py-4 text-gray-600">
         <div className="flex flex-col gap-1">
-          <span>${row.amountTotal}</span>
+          <span className={row.visualStatus === 'income' ? 'font-medium text-green-700' : ''}>
+            ${row.amountTotal}
+          </span>
           {row.taxRegime === 'taxable_qc' ? null : (
             <span className="text-xs text-gray-500">{t(`taxRegime.${row.taxRegime}`)}</span>
           )}
@@ -134,6 +137,8 @@ export default function TransactionRow({
             transactionId={row.id}
             currentCategoryId={row.categoryId}
             categories={categories}
+            transactionDescription={row.merchantName}
+            paymentSourceId={row.paymentSourceId}
           />
         ) : (
           <div className="grid gap-1">

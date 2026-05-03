@@ -708,7 +708,15 @@
       "inlineEdit": {
         "noCategory": "— Aucune —",
         "justificationPlaceholder": "Note rapide...",
-        "justificationHeader": "Justification"
+        "justificationHeader": "Justification",
+        "searchPlaceholder": "Chercher une catégorie...",
+        "loadingSuggestions": "Chargement des suggestions...",
+        "suggestionsHeader": "Suggérées pour cette ligne",
+        "matchingCategories": "{count} résultat(s)",
+        "allCategories": "Toutes les catégories",
+        "noResults": "Aucune catégorie ne correspond",
+        "createNew": "Créer nouvelle catégorie...",
+        "createNamed": "Créer \"{name}\""
       },
       "detail": {
         "eyebrow": "Transaction",
