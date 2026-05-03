@@ -138,7 +138,7 @@ export async function commitImportAction(
   const db = getDb();
   const source = await db.paymentSource.findUnique({
     where: { id: paymentSourceId },
-    select: { archived: true, kind: true },
+    select: { archived: true, kind: true, ownerCompanyId: true },
   });
 
   if (!source) return { ok: false, error: 'Source introuvable' };
@@ -221,6 +221,7 @@ export async function commitImportAction(
               taxRegime: 'manual',
               paymentMethod,
               paymentSourceId,
+              companyId: source.ownerCompanyId ?? null,
               beneficiary: 'company',
               categoryId,
               createdById: session.userId,
