@@ -456,6 +456,8 @@
           "filesImported": "{count} statements imported",
           "filesSkipped": "{count} already imported",
           "matchesCreated": "{count} invoices attached automatically",
+          "aiMatches": "{count} invoices attached by AI (content analysis)",
+          "aiCalls": "{count} API calls used",
           "errors": "Errors:"
         }
       }

@@ -456,6 +456,8 @@
           "filesImported": "{count} relevés importés",
           "filesSkipped": "{count} déjà importés",
           "matchesCreated": "{count} factures attachées automatiquement",
+          "aiMatches": "{count} factures attachées par IA (analyse contenu)",
+          "aiCalls": "{count} appels API utilisés",
           "errors": "Erreurs:"
         }
       }

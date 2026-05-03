@@ -21,6 +21,11 @@ export type MatchInput = {
   invoices: InvoiceFile[];
 };
 
+export type ExtractedMatchInput = {
+  extracted: { date: Date | null; fournisseur: string | null; montantTotal: number | null };
+  transactions: { id: string; date: Date; merchantName: string; amountTotal: number }[];
+};
+
 const STOPWORDS = new Set([
   'pour',
   'avec',
@@ -132,4 +137,35 @@ export function findBestMatch(input: MatchInput, threshold = 50): MatchScore | n
   }
 
   return best;
+}
+
+export function findMatchByExtractedData(
+  input: ExtractedMatchInput,
+  dateToleranceDays = 5,
+  amountToleranceCents = 1,
+): string | null {
+  const { extracted, transactions } = input;
+  if (!extracted.montantTotal || !extracted.date) return null;
+
+  const targetCents = Math.round(extracted.montantTotal * 100);
+  const matches = transactions.filter((transaction) => {
+    const transactionCents = Math.round(transaction.amountTotal * 100);
+    if (Math.abs(transactionCents - targetCents) > amountToleranceCents) return false;
+
+    return daysBetween(transaction.date, extracted.date as Date) <= dateToleranceDays;
+  });
+
+  if (matches.length === 1) return matches[0].id;
+
+  if (matches.length > 1 && extracted.fournisseur) {
+    const fournisseurNorm = normalize(extracted.fournisseur);
+    const refined = matches.filter((transaction) => {
+      const transactionNorm = normalize(transaction.merchantName);
+      return transactionNorm.includes(fournisseurNorm) || fournisseurNorm.includes(transactionNorm);
+    });
+
+    if (refined.length === 1) return refined[0].id;
+  }
+
+  return null;
 }
