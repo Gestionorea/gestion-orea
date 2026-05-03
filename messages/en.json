@@ -376,7 +376,6 @@
       "eyebrow": "Accounting",
       "title": "Import bank statement",
       "subtitle": "Select the account or card, then upload the CSV or Excel file.",
-      "wipBanner": "Work in progress — parser not active yet. Analysis will return an error.",
       "form": {
         "paymentSource": "Payment source",
         "paymentSourcePlaceholder": "Select an account or card",
@@ -386,7 +385,42 @@
       },
       "errors": {
         "missingSource": "Payment source required",
-        "missingFile": "File required"
+        "missingFile": "File required",
+        "sourceArchived": "This payment source is archived",
+        "sourceMissing": "Source not found",
+        "parseFailed": "Could not read the file",
+        "importFailed": "Failed to create transactions"
+      },
+      "preview": {
+        "title": "Preview of detected rows",
+        "warnings": "Warnings",
+        "columnRow": "#",
+        "columnDate": "Date",
+        "columnDescription": "Description",
+        "columnAmount": "Amount",
+        "columnType": "Type",
+        "columnCategory": "Category",
+        "columnStatus": "Status",
+        "statusNew": "New",
+        "statusDuplicate": "Duplicate",
+        "typeIncome": "Income",
+        "typeExpense": "Expense",
+        "categoryNone": "— None —",
+        "suggestion": "Suggestion: {reason}",
+        "suggestionConfidenceHigh": "High-confidence suggestion",
+        "suggestionConfidenceMedium": "Likely suggestion",
+        "suggestionConfidenceLow": "Low-confidence suggestion",
+        "footer": "{newCount} new, {duplicateCount} duplicates"
+      },
+      "commit": {
+        "submit": "Import {count} transactions",
+        "submitting": "Importing...",
+        "successTitle": "Import successful",
+        "successDetail": "{imported} transactions imported, {duplicates} duplicates ignored.",
+        "successDetailWithCategories": "{imported} transactions imported ({categorized} automatically categorized), {duplicates} duplicates ignored.",
+        "viewTransactions": "View transactions",
+        "noNewRows": "No new transaction to import (everything is already in the database).",
+        "errorTitle": "Import error"
       }
     },
     "admin": {

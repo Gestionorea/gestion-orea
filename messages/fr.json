@@ -376,7 +376,6 @@
       "eyebrow": "Comptabilité",
       "title": "Importer un relevé bancaire",
       "subtitle": "Sélectionnez le compte ou la carte, puis téléversez le fichier CSV ou Excel.",
-      "wipBanner": "Page en développement — le parser n'est pas encore actif. L'analyse retournera une erreur.",
       "form": {
         "paymentSource": "Source de paiement",
         "paymentSourcePlaceholder": "Choisir un compte ou une carte",
@@ -386,7 +385,42 @@
       },
       "errors": {
         "missingSource": "Source de paiement requise",
-        "missingFile": "Fichier requis"
+        "missingFile": "Fichier requis",
+        "sourceArchived": "Cette source de paiement est archivée",
+        "sourceMissing": "Source introuvable",
+        "parseFailed": "Lecture du fichier impossible",
+        "importFailed": "Échec de la création des transactions"
+      },
+      "preview": {
+        "title": "Aperçu des lignes détectées",
+        "warnings": "Avertissements",
+        "columnRow": "#",
+        "columnDate": "Date",
+        "columnDescription": "Description",
+        "columnAmount": "Montant",
+        "columnType": "Type",
+        "columnCategory": "Catégorie",
+        "columnStatus": "Statut",
+        "statusNew": "Nouveau",
+        "statusDuplicate": "Doublon",
+        "typeIncome": "Entrée",
+        "typeExpense": "Sortie",
+        "categoryNone": "— Aucune —",
+        "suggestion": "Suggestion: {reason}",
+        "suggestionConfidenceHigh": "Suggestion certaine",
+        "suggestionConfidenceMedium": "Suggestion probable",
+        "suggestionConfidenceLow": "Suggestion incertaine",
+        "footer": "{newCount} nouvelles, {duplicateCount} doublons"
+      },
+      "commit": {
+        "submit": "Importer {count} transactions",
+        "submitting": "Importation en cours...",
+        "successTitle": "Importation réussie",
+        "successDetail": "{imported} transactions importées, {duplicates} doublons ignorés.",
+        "successDetailWithCategories": "{imported} transactions importées (dont {categorized} catégorisées automatiquement), {duplicates} doublons ignorés.",
+        "viewTransactions": "Voir les transactions",
+        "noNewRows": "Aucune nouvelle transaction à importer (tout est déjà en base).",
+        "errorTitle": "Erreur d'importation"
       }
     },
     "admin": {
