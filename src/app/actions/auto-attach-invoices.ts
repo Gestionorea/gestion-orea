@@ -9,7 +9,7 @@ import {
 } from '@/lib/invoice-matcher';
 import { extractInvoiceCached, type ExtractInput } from '@/lib/invoice-extractor';
 import { getDb } from '@/lib/db';
-import { downloadItemContent, listFolderItemsByPath } from '@/lib/onedrive';
+import { downloadItemContent, listFolderItemsByPath, moveItemToFolder } from '@/lib/onedrive';
 import { requireOwner } from '@/lib/permissions';
 
 export type AutoAttachInvoicesResult = {

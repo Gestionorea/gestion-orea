@@ -376,3 +376,53 @@ export async function ensureFolderExists(folderPath: string): Promise<void> {
     currentPath = nextPath;
   }
 }
+
+async function getFolderId(folderPath: string): Promise<string | null> {
+  const env = requireEnv();
+  const encoded = encodeDrivePath(folderPath);
+  const response = await graphFetch(
+    `/users/${encodeURIComponent(env.userPrincipal)}/drive/root:${encoded}?$select=id`,
+  );
+  if (response.status === 404) return null;
+  if (!response.ok) {
+    throw new OneDriveError(`Microsoft Graph returned ${response.status}.`, response.status);
+  }
+  const payload = (await response.json()) as { id?: string };
+  return payload.id ?? null;
+}
+
+export type MovedItem = {
+  id: string;
+  webUrl: string;
+};
+
+export async function moveItemToFolder(
+  itemId: string,
+  destinationFolderPath: string,
+): Promise<MovedItem> {
+  const env = requireEnv();
+  await ensureFolderExists(destinationFolderPath);
+  const folderId = await getFolderId(destinationFolderPath);
+  if (!folderId) {
+    throw new OneDriveError(`Destination folder not found after creation: ${destinationFolderPath}`);
+  }
+
+  const response = await graphFetch(
+    `/users/${encodeURIComponent(env.userPrincipal)}/drive/items/${encodeURIComponent(itemId)}`,
+    {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ parentReference: { id: folderId } }),
+    },
+  );
+
+  if (!response.ok) {
+    throw new OneDriveError(`Microsoft Graph returned ${response.status} on move.`, response.status);
+  }
+
+  const payload = (await response.json()) as { id?: string; webUrl?: string };
+  if (!payload.id || !payload.webUrl) {
+    throw new OneDriveError('Microsoft Graph move response missing id or webUrl.');
+  }
+  return { id: payload.id, webUrl: payload.webUrl };
+}
