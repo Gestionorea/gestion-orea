@@ -19,6 +19,10 @@ function paymentSourceLabel(source: PaymentSourceItem): string {
   return source.lastDigits ? `${source.name} • ${source.lastDigits}` : source.name;
 }
 
+function normalizeFilename(filename: string): string {
+  return filename.normalize('NFC');
+}
+
 export default function MultiUploadForm({
   paymentSources,
 }: {
@@ -68,9 +72,10 @@ export default function MultiUploadForm({
 
   const resolvePaymentSourceId = useCallback(
     (filename: string): string | null => {
-      const result = analysisResults.find((a) => a.filename === filename);
+      const key = normalizeFilename(filename);
+      const result = analysisResults.find((a) => normalizeFilename(a.filename) === key);
       if (result?.detectedPaymentSourceId) return result.detectedPaymentSourceId;
-      return paymentSourceOverrides[filename] ?? null;
+      return paymentSourceOverrides[key] ?? null;
     },
     [analysisResults, paymentSourceOverrides],
   );
@@ -92,11 +97,12 @@ export default function MultiUploadForm({
     startCommit(async () => {
       const newResults: Record<string, CommitStatus> = {};
       for (const file of selectedFiles) {
+        const fileKey = normalizeFilename(file.name);
         const paymentSourceId = resolvePaymentSourceId(file.name);
         if (!paymentSourceId) {
           continue; // skip unresolved
         }
-        newResults[file.name] = { state: 'pending' };
+        newResults[fileKey] = { state: 'pending' };
         setCommitResults({ ...newResults });
 
         const fd = new FormData();
@@ -107,17 +113,17 @@ export default function MultiUploadForm({
         try {
           const result: CommitImportResult = await commitImportAction(null, fd);
           if (result.ok) {
-            newResults[file.name] = {
+            newResults[fileKey] = {
               state: 'success',
               importedCount: result.importedCount,
               duplicateCount: result.duplicateCount,
             };
           } else {
-            newResults[file.name] = { state: 'error', error: result.error };
+            newResults[fileKey] = { state: 'error', error: result.error };
           }
         } catch (e) {
           const msg = e instanceof Error ? e.message : 'Erreur inconnue';
-          newResults[file.name] = { state: 'error', error: msg };
+          newResults[fileKey] = { state: 'error', error: msg };
         }
         setCommitResults({ ...newResults });
       }
@@ -188,7 +194,7 @@ export default function MultiUploadForm({
                   const isDetected = !!file.detectedPaymentSourceId;
                   const newRows = file.parsed?.rows.filter((r) => r.status === 'new').length ?? 0;
                   const dupRows = file.parsed?.rows.filter((r) => r.status === 'duplicate').length ?? 0;
-                  const commit = commitResults[file.filename];
+                  const commit = commitResults[normalizeFilename(file.filename)];
 
                   return (
                     <tr key={file.filename} className="bg-white">
@@ -201,11 +207,11 @@ export default function MultiUploadForm({
                           </span>
                         ) : (
                           <select
-                            value={paymentSourceOverrides[file.filename] ?? ''}
+                            value={paymentSourceOverrides[normalizeFilename(file.filename)] ?? ''}
                             onChange={(event) =>
                               setPaymentSourceOverrides((prev) => ({
                                 ...prev,
-                                [file.filename]: event.target.value,
+                                [normalizeFilename(file.filename)]: event.target.value,
                               }))
                             }
                             className="border border-gray-300 px-2 py-1 text-xs"
