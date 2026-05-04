@@ -3,7 +3,6 @@
 import Link from 'next/link';
 import { useLocale, useTranslations } from 'next-intl';
 import { useCallback, useState, useTransition } from 'react';
-import { commitImportAction, type CommitImportResult } from '@/app/actions/commit-import';
 import {
   analyzeStatementBatchAction,
   type FileAnalysisResult,
@@ -14,6 +13,10 @@ type CommitStatus =
   | { state: 'pending' }
   | { state: 'success'; importedCount: number; duplicateCount: number }
   | { state: 'error'; error: string };
+
+type UploadStatementResult =
+  | { ok: true; importedCount: number; duplicateCount: number }
+  | { ok: false; error: string };
 
 function paymentSourceLabel(source: PaymentSourceItem): string {
   return source.lastDigits ? `${source.name} • ${source.lastDigits}` : source.name;
@@ -111,7 +114,11 @@ export default function MultiUploadForm({
         fd.append('categoryOverrides', '{}');
 
         try {
-          const result: CommitImportResult = await commitImportAction(null, fd);
+          const response = await fetch('/api/upload-statement', {
+            method: 'POST',
+            body: fd,
+          });
+          const result = (await response.json()) as UploadStatementResult;
           if (result.ok) {
             newResults[fileKey] = {
               state: 'success',
