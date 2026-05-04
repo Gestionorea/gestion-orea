@@ -141,7 +141,11 @@ async function getAccessToken(forceRefresh = false): Promise<string> {
   return tokenCache.accessToken;
 }
 
-async function graphFetch(path: string, init?: RequestInit): Promise<Response> {
+export function getUserPrincipal(): string {
+  return requireEnv().userPrincipal;
+}
+
+export async function graphFetch(path: string, init?: RequestInit): Promise<Response> {
   const token = await getAccessToken();
   const response = await fetch(`${GRAPH_BASE_URL}${path}`, {
     ...init,
@@ -165,7 +169,7 @@ async function graphFetch(path: string, init?: RequestInit): Promise<Response> {
   });
 }
 
-async function graphFetchUrl(url: string, init?: RequestInit): Promise<Response> {
+export async function graphFetchUrl(url: string, init?: RequestInit): Promise<Response> {
   const token = await getAccessToken();
   const response = await fetch(url, {
     ...init,
