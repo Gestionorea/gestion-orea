@@ -128,11 +128,17 @@ export async function commitImportAction(
   const categoryOverrides = parseCategoryOverrides(formData.get('categoryOverrides'));
 
   if (typeof paymentSourceId !== 'string' || !paymentSourceId) {
-    return { ok: false, error: 'PaymentSource requis' };
+    const keys = Array.from(formData.keys()).join(',');
+    const psLen = typeof paymentSourceId === 'string' ? paymentSourceId.length : 'N/A';
+    return {
+      ok: false,
+      error: `PaymentSource requis (recu: type=${typeof paymentSourceId}, len=${psLen}, formKeys=[${keys}])`,
+    };
   }
 
   if (!(file instanceof File) || file.size === 0) {
-    return { ok: false, error: 'Fichier requis' };
+    const fileType = file instanceof File ? `File(name=${file.name}, size=${file.size})` : typeof file;
+    return { ok: false, error: `Fichier requis (recu: ${fileType})` };
   }
 
   const db = getDb();
