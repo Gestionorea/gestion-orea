@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { useTranslations } from 'next-intl';
 import { useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import type { TransactionRow, TransactionSortBy, TransactionSortOrder } from '@/lib/transactions';
@@ -27,6 +28,7 @@ export type TransactionListLabels = {
     paymentSource: string;
     property: string;
     company: string;
+    invoice?: string;
     reconciled: string;
   };
 };
@@ -56,6 +58,7 @@ export default function TransactionListClient({
   basePath?: string;
   labels: TransactionListLabels;
 }) {
+  const tColumns = useTranslations('perso.compta.columns');
   const router = useRouter();
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const itemIds = useMemo(() => new Set(items.map((item) => item.row.id)), [items]);
@@ -155,6 +158,7 @@ export default function TransactionListClient({
               {renderSortableHeader('paymentSource', labels.columns.paymentSource)}
               <th className="px-4 py-3 font-medium">{labels.columns.property}</th>
               {renderSortableHeader('company', labels.columns.company)}
+              <th className="px-4 py-3 font-medium">{labels.columns.invoice ?? tColumns('invoice')}</th>
               <th className="px-4 py-3 font-medium">{labels.columns.reconciled}</th>
             </tr>
           </thead>

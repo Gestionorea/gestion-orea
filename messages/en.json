@@ -800,6 +800,19 @@
         "createNew": "Create new category...",
         "createNamed": "Create \"{name}\""
       },
+      "invoiceLinker": {
+        "column": "Invoice",
+        "attach": "Link invoice",
+        "attached": "📎 Invoice matched",
+        "open": "Open in OneDrive",
+        "unlink": "Remove link",
+        "loading": "Loading...",
+        "empty": "No invoice found for this month",
+        "error": "Loading error",
+        "sourceMonthTraitees": "Processed month",
+        "sourceMonthPending": "Pending month",
+        "sourceInboxVrac": "Scanner inbox"
+      },
       "detail": {
         "eyebrow": "Transaction",
         "sectionFinancials": "Financial details",
@@ -853,6 +866,7 @@
         "paymentSource": "Source",
         "property": "Property",
         "company": "Company",
+        "invoice": "Invoice",
         "reconciled": "Reconciled",
         "actions": "Actions"
       },

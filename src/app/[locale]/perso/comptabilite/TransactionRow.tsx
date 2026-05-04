@@ -5,6 +5,7 @@ import { useTranslations } from 'next-intl';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import type { MouseEvent } from 'react';
 import { toggleReconciledAction } from '@/app/actions/transactions';
+import InvoiceLinker from '@/components/InvoiceLinker';
 import type { TransactionRow as TransactionRowData, TransactionVisualStatus } from '@/lib/transactions';
 import InlineCategorySelect, { type InlineCategoryOption } from './InlineCategorySelect';
 import InlineJustificationInput from './InlineJustificationInput';
@@ -179,6 +180,13 @@ export default function TransactionRow({
       </td>
       <td className="px-4 py-4 text-gray-600">{row.property?.name ?? '-'}</td>
       <td className="px-4 py-4 text-gray-600">{row.companyDisplay ?? row.company?.name ?? '-'}</td>
+      <td className="px-4 py-4 text-gray-600">
+        <InvoiceLinker
+          transactionId={row.id}
+          transactionDate={row.date}
+          attachmentUrl={row.attachmentUrl}
+        />
+      </td>
       <td className="px-4 py-4 text-gray-600">
         {canReconcile ? (
           <form action={toggleReconciledAction} className="flex items-center gap-2" onClick={stopRowNavigation}>

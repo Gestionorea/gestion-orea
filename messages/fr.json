@@ -800,6 +800,19 @@
         "createNew": "Créer nouvelle catégorie...",
         "createNamed": "Créer \"{name}\""
       },
+      "invoiceLinker": {
+        "column": "Facture",
+        "attach": "Lier facture",
+        "attached": "📎 Facture matchée",
+        "open": "Ouvrir dans OneDrive",
+        "unlink": "Retirer le lien",
+        "loading": "Chargement...",
+        "empty": "Aucune facture trouvée pour ce mois",
+        "error": "Erreur de chargement",
+        "sourceMonthTraitees": "Mois traité",
+        "sourceMonthPending": "Mois en attente",
+        "sourceInboxVrac": "Inbox scans"
+      },
       "detail": {
         "eyebrow": "Transaction",
         "sectionFinancials": "Détails financiers",
@@ -853,6 +866,7 @@
         "paymentSource": "Source",
         "property": "Immeuble",
         "company": "Entité",
+        "invoice": "Facture",
         "reconciled": "Réconcilié",
         "actions": "Actions"
       },
