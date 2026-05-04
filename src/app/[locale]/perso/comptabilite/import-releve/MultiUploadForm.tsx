@@ -3,10 +3,7 @@
 import Link from 'next/link';
 import { useLocale, useTranslations } from 'next-intl';
 import { useCallback, useState, useTransition } from 'react';
-import {
-  analyzeStatementBatchAction,
-  type FileAnalysisResult,
-} from '@/app/actions/analyze-statement-batch';
+import type { BatchAnalysisResult, FileAnalysisResult } from '@/app/actions/analyze-statement-batch';
 import type { PaymentSourceItem } from '@/lib/paymentSources';
 
 type CommitStatus =
@@ -61,7 +58,11 @@ export default function MultiUploadForm({
       for (const file of selectedFiles) {
         formData.append('files', file);
       }
-      const result = await analyzeStatementBatchAction(formData);
+      const response = await fetch('/api/analyze-statement-batch', {
+        method: 'POST',
+        body: formData,
+      });
+      const result = (await response.json()) as BatchAnalysisResult;
       if (!result.ok) {
         setGlobalError(result.error);
         setAnalysisResults([]);

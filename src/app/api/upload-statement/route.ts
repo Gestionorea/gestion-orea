@@ -5,6 +5,7 @@ import { computeDedupHash } from '@/lib/dedup-hash';
 import { getDb } from '@/lib/db';
 import { detectInterAccountTransfer } from '@/lib/inter-account-detector';
 import { extractInteracName, upsertInteracContact } from '@/lib/interac-contacts';
+import { parseMultipartRequest } from '@/lib/multipart-upload';
 import { requireOwner } from '@/lib/permissions';
 import { parseStatement } from '@/lib/statement-parser';
 
@@ -18,10 +19,6 @@ type UploadStatementResult =
       linkingSummary: { linked: number; unmatched: number };
     }
   | { ok: false; error: string; duplicateCount?: number };
-
-async function fileToBuffer(file: File): Promise<Buffer> {
-  return Buffer.from(await file.arrayBuffer());
-}
 
 function defaultPaymentMethod(kind: PaymentSourceKind): PaymentMethod {
   if (kind === 'card') return 'credit_card';
@@ -37,7 +34,7 @@ function periodBounds(rows: { date: Date }[]): { periodStart: Date; periodEnd: D
   };
 }
 
-function parseCategoryOverrides(value: FormDataEntryValue | null): Map<number, string | null> {
+function parseCategoryOverrides(value: string | null): Map<number, string | null> {
   if (typeof value !== 'string' || !value.trim()) return new Map();
 
   try {
@@ -129,20 +126,25 @@ async function linkInterAccountTransfers(importId: string): Promise<{ linked: nu
 
 export async function POST(request: NextRequest): Promise<NextResponse<UploadStatementResult>> {
   const session = await requireOwner();
-  const formData = await request.formData();
+  let multipart: Awaited<ReturnType<typeof parseMultipartRequest>>;
+  try {
+    multipart = await parseMultipartRequest(request);
+  } catch {
+    return jsonError('Lecture du formulaire impossible');
+  }
 
-  const paymentSourceId = formData.get('paymentSourceId');
-  const file = formData.get('file');
-  const categoryOverrides = parseCategoryOverrides(formData.get('categoryOverrides'));
+  const paymentSourceId = multipart.fields.get('paymentSourceId')?.[0] ?? null;
+  const file = multipart.files.find((item) => item.fieldName === 'file');
+  const categoryOverrides = parseCategoryOverrides(multipart.fields.get('categoryOverrides')?.[0] ?? null);
 
-  if (typeof paymentSourceId !== 'string' || !paymentSourceId) {
-    const keys = Array.from(formData.keys()).join(',');
+  if (!paymentSourceId) {
+    const keys = [...multipart.fields.keys(), ...multipart.files.map((item) => item.fieldName)].join(',');
     const psLen = typeof paymentSourceId === 'string' ? paymentSourceId.length : 'N/A';
     return jsonError(`PaymentSource requis (recu: type=${typeof paymentSourceId}, len=${psLen}, formKeys=[${keys}])`);
   }
 
-  if (!(file instanceof File) || file.size === 0) {
-    const fileType = file instanceof File ? `File(name=${file.name}, size=${file.size})` : typeof file;
+  if (!file || file.size === 0) {
+    const fileType = file ? `File(name=${file.filename}, size=${file.size})` : 'undefined';
     return jsonError(`Fichier requis (recu: ${fileType})`);
   }
 
@@ -158,8 +160,8 @@ export async function POST(request: NextRequest): Promise<NextResponse<UploadSta
   let result: Awaited<ReturnType<typeof parseStatement>>;
   try {
     result = await parseStatement({
-      buffer: await fileToBuffer(file),
-      filename: file.name,
+      buffer: file.buffer,
+      filename: file.filename,
     });
   } catch {
     return jsonError('Lecture du fichier impossible');
@@ -201,7 +203,7 @@ export async function POST(request: NextRequest): Promise<NextResponse<UploadSta
         const bankStatementImport = await tx.bankStatementImport.create({
           data: {
             paymentSourceId,
-            filename: file.name,
+            filename: file.filename,
             periodStart,
             periodEnd,
             rowsTotal: result.rows.length,
