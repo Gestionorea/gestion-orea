@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import { useActionState } from 'react';
 import { useFormStatus } from 'react-dom';
 import { useTranslations } from 'next-intl';
@@ -60,10 +61,14 @@ function RelevesResult({ result }: { result: SyncOneDriveRelevesResult }) {
 
 function AttachResult({ result }: { result: AutoAttachInvoicesResult }) {
   const t = useTranslations('perso.importStatement.sync.result');
+  const syncT = useTranslations('perso.importStatement.sync');
+  const monthName = result.month >= 1 && result.month <= 12 ? syncT(`monthNames.${MONTH_KEYS[result.month - 1]}`) : '-';
 
   return (
     <div className="max-h-56 overflow-auto border border-gray-200 bg-gray-50 px-4 py-3 text-sm text-gray-700">
+      <p>{t('scopeLabel', { month: monthName, year: result.year })}</p>
       <p>{t('matchesCreated', { count: result.matchesCreated })}</p>
+      <p>{t('invoicesMoved', { count: result.invoicesMoved })}</p>
       {result.matches.length > 0 ? (
         <ul className="mt-3 list-disc space-y-1 pl-5">
           {result.matches.map((match) => (
@@ -77,8 +82,34 @@ function AttachResult({ result }: { result: AutoAttachInvoicesResult }) {
   );
 }
 
+const MONTH_KEYS = [
+  'january',
+  'february',
+  'march',
+  'april',
+  'may',
+  'june',
+  'july',
+  'august',
+  'september',
+  'october',
+  'november',
+  'december',
+] as const;
+
+function defaultMonthScope(): { year: number; month: number } {
+  const now = new Date();
+  return {
+    year: now.getMonth() === 0 ? now.getFullYear() - 1 : now.getFullYear(),
+    month: now.getMonth() === 0 ? 12 : now.getMonth(),
+  };
+}
+
 export default function SyncButtons() {
   const t = useTranslations('perso.importStatement.sync');
+  const defaultScope = defaultMonthScope();
+  const [selectedYear, setSelectedYear] = useState(defaultScope.year);
+  const [selectedMonth, setSelectedMonth] = useState(defaultScope.month);
   const [relevesState, syncRelevesAction] = useActionState<SyncOneDriveRelevesResult | null, FormData>(
     syncOneDriveRelevesAction,
     null,
@@ -87,6 +118,8 @@ export default function SyncButtons() {
     autoAttachInvoicesAction,
     null,
   );
+  const currentYear = new Date().getFullYear();
+  const years = Array.from({ length: currentYear + 1 - 2024 + 1 }, (_, index) => 2024 + index);
 
   return (
     <section className="grid gap-4 border border-gray-200 bg-white p-4">
@@ -99,7 +132,37 @@ export default function SyncButtons() {
         <form action={syncRelevesAction}>
           <SyncSubmitButton label={t('syncReleves')} />
         </form>
-        <form action={attachInvoicesAction}>
+        <form action={attachInvoicesAction} className="flex flex-wrap items-end gap-3">
+          <label className="grid gap-2 text-sm font-medium text-gray-700">
+            {t('selectYear')}
+            <select
+              name="year"
+              value={selectedYear}
+              onChange={(event) => setSelectedYear(Number(event.target.value))}
+              className="border border-gray-300 px-3 py-2 text-sm font-normal"
+            >
+              {years.map((year) => (
+                <option key={year} value={year}>
+                  {year}
+                </option>
+              ))}
+            </select>
+          </label>
+          <label className="grid gap-2 text-sm font-medium text-gray-700">
+            {t('selectMonth')}
+            <select
+              name="month"
+              value={selectedMonth}
+              onChange={(event) => setSelectedMonth(Number(event.target.value))}
+              className="border border-gray-300 px-3 py-2 text-sm font-normal"
+            >
+              {MONTH_KEYS.map((key, index) => (
+                <option key={key} value={index + 1}>
+                  {t(`monthNames.${key}`)}
+                </option>
+              ))}
+            </select>
+          </label>
           <SyncSubmitButton label={t('syncInvoices')} />
         </form>
       </div>

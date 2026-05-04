@@ -14,8 +14,11 @@ import { requireOwner } from '@/lib/permissions';
 
 export type AutoAttachInvoicesResult = {
   ok: true;
+  year: number;
+  month: number;
   transactionsExamined: number;
   invoicesAvailable: number;
+  invoicesMoved: number;
   matchesCreated: number;
   matches: {
     txId: string;
@@ -33,11 +36,32 @@ export type AutoAttachInvoicesResult = {
   }[];
 };
 
-const INVOICES_FOLDER = 'siagi/classification/a classer';
+type InvoiceWithSource = InvoiceFile & { source: 'inbox' | 'month'; itemSize: number };
+
+const INBOX_FOLDER = 'Comptabilite/factures scannées';
+const COMPTA_BASE = 'Comptabilite';
 const INVOICE_EXTENSIONS = new Set(['.pdf', '.jpg', '.jpeg', '.png', '.webp']);
 const MAX_AI_CALLS_PER_SYNC = 50;
 const MAX_AI_FILE_SIZE_BYTES = 5 * 1024 * 1024;
-const INVOICE_MATCH_DATE_WINDOW_DAYS = 90;
+
+const MOIS_FR: Record<number, string> = {
+  1: '01-Janvier',
+  2: '02-Fevrier',
+  3: '03-Mars',
+  4: '04-Avril',
+  5: '05-Mai',
+  6: '06-Juin',
+  7: '07-Juillet',
+  8: '08-Aout',
+  9: '09-Septembre',
+  10: '10-Octobre',
+  11: '11-Novembre',
+  12: '12-Decembre',
+};
+
+function monthFolderPath(year: number, month: number): string {
+  return `${COMPTA_BASE}/${year}/${MOIS_FR[month]}/Factures`;
+}
 
 function isInvoiceFile(filename: string): boolean {
   const lower = filename.toLowerCase();
@@ -53,72 +77,84 @@ function mimeTypeForFilename(filename: string): ExtractInput['mimeType'] | null 
   return null;
 }
 
-function addDays(date: Date, days: number): Date {
-  const next = new Date(date);
-  next.setUTCDate(next.getUTCDate() + days);
-  return next;
+function emptyResult(year = 0, month = 0): AutoAttachInvoicesResult {
+  return {
+    ok: true,
+    year,
+    month,
+    transactionsExamined: 0,
+    invoicesAvailable: 0,
+    invoicesMoved: 0,
+    matchesCreated: 0,
+    matches: [],
+    aiMatches: 0,
+    aiCalls: 0,
+    aiMatchedDetails: [],
+  };
 }
 
-function boundsFromInvoices(invoices: InvoiceFile[]): { start: Date; end: Date } | null {
-  const dates = invoices
-    .map((invoice) => invoice.parsedDate)
-    .filter((date): date is Date => Boolean(date));
+function parseMonthScope(formData: FormData): { year: number; month: number } | null {
+  const year = Number(formData.get('year'));
+  const month = Number(formData.get('month'));
+  if (
+    !Number.isInteger(year) ||
+    year < 2020 ||
+    year > 2100 ||
+    !Number.isInteger(month) ||
+    month < 1 ||
+    month > 12
+  ) {
+    return null;
+  }
 
-  if (dates.length === 0) return null;
+  return { year, month };
+}
 
-  const timestamps = dates.map((date) => date.getTime());
+function invoiceFromItem(item: { id: string; name: string; webUrl: string; size: number }, source: 'inbox' | 'month'): InvoiceWithSource {
+  const parsed = parseInvoiceFilename(item.name);
   return {
-    start: addDays(new Date(Math.min(...timestamps)), -INVOICE_MATCH_DATE_WINDOW_DAYS),
-    end: addDays(new Date(Math.max(...timestamps)), INVOICE_MATCH_DATE_WINDOW_DAYS),
+    itemId: item.id,
+    filename: item.name,
+    webUrl: item.webUrl,
+    parsedDate: parsed.parsedDate,
+    parsedKeywords: parsed.parsedKeywords,
+    parsedAmount: parsed.parsedAmount,
+    source,
+    itemSize: item.size,
   };
 }
 
 export async function autoAttachInvoicesAction(
   _prevState: AutoAttachInvoicesResult | null,
-  _formData: FormData,
+  formData: FormData,
 ): Promise<AutoAttachInvoicesResult> {
   await requireOwner();
 
-  const db = getDb();
-  const invoiceItems = (await listFolderItemsByPath(INVOICES_FOLDER)).filter((item) =>
-    isInvoiceFile(item.name),
-  );
-  const invoices: InvoiceFile[] = invoiceItems.map((item) => {
-    const parsed = parseInvoiceFilename(item.name);
-    return {
-      itemId: item.id,
-      filename: item.name,
-      webUrl: item.webUrl,
-      parsedDate: parsed.parsedDate,
-      parsedKeywords: parsed.parsedKeywords,
-      parsedAmount: parsed.parsedAmount,
-    };
-  });
+  const scope = parseMonthScope(formData);
+  if (!scope) return emptyResult();
 
-  const bounds = boundsFromInvoices(invoices);
+  const { year, month } = scope;
+  const monthFolder = monthFolderPath(year, month);
+  const db = getDb();
+  const [inboxItems, monthItems] = await Promise.all([
+    listFolderItemsByPath(INBOX_FOLDER),
+    listFolderItemsByPath(monthFolder),
+  ]);
+  const invoices: InvoiceWithSource[] = [
+    ...inboxItems.filter((item) => isInvoiceFile(item.name)).map((item) => invoiceFromItem(item, 'inbox')),
+    ...monthItems.filter((item) => isInvoiceFile(item.name)).map((item) => invoiceFromItem(item, 'month')),
+  ];
+
   if (invoices.length === 0) {
-    return {
-      ok: true,
-      transactionsExamined: 0,
-      invoicesAvailable: invoices.length,
-      matchesCreated: 0,
-      matches: [],
-      aiMatches: 0,
-      aiCalls: 0,
-      aiMatchedDetails: [],
-    };
+    return emptyResult(year, month);
   }
 
-  const dateWhere = bounds
-    ? {
-        gte: bounds.start,
-        lte: bounds.end,
-      }
-    : undefined;
+  const startOfMonth = new Date(Date.UTC(year, month - 1, 1));
+  const endOfMonth = new Date(Date.UTC(year, month, 1));
   const transactions = await db.transaction.findMany({
     where: {
       attachmentUrl: null,
-      ...(dateWhere ? { date: dateWhere } : {}),
+      date: { gte: startOfMonth, lt: endOfMonth },
     },
     orderBy: { date: 'desc' },
     take: 1000,
@@ -134,8 +170,21 @@ export async function autoAttachInvoicesAction(
   const attachedTxIds = new Set<string>();
   const matches: AutoAttachInvoicesResult['matches'] = [];
   const aiMatchedDetails: AutoAttachInvoicesResult['aiMatchedDetails'] = [];
-  const sizeByInvoiceId = new Map(invoiceItems.map((item) => [item.id, item.size]));
   let aiCalls = 0;
+  let invoicesMoved = 0;
+
+  async function finalUrlForInvoice(invoice: InvoiceWithSource): Promise<string> {
+    if (invoice.source !== 'inbox') return invoice.webUrl;
+
+    try {
+      const moved = await moveItemToFolder(invoice.itemId, monthFolder);
+      invoicesMoved += 1;
+      return moved.webUrl;
+    } catch (error) {
+      console.error('[auto-attach] move failed', { itemId: invoice.itemId, error });
+      return invoice.webUrl;
+    }
+  }
 
   for (const transaction of transactions) {
     const availableInvoices = invoices.filter((invoice) => !consumedInvoiceIds.has(invoice.itemId));
@@ -147,10 +196,12 @@ export async function autoAttachInvoicesAction(
     });
 
     if (!match) continue;
+    const matchedInvoice = invoices.find((invoice) => invoice.itemId === match.invoiceItemId);
+    const finalUrl = matchedInvoice ? await finalUrlForInvoice(matchedInvoice) : match.invoiceWebUrl;
 
     await db.transaction.update({
       where: { id: transaction.id },
-      data: { attachmentUrl: match.invoiceWebUrl },
+      data: { attachmentUrl: finalUrl },
     });
 
     consumedInvoiceIds.add(match.invoiceItemId);
@@ -169,8 +220,7 @@ export async function autoAttachInvoicesAction(
     const mimeType = mimeTypeForFilename(invoice.filename);
     if (!mimeType) continue;
 
-    const fileSize = sizeByInvoiceId.get(invoice.itemId) ?? 0;
-    if (fileSize > MAX_AI_FILE_SIZE_BYTES) continue;
+    if (invoice.itemSize > MAX_AI_FILE_SIZE_BYTES) continue;
 
     try {
       const buffer = await downloadItemContent(invoice.itemId);
@@ -202,10 +252,11 @@ export async function autoAttachInvoicesAction(
       });
 
       if (!matchTxId) continue;
+      const finalUrl = await finalUrlForInvoice(invoice);
 
       await db.transaction.update({
         where: { id: matchTxId },
-        data: { attachmentUrl: invoice.webUrl },
+        data: { attachmentUrl: finalUrl },
       });
 
       consumedInvoiceIds.add(invoice.itemId);
@@ -229,8 +280,11 @@ export async function autoAttachInvoicesAction(
 
   return {
     ok: true,
+    year,
+    month,
     transactionsExamined: transactions.length,
     invoicesAvailable: invoices.length,
+    invoicesMoved,
     matchesCreated: matches.length,
     matches,
     aiMatches: aiMatchedDetails.length,
