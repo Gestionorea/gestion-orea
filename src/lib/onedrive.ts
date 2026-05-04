@@ -399,6 +399,7 @@ export type MovedItem = {
 export async function moveItemToFolder(
   itemId: string,
   destinationFolderPath: string,
+  options?: { newName?: string },
 ): Promise<MovedItem> {
   const env = requireEnv();
   await ensureFolderExists(destinationFolderPath);
@@ -407,12 +408,15 @@ export async function moveItemToFolder(
     throw new OneDriveError(`Destination folder not found after creation: ${destinationFolderPath}`);
   }
 
+  const body: Record<string, unknown> = { parentReference: { id: folderId } };
+  if (options?.newName) body.name = options.newName;
+
   const response = await graphFetch(
     `/users/${encodeURIComponent(env.userPrincipal)}/drive/items/${encodeURIComponent(itemId)}`,
     {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ parentReference: { id: folderId } }),
+      body: JSON.stringify(body),
     },
   );
 

@@ -6,6 +6,7 @@ export const ExtractedInvoiceSchema = z.object({
   montantTotal: z.number().nonnegative().nullable(),
   numeroFacture: z.string().nullable(),
   categorieSuggeree: z.string().nullable(),
+  lastDigitsCarte: z.string().regex(/^\d{4}$/).nullable().optional(),
   confidence: z.enum(['high', 'medium', 'low']),
 });
 export type ExtractedInvoice = z.infer<typeof ExtractedInvoiceSchema>;
@@ -52,6 +53,7 @@ Regles:
 - Date au format ISO YYYY-MM-DD (ex: facture du 15 janvier 2026 -> "2026-01-15")
 - montantTotal en CAD, nombre simple sans symbole (ex: 245.67)
 - categorieSuggeree: un mot ou court groupe en francais (ex: "Telecommunications", "Quincaillerie", "Assurance"). Null si impossible.
+- lastDigitsCarte: 4 derniers chiffres de la carte de credit/debit utilisee pour le paiement, si visible (ex: "0027"). Null si paiement comptant, virement, ou carte non visible.
 - confidence: "high" si tout clair, "medium" si certains champs devines, "low" si flou ou mal cadre.
 
 Schema:
@@ -61,6 +63,7 @@ Schema:
   "montantTotal": number | null,
   "numeroFacture": string | null,
   "categorieSuggeree": string | null,
+  "lastDigitsCarte": "NNNN" | null,
   "confidence": "high" | "medium" | "low"
 }`;
 

@@ -38,7 +38,7 @@ export type AutoAttachInvoicesResult = {
 
 type InvoiceWithSource = InvoiceFile & { source: 'inbox' | 'month'; itemSize: number };
 
-const INBOX_FOLDER = 'Comptabilite/factures scannées';
+const INBOX_FOLDER = 'Comptabilite/Facture scanner';
 const COMPTA_BASE = 'Comptabilite';
 const INVOICE_EXTENSIONS = new Set(['.pdf', '.jpg', '.jpeg', '.png', '.webp']);
 const MAX_AI_CALLS_PER_SYNC = 50;
@@ -61,6 +61,10 @@ const MOIS_FR: Record<number, string> = {
 
 function monthFolderPath(year: number, month: number): string {
   return `${COMPTA_BASE}/${year}/${MOIS_FR[month]}/Factures`;
+}
+
+function monthProcessedFolderPath(year: number, month: number): string {
+  return `${COMPTA_BASE}/${year}/${MOIS_FR[month]}/Factures-Traitees`;
 }
 
 function isInvoiceFile(filename: string): boolean {
@@ -135,6 +139,7 @@ export async function autoAttachInvoicesAction(
 
   const { year, month } = scope;
   const monthFolder = monthFolderPath(year, month);
+  const monthProcessedFolder = monthProcessedFolderPath(year, month);
   const db = getDb();
   const [inboxItems, monthItems] = await Promise.all([
     listFolderItemsByPath(INBOX_FOLDER),
@@ -174,10 +179,8 @@ export async function autoAttachInvoicesAction(
   let invoicesMoved = 0;
 
   async function finalUrlForInvoice(invoice: InvoiceWithSource): Promise<string> {
-    if (invoice.source !== 'inbox') return invoice.webUrl;
-
     try {
-      const moved = await moveItemToFolder(invoice.itemId, monthFolder);
+      const moved = await moveItemToFolder(invoice.itemId, monthProcessedFolder);
       invoicesMoved += 1;
       return moved.webUrl;
     } catch (error) {

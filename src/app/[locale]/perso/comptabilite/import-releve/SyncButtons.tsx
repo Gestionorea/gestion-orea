@@ -12,6 +12,10 @@ import {
   autoAttachInvoicesAction,
   type AutoAttachInvoicesResult,
 } from '@/app/actions/auto-attach-invoices';
+import {
+  processScannerInboxAction,
+  type ProcessScannerInboxResult,
+} from '@/app/actions/process-scanner-inbox';
 
 function SyncSubmitButton({ label }: { label: string }) {
   const t = useTranslations('perso.importStatement.sync');
@@ -54,6 +58,33 @@ function RelevesResult({ result }: { result: SyncOneDriveRelevesResult }) {
             ))}
           </ul>
         </div>
+      ) : null}
+    </div>
+  );
+}
+
+function ScannerInboxResultPanel({ result }: { result: ProcessScannerInboxResult }) {
+  return (
+    <div className="max-h-72 overflow-auto border border-gray-200 bg-gray-50 px-4 py-3 text-sm text-gray-700">
+      <p>
+        Scannés: {result.scanned} · Renommés: {result.renamed} · Échecs: {result.failed}
+      </p>
+      {result.items.length > 0 ? (
+        <ul className="mt-3 space-y-1 text-xs">
+          {result.items.map((item) => (
+            <li key={item.originalFilename} className="font-mono">
+              {item.status === 'renamed' ? (
+                <span className="text-green-700">
+                  ✓ {item.originalFilename} → {item.newFilename}
+                </span>
+              ) : (
+                <span className="text-red-700">
+                  ✗ {item.originalFilename} ({item.status}: {item.reason ?? '—'})
+                </span>
+              )}
+            </li>
+          ))}
+        </ul>
       ) : null}
     </div>
   );
@@ -118,6 +149,10 @@ export default function SyncButtons() {
     autoAttachInvoicesAction,
     null,
   );
+  const [scannerState, scannerInboxAction] = useActionState<ProcessScannerInboxResult | null, FormData>(
+    processScannerInboxAction,
+    null,
+  );
   const currentYear = new Date().getFullYear();
   const years = Array.from({ length: currentYear + 1 - 2024 + 1 }, (_, index) => 2024 + index);
 
@@ -131,6 +166,9 @@ export default function SyncButtons() {
       <div className="flex flex-wrap gap-3">
         <form action={syncRelevesAction}>
           <SyncSubmitButton label={t('syncReleves')} />
+        </form>
+        <form action={scannerInboxAction}>
+          <SyncSubmitButton label="Renommer mes scans" />
         </form>
         <form action={attachInvoicesAction} className="flex flex-wrap items-end gap-3">
           <label className="grid gap-2 text-sm font-medium text-gray-700">
@@ -168,6 +206,7 @@ export default function SyncButtons() {
       </div>
 
       {relevesState ? <RelevesResult result={relevesState} /> : null}
+      {scannerState ? <ScannerInboxResultPanel result={scannerState} /> : null}
       {attachState ? <AttachResult result={attachState} /> : null}
     </section>
   );
