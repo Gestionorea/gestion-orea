@@ -397,6 +397,35 @@
         "parseFailed": "Lecture du fichier impossible",
         "importFailed": "Échec de la création des transactions"
       },
+      "multiUpload": {
+        "tabSimple": "Un fichier",
+        "tabMulti": "Plusieurs fichiers",
+        "instructions": "Sélectionnez plusieurs fichiers (CSV/PDF/Excel). Le compte sera détecté automatiquement via le nom du fichier (convention: COMPAGNIE-TYPE-XXXX-YYYY-MM.ext).",
+        "selectFiles": "Sélectionner les fichiers",
+        "filesSelected": "{count} fichier(s) sélectionné(s)",
+        "analyzeAll": "Analyser tout",
+        "analyzing": "Analyse en cours...",
+        "batchPreview": "Aperçu de {count} fichier(s) — {newRows} nouvelles transactions",
+        "commitAll": "Importer {count} transactions",
+        "committing": "Importation en cours...",
+        "resolveFirst": "Sélectionnez un compte pour les fichiers non détectés.",
+        "allDone": "Importation terminée: {success} succès, {error} erreur(s).",
+        "fileColumn": {
+          "filename": "Fichier",
+          "paymentSource": "Compte détecté",
+          "status": "Statut",
+          "commit": "Résultat"
+        },
+        "status": {
+          "detected": "Détecté automatiquement",
+          "notDetected": "Compte non détecté",
+          "newRows": "{count} nouvelles",
+          "duplicates": "{count} doublons",
+          "parseError": "Erreur de parsing",
+          "success": "{count} importées",
+          "error": "{error}"
+        }
+      },
       "preview": {
         "title": "Aperçu des lignes détectées",
         "warnings": "Avertissements",

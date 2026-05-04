@@ -12,7 +12,7 @@ export type DetectionResult =
   | { ok: true; paymentSourceId: string; period: { year: number; month: number } }
   | { ok: false; reason: string; rawMatch?: StatementRawMatch };
 
-const FILENAME_REGEX = /^([A-Z]+)-(CC|CHQ|BANK)-(\d{4})-(\d{4})-(\d{2})\.csv$/i;
+const FILENAME_REGEX = /^([A-Z0-9]+)-(CC|CHQ|BANK)-(\d{4})-(\d{4})-(\d{2})\.(csv|pdf|xlsx|xls)$/i;
 
 function rawMatchFromRegex(match: RegExpMatchArray): StatementRawMatch {
   const [, companyRaw, typeRaw, lastDigits, yearStr, monthStr] = match;
@@ -33,7 +33,7 @@ export function detectStatementSourceFromSources(
   if (!match) {
     return {
       ok: false,
-      reason: 'Nom de fichier ne suit pas la convention <COMPANY>-<TYPE>-<DIGITS>-<YYYY>-<MM>.csv',
+      reason: 'Nom de fichier ne suit pas la convention <COMPANY>-<TYPE>-<DIGITS>-<YYYY>-<MM>.<csv|pdf|xlsx>',
     };
   }
 

@@ -397,6 +397,35 @@
         "parseFailed": "Could not read the file",
         "importFailed": "Failed to create transactions"
       },
+      "multiUpload": {
+        "tabSimple": "Single file",
+        "tabMulti": "Multiple files",
+        "instructions": "Select multiple files (CSV/PDF/Excel). The account will be auto-detected from the filename (convention: COMPANY-TYPE-XXXX-YYYY-MM.ext).",
+        "selectFiles": "Select files",
+        "filesSelected": "{count} file(s) selected",
+        "analyzeAll": "Analyze all",
+        "analyzing": "Analyzing...",
+        "batchPreview": "Preview {count} file(s) — {newRows} new transactions",
+        "commitAll": "Import {count} transactions",
+        "committing": "Importing...",
+        "resolveFirst": "Select an account for undetected files.",
+        "allDone": "Import done: {success} success, {error} error(s).",
+        "fileColumn": {
+          "filename": "File",
+          "paymentSource": "Detected account",
+          "status": "Status",
+          "commit": "Result"
+        },
+        "status": {
+          "detected": "Auto-detected",
+          "notDetected": "Account not detected",
+          "newRows": "{count} new",
+          "duplicates": "{count} duplicates",
+          "parseError": "Parse error",
+          "success": "{count} imported",
+          "error": "{error}"
+        }
+      },
       "preview": {
         "title": "Preview of detected rows",
         "warnings": "Warnings",

@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { useLocale, useTranslations } from 'next-intl';
-import { useActionState, useCallback, useRef, useState, useTransition } from 'react';
+import { useActionState, useCallback, useEffect, useRef, useState, useTransition } from 'react';
 import { useFormStatus } from 'react-dom';
 import {
   analyzeStatementAction,
@@ -10,8 +10,12 @@ import {
 } from '@/app/actions/analyze-statement';
 import { commitImportAction, type CommitImportResult } from '@/app/actions/commit-import';
 import type { PaymentSourceItem } from '@/lib/paymentSources';
+import MultiUploadForm from './MultiUploadForm';
 import PreviewTable from './PreviewTable';
 import SyncButtons from './SyncButtons';
+
+const MODE_STORAGE_KEY = 'orea-import-mode';
+type UploadMode = 'single' | 'multi';
 
 function SubmitButton() {
   const t = useTranslations('perso.importStatement.form');
@@ -63,6 +67,7 @@ export default function UploadForm({
   const t = useTranslations('perso.importStatement');
   const locale = useLocale();
   const formRef = useRef<HTMLFormElement>(null);
+  const [mode, setMode] = useState<UploadMode>('single');
   const [categoryOverrides, setCategoryOverrides] = useState<Record<number, string | null>>({});
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [selectedPaymentSourceId, setSelectedPaymentSourceId] = useState('');
@@ -72,6 +77,25 @@ export default function UploadForm({
     analyzeStatementAction,
     null,
   );
+
+  useEffect(() => {
+    try {
+      const saved = window.localStorage.getItem(MODE_STORAGE_KEY);
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      if (saved === 'single' || saved === 'multi') setMode(saved);
+    } catch {
+      // localStorage unavailable
+    }
+  }, []);
+
+  const switchMode = useCallback((next: UploadMode) => {
+    setMode(next);
+    try {
+      window.localStorage.setItem(MODE_STORAGE_KEY, next);
+    } catch {
+      // localStorage unavailable
+    }
+  }, []);
   const newRowsCount = analyzeState?.ok
     ? analyzeState.preview.filter((row) => row.status === 'new').length
     : 0;
@@ -108,6 +132,26 @@ export default function UploadForm({
     <div className="mt-8 grid max-w-3xl gap-6">
       <SyncButtons />
 
+      <div className="inline-flex border border-gray-300 self-start text-xs uppercase tracking-[0.16em]">
+        <button
+          type="button"
+          onClick={() => switchMode('single')}
+          className={`px-4 py-2 ${mode === 'single' ? 'bg-black text-white' : 'bg-white text-gray-700 hover:bg-gray-50'}`}
+        >
+          {t('multiUpload.tabSimple')}
+        </button>
+        <button
+          type="button"
+          onClick={() => switchMode('multi')}
+          className={`border-l border-gray-300 px-4 py-2 ${mode === 'multi' ? 'bg-black text-white' : 'bg-white text-gray-700 hover:bg-gray-50'}`}
+        >
+          {t('multiUpload.tabMulti')}
+        </button>
+      </div>
+
+      {mode === 'multi' ? (
+        <MultiUploadForm paymentSources={paymentSources} />
+      ) : (
       <form ref={formRef} action={analyzeFormAction} className="grid gap-5">
         <input type="hidden" name="categoryOverrides" value={JSON.stringify(categoryOverrides)} />
 
@@ -215,6 +259,7 @@ export default function UploadForm({
           </div>
         ) : null}
       </form>
+      )}
     </div>
   );
 }
