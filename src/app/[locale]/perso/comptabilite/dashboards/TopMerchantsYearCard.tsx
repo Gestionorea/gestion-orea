@@ -8,6 +8,14 @@ type TopMerchantsYearCardProps = {
   data: { merchantName: string; total: number; count: number }[];
 };
 
+const MAX_LABEL_LENGTH = 28;
+
+function truncateLabel(value: unknown): string {
+  const text = String(value ?? '');
+  if (text.length <= MAX_LABEL_LENGTH) return text;
+  return text.slice(0, MAX_LABEL_LENGTH - 1) + '…';
+}
+
 function formatTooltip(value: unknown) {
   const numericValue = Number(value ?? 0);
   return `$${numericValue.toFixed(2)}`;
@@ -28,11 +36,12 @@ export default function TopMerchantsYearCard({ title, emptyLabel, data }: TopMer
               <YAxis
                 type="category"
                 dataKey="merchantName"
-                width={130}
+                width={240}
                 tickLine={false}
                 axisLine={false}
+                tickFormatter={truncateLabel}
               />
-              <Tooltip formatter={formatTooltip} />
+              <Tooltip formatter={formatTooltip} labelFormatter={(label: unknown) => String(label ?? '')} />
               <Bar dataKey="total" fill="#111827" radius={[0, 3, 3, 0]} />
             </BarChart>
           </ResponsiveContainer>
