@@ -8,11 +8,21 @@ import type { PaymentSourceItem } from '@/lib/paymentSources';
 
 type CommitStatus =
   | { state: 'pending' }
-  | { state: 'success'; importedCount: number; duplicateCount: number }
+  | {
+      state: 'success';
+      period: { year: number; month: number };
+      importedCount: number;
+      duplicateCount: number;
+    }
   | { state: 'error'; error: string };
 
 type UploadStatementResult =
-  | { ok: true; importedCount: number; duplicateCount: number }
+  | {
+      ok: true;
+      period: { year: number; month: number };
+      importedCount: number;
+      duplicateCount: number;
+    }
   | { ok: false; error: string };
 
 function paymentSourceLabel(source: PaymentSourceItem): string {
@@ -21,6 +31,35 @@ function paymentSourceLabel(source: PaymentSourceItem): string {
 
 function normalizeFilename(filename: string): string {
   return filename.normalize('NFC');
+}
+
+function transactionsHref(
+  locale: string,
+  commitResults: Record<string, CommitStatus>,
+): string | { pathname: string; query: Record<string, string> } {
+  const periods = Object.values(commitResults).flatMap((result) =>
+    result.state === 'success' ? [result.period] : [],
+  );
+  const basePath = `/${locale}/perso/comptabilite`;
+  if (periods.length === 0) return basePath;
+
+  const years = new Set(periods.map((period) => period.year));
+  const months = new Set(periods.map((period) => period.month));
+  if (years.size === 1 && months.size === 1) {
+    const [period] = periods;
+    return {
+      pathname: basePath,
+      query: { year: String(period.year), month: String(period.month) },
+    };
+  }
+  if (years.size === 1) {
+    return {
+      pathname: basePath,
+      query: { year: String(periods[0].year), month: 'all' },
+    };
+  }
+
+  return basePath;
 }
 
 export default function MultiUploadForm({
@@ -123,6 +162,7 @@ export default function MultiUploadForm({
           if (result.ok) {
             newResults[fileKey] = {
               state: 'success',
+              period: result.period,
               importedCount: result.importedCount,
               duplicateCount: result.duplicateCount,
             };
@@ -297,7 +337,7 @@ export default function MultiUploadForm({
                 {t('multiUpload.allDone', { success: successCount, error: errorCount })}
               </p>
               <Link
-                href={`/${locale}/perso/comptabilite`}
+                href={transactionsHref(locale, commitResults)}
                 className="mt-3 inline-flex border border-green-700 px-3 py-2 text-xs font-medium uppercase tracking-[0.16em] text-green-900 hover:bg-green-100"
               >
                 {t('commit.viewTransactions')}

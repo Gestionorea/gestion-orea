@@ -184,7 +184,13 @@ export default function UploadForm({
                   })}
             </p>
             <Link
-              href={`/${locale}/perso/comptabilite`}
+              href={{
+                pathname: `/${locale}/perso/comptabilite`,
+                query: {
+                  year: String(commitState.period.year),
+                  month: String(commitState.period.month),
+                },
+              }}
               className="mt-3 inline-flex border border-green-700 px-3 py-2 text-xs font-medium uppercase tracking-[0.16em] text-green-900 hover:bg-green-100"
             >
               {t('commit.viewTransactions')}

@@ -13,6 +13,7 @@ type UploadStatementResult =
   | {
       ok: true;
       importId: string;
+      period: { year: number; month: number };
       importedCount: number;
       duplicateCount: number;
       categorizedCount: number;
@@ -31,6 +32,13 @@ function periodBounds(rows: { date: Date }[]): { periodStart: Date; periodEnd: D
   return {
     periodStart: new Date(Math.min(...timestamps)),
     periodEnd: new Date(Math.max(...timestamps)),
+  };
+}
+
+function periodLinkTarget(periodStart: Date): { year: number; month: number } {
+  return {
+    year: periodStart.getUTCFullYear(),
+    month: periodStart.getUTCMonth() + 1,
   };
 }
 
@@ -262,6 +270,7 @@ export async function POST(request: NextRequest): Promise<NextResponse<UploadSta
     return NextResponse.json({
       ok: true,
       importId,
+      period: periodLinkTarget(periodStart),
       importedCount: rowsToImport.length,
       duplicateCount,
       categorizedCount,
