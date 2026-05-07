@@ -213,6 +213,7 @@ model Transaction {
   invoiceNumber              String?
   justification              String?
   attachmentUrl              String?
+  attachmentItemId           String?
   categoryId                 String?
   category                   Category?            @relation(fields: [categoryId], references: [id], onDelete: SetNull)
   createdById                String
@@ -244,4 +245,5 @@ model Transaction {
   @@index([isAdvance, reimbursedAt])
   @@index([bankStatementImportId])
   @@index([deletedAt])
+  @@index([attachmentItemId])
 }

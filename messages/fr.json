@@ -806,7 +806,7 @@
         "sectionFinancials": "Détails financiers",
         "sectionAllocation": "Affectation",
         "sectionDescription": "Description / justification",
-        "sectionAttachment": "Pièce jointe",
+        "sectionAttachment": "Facture OneDrive",
         "sectionAdvance": "Avance / remboursement",
         "sectionAudit": "Audit",
         "sectionLinks": "Liens",
@@ -843,6 +843,19 @@
           "invoiceNumber": "No de facture",
           "justification": "Justification"
         }
+      },
+      "invoiceLink": {
+        "empty": "Aucune facture liée.",
+        "legacyLink": "Lien de facture existant",
+        "searchPlaceholder": "Chercher dans les factures OneDrive...",
+        "search": "Chercher",
+        "link": "Lier",
+        "unlink": "Retirer le lien",
+        "open": "Ouvrir",
+        "download": "Télécharger",
+        "noResults": "Aucune facture trouvée.",
+        "size": "Taille",
+        "modified": "Modifié"
       },
       "columns": {
         "date": "Date",

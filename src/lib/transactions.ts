@@ -48,6 +48,7 @@ export type TransactionRow = {
   invoiceNumber: string | null;
   justification: string | null;
   attachmentUrl: string | null;
+  attachmentItemId: string | null;
   propertyId: string | null;
   companyId: string | null;
   categoryId: string | null;
@@ -91,6 +92,7 @@ export type TransactionInput = {
   invoiceNumber?: string | null;
   justification?: string | null;
   attachmentUrl?: string | null;
+  attachmentItemId?: string | null;
   categoryId?: string | null;
   createdById?: string;
 };
@@ -216,6 +218,7 @@ function serialize(transaction: {
   invoiceNumber: string | null;
   justification: string | null;
   attachmentUrl: string | null;
+  attachmentItemId: string | null;
   propertyId: string | null;
   companyId: string | null;
   categoryId: string | null;
@@ -568,6 +571,9 @@ function dataFromInput(input: TransactionInput) {
     invoiceNumber: input.invoiceNumber?.trim() || null,
     justification: input.justification?.trim() || null,
     attachmentUrl: input.attachmentUrl?.trim() || null,
+    ...(input.attachmentItemId !== undefined
+      ? { attachmentItemId: input.attachmentItemId?.trim() || null }
+      : {}),
     categoryId: input.categoryId || null,
   };
 }

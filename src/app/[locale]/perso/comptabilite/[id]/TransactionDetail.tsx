@@ -1,7 +1,9 @@
 import { getTranslations } from 'next-intl/server';
 import Link from 'next/link';
 import type { ReactNode } from 'react';
+import { getItemById, type OneDriveFileItem } from '@/lib/onedrive';
 import { slugifyMerchantName, type TransactionRow } from '@/lib/transactions';
+import InvoiceAttachmentBox from './InvoiceAttachmentBox';
 
 function formatDate(locale: string, date: Date) {
   return new Intl.DateTimeFormat(locale, { dateStyle: 'medium' }).format(date);
@@ -48,6 +50,14 @@ export default async function TransactionDetail({
   back: string | null;
 }) {
   const t = await getTranslations('perso.compta');
+  let linkedInvoiceItem: OneDriveFileItem | null = null;
+  if (transaction.attachmentItemId) {
+    try {
+      linkedInvoiceItem = await getItemById(transaction.attachmentItemId);
+    } catch {
+      linkedInvoiceItem = null;
+    }
+  }
   const safeBack = back && back.startsWith('/') && !back.startsWith('//') ? back : null;
   const currentDetailUrl = `/${locale}/perso/comptabilite/${transaction.id}${
     safeBack ? `?back=${encodeURIComponent(safeBack)}` : ''
@@ -129,18 +139,14 @@ export default async function TransactionDetail({
         ) : null}
 
         <Section title={t('detail.sectionAttachment')}>
-          {transaction.attachmentUrl ? (
-            <a
-              href={transaction.attachmentUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex bg-black px-4 py-3 text-xs font-medium uppercase tracking-[0.18em] text-white"
-            >
-              {t('detail.openInvoice')}
-            </a>
-          ) : (
-            <p className="text-sm text-gray-500">{t('detail.noInvoice')}</p>
-          )}
+          <InvoiceAttachmentBox
+            transactionId={transaction.id}
+            locale={locale}
+            linkedItem={linkedInvoiceItem}
+            attachmentUrl={transaction.attachmentUrl}
+            attachmentItemId={transaction.attachmentItemId}
+            canEdit={canEdit}
+          />
         </Section>
 
         {transaction.isAdvance || transaction.reimbursementOf ? (

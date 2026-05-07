@@ -31,6 +31,8 @@ export type OneDriveItem = {
   folder?: { childCount?: number };
 };
 
+export type OneDriveFileItem = Pick<OneDriveItem, 'id' | 'name' | 'size' | 'webUrl' | 'lastModifiedDateTime'>;
+
 export type PingDriveResult =
   | { ok: true; userPrincipalName: string; driveQuota: { used: string; total: string } }
   | { ok: false; error: string; statusCode?: number };
@@ -271,6 +273,30 @@ export async function downloadItemContent(itemId: string): Promise<Buffer> {
   }
 
   return Buffer.from(await response.arrayBuffer());
+}
+
+export async function getItemById(itemId: string): Promise<OneDriveFileItem | null> {
+  const env = requireEnv();
+  const response = await graphFetch(
+    `/users/${encodeURIComponent(env.userPrincipal)}/drive/items/${encodeURIComponent(itemId)}?$select=id,name,size,webUrl,lastModifiedDateTime`,
+  );
+
+  if (response.status === 404) return null;
+
+  if (!response.ok) {
+    throw new OneDriveError(`Microsoft Graph returned ${response.status}.`, response.status);
+  }
+
+  const payload = (await response.json()) as Partial<OneDriveFileItem>;
+  if (!payload.id || !payload.name || !payload.webUrl || !payload.lastModifiedDateTime) return null;
+
+  return {
+    id: payload.id,
+    name: payload.name,
+    size: payload.size ?? 0,
+    webUrl: payload.webUrl,
+    lastModifiedDateTime: payload.lastModifiedDateTime,
+  };
 }
 
 export async function listFolderItemsByPath(folderPath: string): Promise<OneDriveItem[]> {

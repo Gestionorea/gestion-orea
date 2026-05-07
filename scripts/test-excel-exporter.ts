@@ -29,6 +29,7 @@ function mockTransaction(index: number): TransactionRow {
     invoiceNumber: `INV-${index}`,
     justification: `Justification ${index}`,
     attachmentUrl: index % 2 === 0 ? `https://example.com/invoice-${index}.pdf` : null,
+    attachmentItemId: index % 2 === 0 ? `item-${index}` : null,
     propertyId: null,
     companyId: null,
     categoryId: null,

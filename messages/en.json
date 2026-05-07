@@ -806,7 +806,7 @@
         "sectionFinancials": "Financial details",
         "sectionAllocation": "Allocation",
         "sectionDescription": "Description / justification",
-        "sectionAttachment": "Attachment",
+        "sectionAttachment": "OneDrive invoice",
         "sectionAdvance": "Advance / reimbursement",
         "sectionAudit": "Audit",
         "sectionLinks": "Links",
@@ -843,6 +843,19 @@
           "invoiceNumber": "Invoice number",
           "justification": "Justification"
         }
+      },
+      "invoiceLink": {
+        "empty": "No invoice linked.",
+        "legacyLink": "Existing invoice link",
+        "searchPlaceholder": "Search OneDrive invoices...",
+        "search": "Search",
+        "link": "Link",
+        "unlink": "Remove link",
+        "open": "Open",
+        "download": "Download",
+        "noResults": "No invoice found.",
+        "size": "Size",
+        "modified": "Modified"
       },
       "columns": {
         "date": "Date",
