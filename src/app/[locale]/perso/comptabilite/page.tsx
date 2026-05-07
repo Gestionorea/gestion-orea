@@ -20,6 +20,7 @@ import MonthNavigator from './MonthNavigator';
 import YearTabs from './YearTabs';
 import { ExportXlsxButton } from './conciliation/ConciliationList';
 import DeleteMonthButton from './DeleteMonthButton';
+import TransactionInvoiceQuickLink from './TransactionInvoiceQuickLink';
 
 export default async function AccountingPage({
   params,
@@ -158,6 +159,11 @@ export default async function AccountingPage({
         month={isAllMonthMode ? 'all' : parsedMonth}
         locale={locale}
         searchParams={normalizedSearchParams}
+      />
+      <TransactionInvoiceQuickLink
+        rows={result.rows}
+        locale={locale}
+        canMutate={canMutate}
       />
       <TransactionFilters
         properties={properties}

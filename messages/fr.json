@@ -857,6 +857,15 @@
         "size": "Taille",
         "modified": "Modifié"
       },
+      "invoiceQuickLink": {
+        "title": "Factures OneDrive",
+        "subtitle": "Lie rapidement une facture scannée à une transaction visible.",
+        "missingCount": "{count} sans facture",
+        "searchPlaceholder": "Nom de fichier, fournisseur, montant...",
+        "search": "Chercher",
+        "link": "Lier",
+        "noResults": "Aucune facture trouvée."
+      },
       "columns": {
         "date": "Date",
         "merchant": "Marchand",

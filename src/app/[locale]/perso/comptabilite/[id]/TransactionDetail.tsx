@@ -1,7 +1,6 @@
 import { getTranslations } from 'next-intl/server';
 import Link from 'next/link';
 import type { ReactNode } from 'react';
-import { getItemById, type OneDriveFileItem } from '@/lib/onedrive';
 import { slugifyMerchantName, type TransactionRow } from '@/lib/transactions';
 import InvoiceAttachmentBox from './InvoiceAttachmentBox';
 
@@ -50,14 +49,6 @@ export default async function TransactionDetail({
   back: string | null;
 }) {
   const t = await getTranslations('perso.compta');
-  let linkedInvoiceItem: OneDriveFileItem | null = null;
-  if (transaction.attachmentItemId) {
-    try {
-      linkedInvoiceItem = await getItemById(transaction.attachmentItemId);
-    } catch {
-      linkedInvoiceItem = null;
-    }
-  }
   const safeBack = back && back.startsWith('/') && !back.startsWith('//') ? back : null;
   const currentDetailUrl = `/${locale}/perso/comptabilite/${transaction.id}${
     safeBack ? `?back=${encodeURIComponent(safeBack)}` : ''
@@ -142,7 +133,7 @@ export default async function TransactionDetail({
           <InvoiceAttachmentBox
             transactionId={transaction.id}
             locale={locale}
-            linkedItem={linkedInvoiceItem}
+            linkedItem={null}
             attachmentUrl={transaction.attachmentUrl}
             attachmentItemId={transaction.attachmentItemId}
             canEdit={canEdit}
