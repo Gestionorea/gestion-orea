@@ -4,6 +4,7 @@ import { computeDedupHash } from '@/lib/dedup-hash';
 import { listCategories } from '@/lib/categories';
 import { suggestCategoryBatch, type Suggestion } from '@/lib/categorization-learning';
 import { getDb } from '@/lib/db';
+import { partitionImportRowsByDedup } from '@/lib/import-dedup';
 import { requireOwner } from '@/lib/permissions';
 import { parseStatement } from '@/lib/statement-parser';
 
@@ -19,7 +20,7 @@ export type PreviewRow = {
   description: string;
   amountTotal: string;
   type: 'income' | 'expense';
-  status: 'new' | 'duplicate';
+  status: 'new' | 'duplicate' | 'restorable';
   suggestedCategoryId: string | null;
   suggestionConfidence: Suggestion['confidence'];
   suggestionReason: string;
@@ -108,9 +109,11 @@ export async function analyzeStatementAction(
 
   const existing = await getDb().transaction.findMany({
     where: { dedupHash: { in: rowsWithHashes.map((row) => row.dedupHash) } },
-    select: { dedupHash: true },
+    select: { id: true, dedupHash: true, deletedAt: true },
   });
-  const existingHashes = new Set(existing.map((row) => row.dedupHash).filter(Boolean));
+  const partition = partitionImportRowsByDedup(rowsWithHashes, existing);
+  const createHashes = new Set(partition.rowsToCreate.map((row) => row.dedupHash));
+  const restoreHashes = new Set(partition.rowsToRestore.map((row) => row.dedupHash));
   const [suggestions, categories] = await Promise.all([
     suggestCategoryBatch(
       result.rows.map((row) => ({
@@ -136,7 +139,11 @@ export async function analyzeStatementAction(
         description: row.description,
         amountTotal: row.amountTotal.toFixed(2),
         type: row.type,
-        status: existingHashes.has(dedupHash) ? 'duplicate' : 'new',
+        status: createHashes.has(dedupHash)
+          ? 'new'
+          : restoreHashes.has(dedupHash)
+            ? 'restorable'
+            : 'duplicate',
         suggestedCategoryId: suggestion.categoryId,
         suggestionConfidence: suggestion.confidence,
         suggestionReason: suggestion.reason,

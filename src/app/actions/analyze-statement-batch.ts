@@ -2,6 +2,7 @@
 
 import { computeDedupHash } from '@/lib/dedup-hash';
 import { getDb } from '@/lib/db';
+import { partitionImportRowsByDedup } from '@/lib/import-dedup';
 import { requireOwner } from '@/lib/permissions';
 import { listPaymentSources } from '@/lib/paymentSources';
 import { parseStatement } from '@/lib/statement-parser';
@@ -13,7 +14,7 @@ export type FileAnalysisRow = {
   description: string;
   amountTotal: string;
   type: 'income' | 'expense';
-  status: 'new' | 'duplicate';
+  status: 'new' | 'duplicate' | 'restorable';
 };
 
 export type FileAnalysisResult = {
@@ -116,23 +117,29 @@ export async function analyzeStatementBatchAction(formData: FormData): Promise<B
   const existing = uniqueHashes.length > 0
     ? await getDb().transaction.findMany({
         where: { dedupHash: { in: uniqueHashes } },
-        select: { dedupHash: true },
+        select: { id: true, dedupHash: true, deletedAt: true },
       })
     : [];
-  const existingHashSet = new Set(existing.map((e) => e.dedupHash).filter((h): h is string => h !== null));
+  const partition = partitionImportRowsByDedup(
+    allHashContexts.map((context) => ({
+      row: context,
+      dedupHash: context.dedupHash,
+    })),
+    existing,
+  );
+  const createKeys = new Set(partition.rowsToCreate.map(({ row }) => `${row.fileIndex}:${row.rowIndex}`));
+  const restoreKeys = new Set(partition.rowsToRestore.map(({ row }) => `${row.fileIndex}:${row.rowIndex}`));
 
   // Step 5: cross-file dedup (first occurrence wins)
-  const seenInBatch = new Set<string>();
-  const statusByContext = new Map<string, 'new' | 'duplicate'>();
+  const statusByContext = new Map<string, 'new' | 'duplicate' | 'restorable'>();
   for (const ctx of allHashContexts) {
     const key = `${ctx.fileIndex}:${ctx.rowIndex}`;
-    if (existingHashSet.has(ctx.dedupHash)) {
-      statusByContext.set(key, 'duplicate');
-    } else if (seenInBatch.has(ctx.dedupHash)) {
-      statusByContext.set(key, 'duplicate');
-    } else {
-      seenInBatch.add(ctx.dedupHash);
+    if (createKeys.has(key)) {
       statusByContext.set(key, 'new');
+    } else if (restoreKeys.has(key)) {
+      statusByContext.set(key, 'restorable');
+    } else {
+      statusByContext.set(key, 'duplicate');
     }
   }
 
@@ -146,7 +153,7 @@ export async function analyzeStatementBatchAction(formData: FormData): Promise<B
     const hasDetection = !!filesAnalysis[i].detectedPaymentSourceId;
     const rows: FileAnalysisRow[] = parsed.rows.map((row, rowIndex) => {
       const key = `${i}:${rowIndex}`;
-      const status: 'new' | 'duplicate' = hasDetection
+      const status: 'new' | 'duplicate' | 'restorable' = hasDetection
         ? statusByContext.get(key) ?? 'new'
         : 'new'; // we cannot dedup without payment source — proprio will see status as 'new'
       return {

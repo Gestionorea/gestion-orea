@@ -405,7 +405,7 @@
         "filesSelected": "{count} fichier(s) sélectionné(s)",
         "analyzeAll": "Analyser tout",
         "analyzing": "Analyse en cours...",
-        "batchPreview": "Aperçu de {count} fichier(s) — {newRows} nouvelles transactions",
+        "batchPreview": "Aperçu de {count} fichier(s) — {newRows} transactions à importer/restaurer",
         "commitAll": "Importer {count} transactions",
         "committing": "Importation en cours...",
         "resolveFirst": "Sélectionnez un compte pour les fichiers non détectés.",
@@ -419,7 +419,7 @@
         "status": {
           "detected": "Détecté automatiquement",
           "notDetected": "Compte non détecté",
-          "newRows": "{count} nouvelles",
+          "newRows": "{count} à importer/restaurer",
           "duplicates": "{count} doublons",
           "parseError": "Erreur de parsing",
           "success": "{count} importées",
@@ -438,6 +438,7 @@
         "columnStatus": "Statut",
         "statusNew": "Nouveau",
         "statusDuplicate": "Doublon",
+        "statusRestorable": "À restaurer",
         "typeIncome": "Entrée",
         "typeExpense": "Sortie",
         "categoryNone": "— Aucune —",
@@ -457,7 +458,7 @@
         "suggestionConfidenceHigh": "Suggestion certaine",
         "suggestionConfidenceMedium": "Suggestion probable",
         "suggestionConfidenceLow": "Suggestion incertaine",
-        "footer": "{newCount} nouvelles, {duplicateCount} doublons"
+        "footer": "{newCount} nouvelles, {restorableCount} à restaurer, {duplicateCount} doublons"
       },
       "createCategory": {
         "title": "Nouvelle catégorie",

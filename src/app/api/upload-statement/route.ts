@@ -3,6 +3,7 @@ import type { PaymentMethod, PaymentSourceKind } from '@prisma/client';
 import { Prisma } from '@prisma/client';
 import { computeDedupHash } from '@/lib/dedup-hash';
 import { getDb } from '@/lib/db';
+import { partitionImportRowsByDedup } from '@/lib/import-dedup';
 import { detectInterAccountTransfer } from '@/lib/inter-account-detector';
 import { extractInteracName, upsertInteracContact } from '@/lib/interac-contacts';
 import { parseMultipartRequest } from '@/lib/multipart-upload';
@@ -15,6 +16,7 @@ type UploadStatementResult =
       importId: string;
       period: { year: number; month: number };
       importedCount: number;
+      restoredCount: number;
       duplicateCount: number;
       categorizedCount: number;
       linkingSummary: { linked: number; unmatched: number };
@@ -191,19 +193,20 @@ export async function POST(request: NextRequest): Promise<NextResponse<UploadSta
 
   const existing = await db.transaction.findMany({
     where: { dedupHash: { in: rowsWithHashes.map((row) => row.dedupHash) } },
-    select: { dedupHash: true },
+    select: { id: true, dedupHash: true, deletedAt: true },
   });
-  const existingHashes = new Set(existing.map((row) => row.dedupHash).filter(Boolean));
-  const rowsToImport = rowsWithHashes.filter(({ dedupHash }) => !existingHashes.has(dedupHash));
-  const duplicateCount = result.rows.length - rowsToImport.length;
+  const { rowsToCreate, rowsToRestore, duplicateCount } = partitionImportRowsByDedup(rowsWithHashes, existing);
+  const importedCount = rowsToCreate.length + rowsToRestore.length;
 
-  if (rowsToImport.length === 0) {
+  if (importedCount === 0) {
     return jsonError('Tous les enregistrements sont deja en DB', 400, duplicateCount);
   }
 
   const { periodStart, periodEnd } = periodBounds(result.rows);
   const paymentMethod = defaultPaymentMethod(source.kind);
-  const categorizedCount = rowsToImport.filter(({ row }) => categoryOverrides.get(row.rawRowNumber)).length;
+  const categorizedCount = [...rowsToCreate, ...rowsToRestore].filter(({ row }) =>
+    categoryOverrides.get(row.rawRowNumber),
+  ).length;
 
   try {
     const importId = await db.$transaction(
@@ -215,7 +218,7 @@ export async function POST(request: NextRequest): Promise<NextResponse<UploadSta
             periodStart,
             periodEnd,
             rowsTotal: result.rows.length,
-            rowsImported: rowsToImport.length,
+            rowsImported: importedCount,
             rowsDuplicate: duplicateCount,
             rowsRejected: result.rowsSkipped,
             uploadedById: session.userId,
@@ -223,7 +226,7 @@ export async function POST(request: NextRequest): Promise<NextResponse<UploadSta
           select: { id: true },
         });
 
-        for (const { row, dedupHash } of rowsToImport) {
+        for (const { row, dedupHash } of rowsToCreate) {
           const categoryId = categoryOverrides.get(row.rawRowNumber) ?? null;
 
           await tx.transaction.create({
@@ -248,13 +251,26 @@ export async function POST(request: NextRequest): Promise<NextResponse<UploadSta
           });
         }
 
+        for (const { row, transactionId } of rowsToRestore) {
+          const categoryId = categoryOverrides.get(row.rawRowNumber);
+
+          await tx.transaction.update({
+            where: { id: transactionId },
+            data: {
+              deletedAt: null,
+              bankStatementImportId: bankStatementImport.id,
+              ...(categoryId !== undefined ? { categoryId } : {}),
+            },
+          });
+        }
+
         return bankStatementImport.id;
       },
       { timeout: 60000 },
     );
     const linkingSummary = await linkInterAccountTransfers(importId);
     try {
-      for (const { row } of rowsToImport) {
+      for (const { row } of [...rowsToCreate, ...rowsToRestore]) {
         const categoryId = categoryOverrides.get(row.rawRowNumber);
         if (!categoryId) continue;
 
@@ -271,7 +287,8 @@ export async function POST(request: NextRequest): Promise<NextResponse<UploadSta
       ok: true,
       importId,
       period: periodLinkTarget(periodStart),
-      importedCount: rowsToImport.length,
+      importedCount,
+      restoredCount: rowsToRestore.length,
       duplicateCount,
       categorizedCount,
       linkingSummary,

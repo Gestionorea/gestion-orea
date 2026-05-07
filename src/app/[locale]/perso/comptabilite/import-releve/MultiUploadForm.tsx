@@ -12,6 +12,7 @@ type CommitStatus =
       state: 'success';
       period: { year: number; month: number };
       importedCount: number;
+      restoredCount?: number;
       duplicateCount: number;
     }
   | { state: 'error'; error: string };
@@ -21,6 +22,7 @@ type UploadStatementResult =
       ok: true;
       period: { year: number; month: number };
       importedCount: number;
+      restoredCount?: number;
       duplicateCount: number;
     }
   | { ok: false; error: string };
@@ -130,7 +132,7 @@ export default function MultiUploadForm({
       .every((a) => resolvePaymentSourceId(a.filename) !== null);
 
   const totalNew = analysisResults.reduce(
-    (sum, a) => sum + (a.parsed?.rows.filter((r) => r.status === 'new').length ?? 0),
+    (sum, a) => sum + (a.parsed?.rows.filter((r) => r.status !== 'duplicate').length ?? 0),
     0,
   );
 
@@ -164,6 +166,7 @@ export default function MultiUploadForm({
               state: 'success',
               period: result.period,
               importedCount: result.importedCount,
+              restoredCount: result.restoredCount,
               duplicateCount: result.duplicateCount,
             };
           } else {
@@ -240,7 +243,7 @@ export default function MultiUploadForm({
                 {analysisResults.map((file) => {
                   const resolvedId = resolvePaymentSourceId(file.filename);
                   const isDetected = !!file.detectedPaymentSourceId;
-                  const newRows = file.parsed?.rows.filter((r) => r.status === 'new').length ?? 0;
+                  const newRows = file.parsed?.rows.filter((r) => r.status !== 'duplicate').length ?? 0;
                   const dupRows = file.parsed?.rows.filter((r) => r.status === 'duplicate').length ?? 0;
                   const commit = commitResults[normalizeFilename(file.filename)];
 

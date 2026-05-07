@@ -21,7 +21,8 @@ export default function PreviewTable({
 }) {
   const t = useTranslations('perso.importStatement.preview');
   const newCount = rows.filter((row) => row.status === 'new').length;
-  const duplicateCount = rows.length - newCount;
+  const restorableCount = rows.filter((row) => row.status === 'restorable').length;
+  const duplicateCount = rows.filter((row) => row.status === 'duplicate').length;
   const [availableCategories, setAvailableCategories] = useState<PreviewCategory[]>(categories);
   const [createCategoryRowNumber, setCreateCategoryRowNumber] = useState<number | null>(null);
   const initialOverrides = useMemo(
@@ -29,7 +30,7 @@ export default function PreviewTable({
       Object.fromEntries(
         rows.map((row) => [
           row.rowNumber,
-          row.status === 'new' ? row.suggestedCategoryId : null,
+          row.status !== 'duplicate' ? row.suggestedCategoryId : null,
         ]),
       ) as Record<number, string | null>,
     [rows],
@@ -61,6 +62,7 @@ export default function PreviewTable({
   function previewVisualStatus(row: PreviewRow): TransactionVisualStatus {
     if (row.type === 'income') return 'income';
     if (row.status === 'duplicate') return 'neutral';
+    if (row.status === 'restorable') return 'recurring_ok';
     if (row.suggestionConfidence === 'high') return 'recurring_ok';
     return 'missing_invoice';
   }
@@ -146,6 +148,7 @@ export default function PreviewTable({
           <tbody className="divide-y divide-gray-200 bg-white">
             {rows.map((row) => {
               const isDuplicate = row.status === 'duplicate';
+              const isRestorable = row.status === 'restorable';
               const visualStatus = previewVisualStatus(row);
               const visualLabel = visualStatusLabel(visualStatus);
               const badges = contextBadges(row);
@@ -171,7 +174,7 @@ export default function PreviewTable({
                   <td className="max-w-sm px-3 py-3">
                     <div className="grid gap-2">
                       <span>{row.description}</span>
-                      {row.status === 'new' && badges.length > 0 ? (
+                      {row.status !== 'duplicate' && badges.length > 0 ? (
                         <div className="flex flex-wrap gap-1">
                           {badges.map((badge) => (
                             <span
@@ -215,7 +218,7 @@ export default function PreviewTable({
                         </option>
                       ))}
                     </select>
-                    {row.status === 'new' && row.suggestionConfidence !== 'none' ? (
+                    {row.status !== 'duplicate' && row.suggestionConfidence !== 'none' ? (
                       <p className="mt-1 text-xs text-gray-500">
                         {confidenceLabel(row)} · {t('suggestion', { reason: row.suggestionReason })}
                       </p>
@@ -229,7 +232,7 @@ export default function PreviewTable({
                           : 'inline-flex border border-green-300 bg-green-50 px-2 py-1 text-xs font-medium text-green-800'
                       }
                     >
-                      {isDuplicate ? t('statusDuplicate') : t('statusNew')}
+                      {isDuplicate ? t('statusDuplicate') : isRestorable ? t('statusRestorable') : t('statusNew')}
                     </span>
                   </td>
                 </tr>
@@ -239,7 +242,7 @@ export default function PreviewTable({
           <tfoot className="border-t border-gray-200 bg-gray-50 text-sm font-medium text-gray-700">
             <tr>
               <td colSpan={7} className="px-3 py-3">
-                {t('footer', { newCount, duplicateCount })}
+                {t('footer', { newCount, restorableCount, duplicateCount })}
               </td>
             </tr>
           </tfoot>

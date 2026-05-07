@@ -96,8 +96,8 @@ export default function UploadForm({
       // localStorage unavailable
     }
   }, []);
-  const newRowsCount = analyzeState?.ok
-    ? analyzeState.preview.filter((row) => row.status === 'new').length
+  const importableRowsCount = analyzeState?.ok
+    ? analyzeState.preview.filter((row) => row.status !== 'duplicate').length
     : 0;
 
   const handleCategoryOverridesChange = useCallback((overrides: Record<number, string | null>) => {
@@ -254,13 +254,13 @@ export default function UploadForm({
               categories={analyzeState.categories}
               onCategoryOverridesChange={handleCategoryOverridesChange}
             />
-            {newRowsCount === 0 ? (
+            {importableRowsCount === 0 ? (
               <div className="border border-gray-300 bg-gray-50 px-4 py-3 text-sm text-gray-700">
                 {t('commit.noNewRows')}
               </div>
             ) : null}
             <div>
-              <CommitButton count={newRowsCount} pending={isCommitPending} onCommit={handleCommit} />
+              <CommitButton count={importableRowsCount} pending={isCommitPending} onCommit={handleCommit} />
             </div>
           </div>
         ) : null}

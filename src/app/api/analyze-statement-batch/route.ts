@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { computeDedupHash } from '@/lib/dedup-hash';
 import { getDb } from '@/lib/db';
+import { partitionImportRowsByDedup } from '@/lib/import-dedup';
 import { parseMultipartRequest } from '@/lib/multipart-upload';
 import { requireOwner } from '@/lib/permissions';
 import { listPaymentSources } from '@/lib/paymentSources';
@@ -90,22 +91,28 @@ export async function POST(request: NextRequest): Promise<NextResponse<BatchAnal
   const existing = uniqueHashes.length > 0
     ? await getDb().transaction.findMany({
         where: { dedupHash: { in: uniqueHashes } },
-        select: { dedupHash: true },
+        select: { id: true, dedupHash: true, deletedAt: true },
       })
     : [];
-  const existingHashSet = new Set(existing.map((row) => row.dedupHash).filter((hash): hash is string => hash !== null));
+  const partition = partitionImportRowsByDedup(
+    allHashContexts.map((context) => ({
+      row: context,
+      dedupHash: context.dedupHash,
+    })),
+    existing,
+  );
+  const createKeys = new Set(partition.rowsToCreate.map(({ row }) => `${row.fileIndex}:${row.rowIndex}`));
+  const restoreKeys = new Set(partition.rowsToRestore.map(({ row }) => `${row.fileIndex}:${row.rowIndex}`));
 
-  const seenInBatch = new Set<string>();
-  const statusByContext = new Map<string, 'new' | 'duplicate'>();
+  const statusByContext = new Map<string, 'new' | 'duplicate' | 'restorable'>();
   for (const context of allHashContexts) {
     const key = `${context.fileIndex}:${context.rowIndex}`;
-    if (existingHashSet.has(context.dedupHash)) {
-      statusByContext.set(key, 'duplicate');
-    } else if (seenInBatch.has(context.dedupHash)) {
-      statusByContext.set(key, 'duplicate');
-    } else {
-      seenInBatch.add(context.dedupHash);
+    if (createKeys.has(key)) {
       statusByContext.set(key, 'new');
+    } else if (restoreKeys.has(key)) {
+      statusByContext.set(key, 'restorable');
+    } else {
+      statusByContext.set(key, 'duplicate');
     }
   }
 
@@ -119,7 +126,7 @@ export async function POST(request: NextRequest): Promise<NextResponse<BatchAnal
     const hasDetection = !!filesAnalysis[fileIndex].detectedPaymentSourceId;
     const rows: FileAnalysisRow[] = parsed.rows.map((row, rowIndex) => {
       const key = `${fileIndex}:${rowIndex}`;
-      const status: 'new' | 'duplicate' = hasDetection
+      const status: 'new' | 'duplicate' | 'restorable' = hasDetection
         ? statusByContext.get(key) ?? 'new'
         : 'new';
 

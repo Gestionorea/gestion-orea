@@ -405,7 +405,7 @@
         "filesSelected": "{count} file(s) selected",
         "analyzeAll": "Analyze all",
         "analyzing": "Analyzing...",
-        "batchPreview": "Preview {count} file(s) — {newRows} new transactions",
+        "batchPreview": "Preview {count} file(s) — {newRows} transactions to import/restore",
         "commitAll": "Import {count} transactions",
         "committing": "Importing...",
         "resolveFirst": "Select an account for undetected files.",
@@ -419,7 +419,7 @@
         "status": {
           "detected": "Auto-detected",
           "notDetected": "Account not detected",
-          "newRows": "{count} new",
+          "newRows": "{count} to import/restore",
           "duplicates": "{count} duplicates",
           "parseError": "Parse error",
           "success": "{count} imported",
@@ -438,6 +438,7 @@
         "columnStatus": "Status",
         "statusNew": "New",
         "statusDuplicate": "Duplicate",
+        "statusRestorable": "To restore",
         "typeIncome": "Income",
         "typeExpense": "Expense",
         "categoryNone": "— None —",
@@ -457,7 +458,7 @@
         "suggestionConfidenceHigh": "High-confidence suggestion",
         "suggestionConfidenceMedium": "Likely suggestion",
         "suggestionConfidenceLow": "Low-confidence suggestion",
-        "footer": "{newCount} new, {duplicateCount} duplicates"
+        "footer": "{newCount} new, {restorableCount} to restore, {duplicateCount} duplicates"
       },
       "createCategory": {
         "title": "New category",
