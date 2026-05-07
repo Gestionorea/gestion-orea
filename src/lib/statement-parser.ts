@@ -2,7 +2,7 @@ import { parse } from 'csv-parse/sync';
 import ExcelJS from 'exceljs';
 import { Decimal } from '@prisma/client/runtime/library';
 
-export type StatementFormat = 'desjardins_bank_account' | 'desjardins_credit_card_pdf';
+export type StatementFormat = 'desjardins_bank_account' | 'desjardins_credit_card_csv' | 'desjardins_credit_card_pdf';
 
 export type ParsedRow = {
   date: Date;
@@ -39,6 +39,9 @@ const DESJARDINS_CODES = new Set(['EOP', 'ET1']);
 const adapters: Record<StatementFormat, StatementAdapter> = {
   desjardins_bank_account: {
     parseRows: parseDesjardinsBankAccount,
+  },
+  desjardins_credit_card_csv: {
+    parseRows: parseDesjardinsCreditCardCsv,
   },
   desjardins_credit_card_pdf: {
     parseRows: () => {
@@ -89,6 +92,10 @@ function detectFormat(records: string[][]): StatementFormat {
   const candidate = records.find((record) => !isEmptyRecord(record));
   if (!candidate) throw new StatementParserError('Statement file is empty.');
 
+  if (isDesjardinsCreditCardCsvRecord(candidate)) {
+    return 'desjardins_credit_card_csv';
+  }
+
   const code = String(candidate[2] ?? '').trim();
   if (candidate.length >= 14 && (DESJARDINS_CODES.has(code) || code.length > 0)) {
     return 'desjardins_bank_account';
@@ -130,6 +137,22 @@ function parseAmount(value: string | undefined): number | null {
 
 function warning(line: number, message: string): string {
   return `Ligne ${line} ${message}`;
+}
+
+function isDesjardinsCreditCardCsvRecord(record: string[]): boolean {
+  const account = String(record[0] ?? '').trim();
+  const date = String(record[3] ?? '').trim();
+  const description = String(record[5] ?? '').trim();
+  const purchaseAmount = parseAmount(record[11]);
+  const paymentAmount = parseAmount(record[12]);
+
+  return (
+    record.length >= 14 &&
+    /^VISA\*{4}/i.test(account) &&
+    /^\d{4}\/\d{2}\/\d{2}$/.test(date) &&
+    description.length > 0 &&
+    (purchaseAmount !== null || paymentAmount !== null)
+  );
 }
 
 function parseDesjardinsBankAccount(records: string[][]): ParseResult {
@@ -196,6 +219,67 @@ function parseDesjardinsBankAccount(records: string[][]): ParseResult {
 
   return {
     format: 'desjardins_bank_account',
+    rows,
+    warnings,
+    totalRowsRead: records.length,
+    rowsSkipped,
+  };
+}
+
+function parseDesjardinsCreditCardCsv(records: string[][]): ParseResult {
+  const rows: ParsedRow[] = [];
+  const warnings: string[] = [];
+  let rowsSkipped = 0;
+
+  records.forEach((record, index) => {
+    const rawRowNumber = index + 1;
+    if (isEmptyRecord(record)) {
+      rowsSkipped += 1;
+      return;
+    }
+
+    if (!isDesjardinsCreditCardCsvRecord(record)) {
+      rowsSkipped += 1;
+      warnings.push(warning(rawRowNumber, 'ignoree: ligne carte de credit Desjardins invalide'));
+      return;
+    }
+
+    const description = String(record[5] ?? '').trim();
+    const purchaseAmount = parseAmount(record[11]);
+    const paymentAmount = parseAmount(record[12]);
+
+    if (
+      (purchaseAmount === null && paymentAmount === null) ||
+      (purchaseAmount !== null && paymentAmount !== null)
+    ) {
+      rowsSkipped += 1;
+      warnings.push(warning(rawRowNumber, 'ignoree: montant achat/paiement invalide'));
+      return;
+    }
+
+    const rawAmount = purchaseAmount ?? paymentAmount;
+    if (rawAmount === null || rawAmount === 0) {
+      rowsSkipped += 1;
+      warnings.push(warning(rawRowNumber, 'ignoree: montant nul'));
+      return;
+    }
+
+    try {
+      rows.push({
+        date: parseDesjardinsDate(String(record[3] ?? '')),
+        description,
+        amountTotal: new Decimal(Math.abs(rawAmount).toFixed(2)),
+        type: purchaseAmount !== null ? 'expense' : 'income',
+        rawRowNumber,
+      });
+    } catch (error) {
+      rowsSkipped += 1;
+      warnings.push(warning(rawRowNumber, `ignoree: ${error instanceof Error ? error.message : String(error)}`));
+    }
+  });
+
+  return {
+    format: 'desjardins_credit_card_csv',
     rows,
     warnings,
     totalRowsRead: records.length,

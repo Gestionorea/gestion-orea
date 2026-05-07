@@ -2,6 +2,12 @@ import { readFileSync } from 'node:fs';
 import { parseStatement, type ParsedRow } from '../src/lib/statement-parser';
 
 const CSV_PATH = '/Users/olivierlemieux/Documents/Claude/site-gestion-orea/02-documents/releve.csv';
+const CREDIT_CARD_CSV = `
+"VISA**** **** **** 0019","","",2026/04/02,"  1","PETRO-CANADA 13951 SHERBROOKE QC","","","","","",80.00,"",""
+"VISA**** **** **** 0019","","",2026/04/05,"  1","COUCHETARD #190 SHERBROOKE QC","","","","","",80.40,"",""
+"VISA**** **** **** 0019","","",2026/04/05,"  2","HOTEL HUMANITI MONTREA MONTREAL QC","","","","","",40.24,"",""
+"VISA**** **** **** 0019","","",2026/04/27,"  2","PAIEMENT AUTORISE - PRELEVEMENT EFFECTUE","","","","","","",-361.97,""
+`;
 
 function isoDate(row: ParsedRow): string {
   return row.date.toISOString().slice(0, 10);
@@ -27,6 +33,10 @@ function assert(condition: boolean, message: string): void {
 async function main() {
   const buffer = readFileSync(CSV_PATH);
   const result = await parseStatement({ buffer, filename: 'releve.csv' });
+  const creditCardResult = await parseStatement({
+    buffer: Buffer.from(CREDIT_CARD_CSV, 'utf8'),
+    filename: 'OREA-CC-0019-2026-04.csv',
+  });
 
   const expenses = result.rows
     .filter((row) => row.type === 'expense')
@@ -72,6 +82,32 @@ async function main() {
     'Expected at least one Depot Mobile income of 7500.00.',
   );
   console.log('✓ Au moins 1 income (Depot Mobile 7500.00)');
+
+  assert(
+    creditCardResult.format === 'desjardins_credit_card_csv',
+    `Unexpected credit-card CSV format: ${creditCardResult.format}.`,
+  );
+  console.log("✓ format carte de credit CSV === 'desjardins_credit_card_csv'");
+
+  assert(creditCardResult.rows.length === 4, `Expected 4 credit-card rows, got ${creditCardResult.rows.length}.`);
+  console.log('✓ 4 lignes carte de credit parsees');
+
+  const firstCreditCardRow = creditCardResult.rows[0];
+  assert(firstCreditCardRow !== undefined, 'First credit-card row missing.');
+  assert(isoDate(firstCreditCardRow) === '2026-04-02', `Unexpected credit-card first date: ${isoDate(firstCreditCardRow)}.`);
+  assert(
+    firstCreditCardRow.description === 'PETRO-CANADA 13951 SHERBROOKE QC',
+    `Unexpected credit-card first description: ${firstCreditCardRow.description}.`,
+  );
+  assert(firstCreditCardRow.type === 'expense', `Unexpected credit-card first type: ${firstCreditCardRow.type}.`);
+  assert(amount(firstCreditCardRow) === 80, `Unexpected credit-card first amount: ${amount(firstCreditCardRow)}.`);
+  console.log('✓ Premiere ligne carte: expense 80.00');
+
+  const paymentRow = creditCardResult.rows[creditCardResult.rows.length - 1];
+  assert(paymentRow !== undefined, 'Credit-card payment row missing.');
+  assert(paymentRow.type === 'income', `Unexpected payment row type: ${paymentRow.type}.`);
+  assert(amount(paymentRow) === 361.97, `Unexpected payment row amount: ${amount(paymentRow)}.`);
+  console.log('✓ Paiement carte negatif importe comme income 361.97');
 
   console.log('');
   console.log('RESULT: PASS');
