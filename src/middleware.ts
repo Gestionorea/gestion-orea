@@ -5,6 +5,21 @@ import { SESSION_COOKIE_NAME, verifySessionToken } from './lib/auth';
 
 const intlMiddleware = createMiddleware(routing);
 const PROTECTED_PREFIXES = ['/perso', '/private'];
+const LEGACY_HOSTS = new Set(['gestionorea.com', 'www.gestionorea.com']);
+const NEVER_REDIRECT_HOSTS = new Set([
+  'oreaholding.ca',
+  'www.oreaholding.ca',
+  'localhost',
+  '127.0.0.1',
+]);
+
+function shouldRedirectToCanonical(hostname: string): boolean {
+  if (NEVER_REDIRECT_HOSTS.has(hostname) || hostname.includes('.railway.app')) {
+    return false;
+  }
+
+  return LEGACY_HOSTS.has(hostname);
+}
 
 function isProtectedPath(pathname: string): boolean {
   for (const locale of routing.locales) {
@@ -19,6 +34,17 @@ function isProtectedPath(pathname: string): boolean {
 }
 
 export default async function middleware(request: NextRequest) {
+  const hostname = request.nextUrl.hostname.toLowerCase();
+
+  // Redirect only legacy domains before locale/auth middleware to avoid canonical loops.
+  if (shouldRedirectToCanonical(hostname)) {
+    const redirectUrl = new URL(
+      request.nextUrl.pathname + request.nextUrl.search,
+      'https://oreaholding.ca'
+    );
+    return NextResponse.redirect(redirectUrl, 301);
+  }
+
   if (request.nextUrl.pathname === '/opengraph-image') {
     return NextResponse.next();
   }
