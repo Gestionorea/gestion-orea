@@ -18,7 +18,7 @@ const playfair = Playfair_Display({
   display: 'swap',
 });
 
-const siteUrl = 'https://gestionorea.com';
+const siteUrl = 'https://oreaholding.ca';
 
 export async function generateMetadata({
   params,
