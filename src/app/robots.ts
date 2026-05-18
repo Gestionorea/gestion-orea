@@ -7,6 +7,6 @@ export default function robots(): MetadataRoute.Robots {
       allow: '/',
       disallow: ['/fr/login', '/en/login', '/fr/perso', '/en/private'],
     },
-    sitemap: 'https://gestionorea.com/sitemap.xml',
+    sitemap: 'https://oreaholding.ca/sitemap.xml',
   };
 }
