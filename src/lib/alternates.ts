@@ -1,6 +1,6 @@
 import { routing } from '@/i18n/routing';
 
-const SITE_URL = 'https://gestionorea.com';
+const SITE_URL = 'https://oreaholding.ca';
 
 type PathnameKey = keyof typeof routing.pathnames;
 

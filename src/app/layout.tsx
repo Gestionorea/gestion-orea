@@ -1,7 +1,7 @@
 import type { Metadata, Viewport } from 'next';
 import './globals.css';
 
-const siteUrl = 'https://gestionorea.com';
+const siteUrl = 'https://oreaholding.ca';
 
 export const viewport: Viewport = {
   width: 'device-width',

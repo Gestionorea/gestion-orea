@@ -1,7 +1,7 @@
 import type { MetadataRoute } from 'next';
 import { routing } from '@/i18n/routing';
 
-const siteUrl = 'https://gestionorea.com';
+const siteUrl = 'https://oreaholding.ca';
 const PRIVATE_PATHS = new Set<string>(['/login', '/perso']);
 
 export default function sitemap(): MetadataRoute.Sitemap {
